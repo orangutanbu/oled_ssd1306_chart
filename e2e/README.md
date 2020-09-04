@@ -32,4 +32,12 @@ E2E tests should remain as close as possible to production, but sometimes mockin
 
 Only mocking entire files is supported at the moment, so you may need to reorganize functions. To mock a file, create a new one with the same name and extension `e2e.js` (e.g. `utils.ts` -> `utils.e2e.js`). The metro bundler will override any file that has a `e2e.js` equivalent in Detox runs. e.g. https://github.com/Uniswap/mobile/blob/main/src/utils/time.e2e.js
 
-Read more here https://wix.github.io/Detox
+Read more here https://wix.github.io/Detox/docs/guide/mocking/
+
+## Debugging
+
+[Detox Troubleshooting](https://github.com/wix/Detox/blob/master/docs/Troubleshooting.RunningTests.md)
+
+- Example: [#430](https://github.com/Uniswap/mobile/pull/430)
+
+* Element not visible: [Debug View Hierarchy](https://github.com/wix/Detox/blob/master/docs/Troubleshooting.RunningTests.md#debug-view-hierarchy)
