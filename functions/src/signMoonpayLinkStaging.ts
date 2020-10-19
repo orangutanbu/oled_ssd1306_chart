@@ -61,4 +61,26 @@ export const signMoonpayLinkStaging = functions
           baseCurrencyAmount,
           colorCode,
           currencyCode,
-          defa
+          defaultCurrencyCode,
+          externalTransactionId,
+          externalCustomerId,
+          redirectURL,
+          theme,
+          walletAddress,
+          walletAddresses,
+        })
+      )
+
+      console.log(`Requested signature for: ${url}`)
+
+      const signature = crypto
+        .createHmac('sha256', MOONPAY_SECRET_KEY_STAGING ?? '')
+        .update(new URL(url).search)
+        .digest('base64')
+
+      const urlWithSignature = `${url}&signature=${encodeURIComponent(signature)}`
+
+      console.log(`Returning signed URL: ${urlWithSignature}`)
+      response.send(JSON.stringify({ url: urlWithSignature }))
+    })
+  })
