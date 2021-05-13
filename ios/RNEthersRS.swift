@@ -61,4 +61,84 @@ class RNEthersRS: NSObject {
   @objc(importMnemonic:resolve:reject:)
   func importMnemonic(
     mnemonic: String, resolve: RCTPromiseResolveBlock,
-    reject: RCTPromiseR
+    reject: RCTPromiseRejectBlock
+  ) {
+    let private_key = private_key_from_mnemonic(
+      mnemonic, UInt32(exactly: 0)!)
+    let address = String(cString: private_key.address!)
+    
+    let res = storeNewMnemonic(mnemonic: mnemonic, address: address)
+    if res != nil {
+      resolve(res)
+      return
+    }
+    let err = NSError.init()
+    reject("error", "error", err)
+    return
+  }
+  
+  /**
+   Generates a new mnemonic and retrieves associated public address. Stores new mnemonic in native keychain with the mnemonic ID key as the public address.
+   
+   - returns: public address from the mnemonic's first derived private key
+   */
+  @objc(generateAndStoreMnemonic:reject:)
+  func generateAndStoreMnemonic(resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
+    let mnemonic_ptr = generate_mnemonic()
+    let mnemonic_str = String(cString: mnemonic_ptr.mnemonic!)
+    let address_str = String(cString: mnemonic_ptr.address!)
+    let res = storeNewMnemonic(mnemonic: mnemonic_str, address: address_str)
+    mnemonic_free(mnemonic_ptr)
+    resolve(res)
+  }
+  
+  /**
+   Stores mnemonic phrase in Native Keychain under the address
+   
+   - returns: public address if successfully stored in native keychain
+   */
+  func storeNewMnemonic(mnemonic: String, address: String) -> String? {
+    let newMnemonicKey = keychainKeyForMnemonicId(mnemonicId: address);
+    let checkStored = retrieveMnemonic(mnemonicId: newMnemonicKey)
+    
+    if checkStored == nil {
+      keychain.set(mnemonic, forKey: newMnemonicKey, withAccess: .accessibleWhenUnlockedThisDeviceOnly)
+      return address
+    }
+    
+    return nil
+  }
+  
+  func keychainKeyForMnemonicId(mnemonicId: String) -> String {
+    return mnemonicPrefix + mnemonicId
+  }
+  
+  func retrieveMnemonic(mnemonicId: String) -> String? {
+    return keychain.get(keychainKeyForMnemonicId(mnemonicId: mnemonicId))
+  }
+  
+  /**
+   Fetches all public addresses from private keys stored under `privateKeyPrefix` in native keychain. Used from React Native to verify the native keychain has the private key for an account that is attempting create a NativeSigner that calls native signing methods
+   
+   - returns: public addresses for all stored private keys
+   */
+  @objc(getAddressesForStoredPrivateKeys:reject:)
+  func getAddressesForStoredPrivateKeys(
+    resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock
+  ) {
+    let addresses = keychain.allKeys.filter { key in
+      key.contains(privateKeyPrefix)
+    }.map { key in
+      key.replacingOccurrences(of: entirePrivateKeyPrefix, with: "")
+    }
+    resolve(addresses)
+  }
+  
+  func storeNewPrivateKey(address: String, privateKey: String) {
+    let newKey = keychainKeyForPrivateKey(address: address);
+    keychain.set(privateKey, forKey: newKey, withAccess: .accessibleWhenUnlockedThisDeviceOnly)
+  }
+  
+  /**
+   Derives private key and public address from mnemonic associated with `mnemonicId` for given `derivationIndex`. Stores the private key in native keychain with key.
+   
