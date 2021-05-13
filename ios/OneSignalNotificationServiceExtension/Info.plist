@@ -6,4 +6,8 @@
 	<dict>
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.usernotifications.service</string>
-		<key>NSExtensionPrincipal
+		<key>NSExtensionPrincipalClass</key>
+		<string>$(PRODUCT_MODULE_NAME).NotificationService</string>
+	</dict>
+</dict>
+</plist>
