@@ -142,3 +142,72 @@ class RNEthersRS: NSObject {
   /**
    Derives private key and public address from mnemonic associated with `mnemonicId` for given `derivationIndex`. Stores the private key in native keychain with key.
    
+   - parameter mnemonicId: key string associated with mnemonic to generate private key for (currently convention is to use public address associated with mnemonic)
+   - parameter derivationIndex: number used to specify a which derivation index to use for deriving a private key from the mnemonic
+   - returns: public address associated with private key generated from the mnemonic at given derivation index
+   */
+  @objc(generateAndStorePrivateKey:derivationIndex:resolve:reject:)
+  func generateAndStorePrivateKey(
+    mnemonicId: String, derivationIndex: Int, resolve: RCTPromiseResolveBlock,
+    reject: RCTPromiseRejectBlock
+  ) {
+    let mnemonic = retrieveMnemonic(mnemonicId: mnemonicId)
+    let private_key = private_key_from_mnemonic(
+      mnemonic, UInt32(exactly: derivationIndex)!)
+    let xprv = String(cString: private_key.private_key!)
+    let address = String(cString: private_key.address!)
+    storeNewPrivateKey(address: address, privateKey: xprv)
+    private_key_free(private_key)
+    resolve(address)
+  }
+  
+  @objc(signTransactionHashForAddress:hash:chainId:resolve:reject:)
+  func signTransactionForAddress(
+    address: String, hash: String, chainId: NSNumber, resolve: RCTPromiseResolveBlock,
+    reject: RCTPromiseRejectBlock
+  ) {
+    let wallet = retrieveOrCreateWalletForAddress(address: address)
+    let signedHash = sign_tx_with_wallet(wallet, hash, UInt64(chainId))
+    let result = String(cString: signedHash.signature!)
+    resolve(result);
+  }
+  
+  @objc(signMessageForAddress:message:resolve:reject:)
+  func signMessageForAddress(
+    address: String, message: String, resolve: RCTPromiseResolveBlock,
+    reject: RCTPromiseRejectBlock
+  ) {
+    let wallet = retrieveOrCreateWalletForAddress(address: address)
+    let signedMessage = sign_message_with_wallet(wallet, message)
+    let result = String(cString: signedMessage!)
+    string_free(signedMessage)
+    resolve(result)
+  }
+  
+  @objc(signHashForAddress:hash:chainId:resolve:reject:)
+  func signHashForAddress(
+    address: String, hash: String, chainId: NSNumber, resolve: RCTPromiseResolveBlock,
+    reject: RCTPromiseRejectBlock
+  ) {
+    let wallet = retrieveOrCreateWalletForAddress(address: address)
+    let signedHash = sign_hash_with_wallet(wallet, hash, UInt64(chainId))
+    let result = String(cString: signedHash!)
+    string_free(signedHash)
+    resolve(result)
+  }
+  
+  func retrieveOrCreateWalletForAddress(address: String) -> OpaquePointer {
+    if walletCache[address] != nil {
+      return walletCache[address]!
+    }
+    let privateKey = retrievePrivateKey(address: address)
+    let wallet = wallet_from_private_key(privateKey)
+    walletCache[address] = wallet
+    return wallet!
+  }
+  
+  func retrievePrivateKey(address: String) -> String? {
+    return keychain.get(keychainKeyForPrivateKey(address: address))
+  }
+  
+  func keychainKeyForPrivateKey(address: Stri
