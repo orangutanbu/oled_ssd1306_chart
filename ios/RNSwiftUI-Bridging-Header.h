@@ -27,4 +27,14 @@ RCT_REMAP_VIEW_PROPERTY(name, __custom__, type)                                 
 - (void)set_##name:(id)json forView:(UIView *)view withDefaultView:(UIView *)defaultView RCT_DYNAMIC {      \
   NSMutableDictionary *storage = [proxyClass storage];                                                      \
   proxyClass *proxy = storage[[NSValue valueWithNonretainedObject:view]];                                   \
-  void (^eventHandler)(NSDi
+  void (^eventHandler)(NSDictionary *event) = ^(NSDictionary *event) {                                      \
+  RCTComponentEvent *componentEvent = [[RCTComponentEvent alloc] initWithName:@""#name                      \
+                                                                        viewTag:view.reactTag               \
+                                                                           body:event];                     \
+    [self.bridge.eventDispatcher sendEvent:componentEvent];                                                 \
+  };                                                                                                        \
+  proxy.name = eventHandler;                                                                                \
+}
+
+
+#endif /* RNSwiftUI_Bridging_Header_h */
