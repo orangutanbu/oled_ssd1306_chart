@@ -210,4 +210,7 @@ class RNEthersRS: NSObject {
     return keychain.get(keychainKeyForPrivateKey(address: address))
   }
   
-  func keychainKeyForPrivateKey(address: Stri
+  func keychainKeyForPrivateKey(address: String) -> String {
+    return privateKeyPrefix + address
+  }
+}
