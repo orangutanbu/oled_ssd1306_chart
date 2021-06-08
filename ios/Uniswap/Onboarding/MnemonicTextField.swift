@@ -67,4 +67,32 @@ struct MnemonicTextField: View {
     case .notFocused:
       return AnyView(
         RoundedRectangle(cornerRadius: 100, style: .continuous)
-          .fill(Colors.backgr
+          .fill(Colors.background1)
+      )
+    }
+  }
+  
+  
+  var body: some View {
+    HStack(alignment: VerticalAlignment.center, spacing: 0) {
+      
+      Text(String(index)).cornerRadius(16)
+        .font(Font((shouldShowSmallText ? smallFont : mediumFont)!))
+        .foregroundColor(Colors.textTertiary)
+        .padding(shouldShowSmallText ? EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16) : EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
+        .frame(alignment: Alignment.leading)
+      
+      Text(initialText)
+        .font(Font((shouldShowSmallText ? smallFont : mediumFont)!))
+        .multilineTextAlignment(TextAlignment.leading)
+        .foregroundColor(Colors.textPrimary)
+        .padding(shouldShowSmallText ? EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 16) : EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
+        .frame(maxWidth: .infinity, alignment: Alignment.leading)
+    }
+    .background(getLabelBackground(focusState: focusState))
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .onTapGesture {
+      onFieldTapped?(index)
+    }
+  }
+}
