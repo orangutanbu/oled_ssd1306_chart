@@ -36,4 +36,13 @@
                         </constraints>
                     </view>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="EXPO-PLACEHOLDER-1" userLabel="First Responder" sceneMemberID="firstResponde
+                <placeholder placeholderIdentifier="IBFirstResponder" id="EXPO-PLACEHOLDER-1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="140.625" y="129.4921875"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="SplashScreen" width="1242" height="2436"/>
+        <image name="SplashScreenBackground" width="1" height="1"/>
+    </resources>
+</document>
