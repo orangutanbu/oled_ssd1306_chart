@@ -62,4 +62,85 @@ class WalletConnectServerWrapper {
     
     let walletMeta = Session.ClientMeta(name: "Uniswap Wallet",
                                         description: "Built by the most trusted team in DeFi, Uniswap Wallet allows you to maintain full custody and control of your assets.",
-                                        icons: [URL(string:       "https://gateway.pinata.cloud/
+                                        icons: [URL(string:       "https://gateway.pinata.cloud/ipfs/QmR1hYqhDMoyvJtwrQ6f1kVyfEKyK65XH3nbCimXBMkHJg")!],
+                                        url: URL(string: "https://uniswap.org/wallet")!)
+    let walletInfo = Session.WalletInfo(approved: approved,
+                                        accounts: [account],
+                                        chainId: chainId,
+                                        peerId: UUID().uuidString,
+                                        peerMeta: walletMeta)
+    completePendingSession(walletInfo)
+    self.settlePendingSession = nil
+  }
+  
+  func sendSignature(requestInternalId: String, signature: String) {
+    guard let request = self.pendingRequests[requestInternalId] else {
+      return self.eventEmitter.sendEvent(
+        withName: EventType.error.rawValue,
+        body: [
+          "type": ErrorType.invalidRequestId.rawValue,
+          "message": "Invalid request id",
+        ]
+      )
+    }
+    
+    do {
+      try self.server.send(Response(url: request.url, value: signature, id: request.id!))
+    } catch {
+      self.eventEmitter.sendEvent(
+        withName: EventType.error.rawValue,
+        body: [
+          "type": ErrorType.wcSendSignatureError.rawValue,
+        ]
+      )
+    }
+    
+    self.pendingRequests.removeValue(forKey: requestInternalId)
+  }
+  
+  func requestSwitchChainId(request: Request, chainId: Int) {
+    guard let session: Session = self.topicToSession[request.url.topic] else { return }
+    
+    guard supportedChainIds.contains(chainId) else {
+      do {
+        try self.server.send(Response(request: request, error: .requestRejected))
+        
+        let icons = session.dAppInfo.peerMeta.icons
+        self.eventEmitter.sendEvent(withName: EventType.error.rawValue, body: [
+          "type": ErrorType.wcUnsupportedChainError.rawValue,
+          "account": session.getAccount(),
+          "dapp": [
+            "name": session.dAppInfo.peerMeta.name,
+            "url": session.dAppInfo.peerMeta.url.absoluteString,
+            "icon": icons.isEmpty ? "" : icons[0].absoluteString,
+            "chain_id": chainId,
+          ]
+        ])
+      } catch {
+        self.eventEmitter.sendEvent(
+          withName: EventType.error.rawValue,
+          body: [
+            "type": ErrorType.wcRejectRequestError.rawValue,
+            "account": session.getAccount()
+          ]
+        )
+      }
+      
+      return
+    }
+    
+    switchChainId(session: session, chainId: chainId)
+  }
+  
+  func switchChainId(session: Session, chainId: Int) {
+    let w = session.walletInfo!
+    let newWalletInfo = Session.WalletInfo(
+      approved: w.approved, accounts: w.accounts, chainId: chainId, peerId: w.peerId, peerMeta: w.peerMeta)
+    
+    do {
+      try self.server.updateSession(session, with: newWalletInfo)
+      
+      let icons = session.dAppInfo.peerMeta.icons
+      
+      self.eventEmitter.sendEvent(withName: EventType.networkChanged.rawValue, body: [
+     
