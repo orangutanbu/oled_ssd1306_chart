@@ -143,4 +143,87 @@ class WalletConnectServerWrapper {
       let icons = session.dAppInfo.peerMeta.icons
       
       self.eventEmitter.sendEvent(withName: EventType.networkChanged.rawValue, body: [
-     
+        "session_id": session.url.topic,
+        "account": session.getAccount(),
+        "dapp": [
+          "name": session.dAppInfo.peerMeta.name,
+          "url": session.dAppInfo.peerMeta.url.absoluteString,
+          "icon": icons.isEmpty ? "" : icons[0].absoluteString,
+          "chain_id": chainId
+        ]
+      ])
+      
+      // update session with updated chain ID in our local store
+      var newSession = session
+      newSession.walletInfo = newWalletInfo
+      self.topicToSession.updateValue(newSession, forKey: session.url.topic)
+      self.updateStoredSession(newSession)
+    } catch {
+      self.eventEmitter.sendEvent(
+        withName: EventType.error.rawValue,
+        body: [
+          "type": ErrorType.wcSwitchChainError.rawValue,
+          "account": session.getAccount()
+        ]
+      )
+    }
+  }
+  
+  func confirmSwitchChainRequest(requestInternalId: String) {
+    guard let request = self.pendingRequests[requestInternalId] else {
+      return self.eventEmitter.sendEvent(
+        withName: EventType.error.rawValue,
+        body: [
+          "type": ErrorType.invalidRequestId.rawValue,
+          "message": "Are you sure you are using request_internal_id and not request.id?"
+        ]
+      )
+    }
+
+    do {
+      let session = try self.getSessionFromTopic(request.url.topic)
+      let chainIdRequest = try request.parameter(of: WalletSwitchEthereumChainObject.self, at: 0)
+      let chainId = try chainIdRequest.toInt()
+    
+      switchChainId(session: session, chainId: chainId)
+
+      // TODO: Should be responding to wallet_switchEthereumChain requests with null based on https://eips.ethereum.org/EIPS/eip-3326, but Response requires non-null value
+      try self.server.send(Response(url: request.url, value: chainId, id: request.id!))
+    } catch {
+      self.eventEmitter.sendEvent(
+        withName: EventType.error.rawValue,
+        body: [
+          "type": ErrorType.wcSwitchChainError.rawValue,
+        ]
+      )
+    }
+    
+    self.pendingRequests.removeValue(forKey: requestInternalId)
+  }
+  
+  func rejectRequest(requestInternalId: String) {
+    guard let request = self.pendingRequests[requestInternalId] else {
+      return
+    }
+    
+    do {
+      try self.server.send(Response(request: request, error: .requestRejected))
+    } catch {
+      self.eventEmitter.sendEvent(
+        withName: EventType.error.rawValue,
+        body: [
+          "type": ErrorType.wcRejectRequestError.rawValue,
+        ]
+      )
+    }
+    
+    self.pendingRequests.removeValue(forKey: requestInternalId)
+  }
+  
+  func setPendingRequest(request: Request, internalId: String) {
+    self.pendingRequests.updateValue(request, forKey: internalId)
+  }
+  
+  func getSessionFromTopic(_ topic: String) throws -> Session {
+    guard let session = self.topicToSession[topic] else {
+    
