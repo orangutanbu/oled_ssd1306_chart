@@ -294,4 +294,27 @@ extension WalletConnectServerWrapper: ServerDelegate {
     // Remove session from UserDefaults cache
     var newSessionDatas = UserDefaults.standard.object(forKey: WALLET_CONNECT_SESSION_STORAGE_KEY) as? [String: Data]
     newSessionDatas?.removeValue(forKey: session.url.topic)
-    UserDefaults.standard.set(newSessionDatas, forKey: WALLET_CONNECT_SESSION_STORAGE_K
+    UserDefaults.standard.set(newSessionDatas, forKey: WALLET_CONNECT_SESSION_STORAGE_KEY)
+    
+    self.topicToSession.removeValue(forKey: session.url.topic)
+    
+    // Send disconnected event back to React Native
+    let icons = session.dAppInfo.peerMeta.icons
+    self.eventEmitter.sendEvent(withName: EventType.sessionDisconnected.rawValue, body: [
+      "session_id": session.url.topic,
+      "account": session.getAccount(),
+      "dapp": [
+        "name": session.dAppInfo.peerMeta.name,
+        "url": session.dAppInfo.peerMeta.url.absoluteString,
+        "icon": icons.isEmpty ? "" : icons[0].absoluteString,
+        "chain_id": session.walletInfo?.chainId ?? 1
+      ],
+      "client_id": session.walletInfo?.peerId,
+    ])
+  }
+  
+  // TODO: [MOB-3873] figure out why this update function is never called on network change
+  func server(_ server: Server, didUpdate session: Session) {
+    self.topicToSession.updateValue(session, forKey: session.url.topic)
+  }
+}
