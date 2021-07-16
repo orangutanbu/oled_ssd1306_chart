@@ -51,4 +51,21 @@ class WalletConnectSignTransactionHandler: RequestHandler {
             // use walletInfo's chainId because .dappInfo does not update on network change
             "chain_id": session.walletInfo?.chainId ?? 1,
           ]
- 
+        ]
+      )
+    } catch {
+      self.serverWrapper.server.send(.invalid(request))
+    }
+  }
+}
+
+struct EthereumTransaction: Decodable {
+  let data: String?
+  let from: String?
+  let to: String
+  let gas: String?
+  let gasPrice: String?
+  let value: String?
+  let nonce: String?
+}
+
