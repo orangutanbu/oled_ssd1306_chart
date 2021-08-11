@@ -59,3 +59,131 @@ if (!__DEV__) {
     ],
   })
 }
+
+initializeRemoteConfig()
+initOneSignal()
+
+function App(): JSX.Element | null {
+  const client = usePersistedApolloClient()
+  const [deviceId, setDeviceId] = useState<string | null>(null)
+
+  // We want to ensure deviceID is used as the identifier to link with analytics
+  useEffect(() => {
+    async function fetchAndSetDeviceId(): Promise<void> {
+      const uniqueId = await getUniqueId()
+      setDeviceId(uniqueId)
+    }
+    fetchAndSetDeviceId()
+  }, [])
+
+  const onReportPrepared = useCallback((report: RenderPassReport) => {
+    sendAnalyticsEvent(MobileEventName.PerformanceReport, report)
+  }, [])
+
+  if (!client) {
+    // TODO: [MOB-3515] delay splash screen until client is rehydated
+    return null
+  }
+
+  const statSigOptions = {
+    options: {
+      environment: {
+        tier: getStatsigEnvironmentTier(),
+      },
+      api: config.statSigProxyUrl,
+    },
+    sdkKey: DUMMY_STATSIG_SDK_KEY,
+    user: deviceId ? { userID: deviceId } : {},
+    waitForInitialization: true,
+  }
+
+  return (
+    <Trace>
+      <StrictMode>
+        <StatsigProvider {...statSigOptions}>
+          <SafeAreaProvider>
+            <Provider store={store}>
+              <ApolloProvider client={client}>
+                <PersistGate loading={null} persistor={persistor}>
+                  <DynamicThemeProvider>
+                    <ErrorBoundary>
+                      <WalletContextProvider>
+                        <BiometricContextProvider>
+                          <LockScreenContextProvider>
+                            <DataUpdaters />
+                            <BottomSheetModalProvider>
+                              <AppModals />
+                              <PerformanceProfiler onReportPrepared={onReportPrepared}>
+                                <AppInner />
+                              </PerformanceProfiler>
+                            </BottomSheetModalProvider>
+                          </LockScreenContextProvider>
+                        </BiometricContextProvider>
+                      </WalletContextProvider>
+                    </ErrorBoundary>
+                  </DynamicThemeProvider>
+                </PersistGate>
+              </ApolloProvider>
+            </Provider>
+          </SafeAreaProvider>
+        </StatsigProvider>
+      </StrictMode>
+    </Trace>
+  )
+}
+
+function AppInner(): JSX.Element {
+  const isDarkMode = useColorScheme() === 'dark'
+
+  return <NavStack isDarkMode={isDarkMode} />
+}
+
+const PREFETCH_OPTIONS = {
+  ifOlderThan: 60 * 15, // cache results for 15 minutes
+}
+
+function DataUpdaters(): JSX.Element {
+  const signerAccounts = useSignerAccounts()
+  const prefetchTrm = useTrmPrefetch()
+
+  const prefetchTrmData = useCallback(
+    () =>
+      signerAccounts.forEach((account) => {
+        prefetchTrm(account.address, PREFETCH_OPTIONS)
+      }),
+    [prefetchTrm, signerAccounts]
+  )
+
+  // Prefetch TRM data on app start (either cold or warm)
+  useEffect(prefetchTrmData, [prefetchTrmData])
+  useAppStateTrigger('background', 'active', prefetchTrmData)
+  useAppStateTrigger('inactive', 'active', prefetchTrmData)
+
+  return (
+    <>
+      <TraceUserProperties />
+      <TransactionHistoryUpdater />
+    </>
+  )
+}
+
+function NavStack({ isDarkMode }: { isDarkMode: boolean }): JSX.Element {
+  return (
+    <NavigationContainer
+      onReady={(navigationRef): void => {
+        routingInstrumentation.registerNavigationContainer(navigationRef)
+      }}>
+      <OfflineBanner />
+      <NotificationToastWrapper />
+      <AppStackNavigator />
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+    </NavigationContainer>
+  )
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function getApp() {
+  return __DEV__ ? App : Sentry.wrap(App)
+}
+
+export default getApp()
