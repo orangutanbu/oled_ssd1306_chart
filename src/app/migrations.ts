@@ -98,4 +98,106 @@ export const migrations = {
     }
 
     delete newState?.balances
-    r
+    return newState
+  },
+
+  6: (state: any) => {
+    const newState = { ...state }
+    newState.walletConnect = { ...newState.walletConnect, pendingSession: null }
+    newState.wallet = { ...newState.wallet, settings: {} }
+
+    delete newState?.wallet?.bluetooth
+    return newState
+  },
+
+  7: (state: any) => {
+    const newState = { ...state }
+    const accounts = newState?.wallet?.accounts ?? {}
+    const originalAccountValues = Object.keys(accounts)
+    for (const account of originalAccountValues) {
+      if (accounts[account].type === 'native' && accounts[account].derivationIndex !== 0) {
+        delete accounts[account]
+      } else if (accounts[account].type === 'native' && accounts[account].derivationIndex === 0) {
+        accounts[account].mnemonicId = accounts[account].address
+      }
+    }
+    return newState
+  },
+
+  8: (state: any) => {
+    const newState = { ...state }
+    newState.cloudBackup = { backupsFound: [] }
+    return newState
+  },
+
+  9: (state: any) => {
+    const newState = { ...state }
+    const accounts = newState?.wallet?.accounts ?? {}
+    for (const account of Object.keys(accounts)) {
+      if (newState.wallet.accounts[account].type === 'local') {
+        delete newState.wallet.accounts[account]
+      }
+    }
+    return newState
+  },
+
+  10: (state: any) => {
+    const newState = { ...state }
+    const accounts = newState?.wallet?.accounts ?? {}
+
+    if (accounts[DEMO_ACCOUNT_ADDRESS]) {
+      delete accounts[DEMO_ACCOUNT_ADDRESS]
+    }
+
+    return newState
+  },
+
+  11: (state: any) => {
+    const newState = { ...state }
+    newState.biometricSettings = {
+      requiredForAppAccess: false,
+      requiredForTransactions: false,
+    }
+
+    return newState
+  },
+
+  12: (state: any) => {
+    const accounts: Record<Address, Account> | undefined = state?.wallet?.accounts
+    const newAccounts = Object.values(accounts ?? {}).map((account: Account) => {
+      const newAccount = { ...account }
+      newAccount.pushNotificationsEnabled = false
+      return newAccount
+    })
+
+    const newAccountObj = newAccounts.reduce<Record<Address, Account>>((accountObj, account) => {
+      accountObj[account.address] = account
+      return accountObj
+    }, {})
+
+    const newState = { ...state }
+    newState.wallet = { ...state.wallet, accounts: newAccountObj }
+    return newState
+  },
+
+  13: (state: any) => {
+    const newState = { ...state }
+    newState.ens = { ensForAddress: {} }
+    return newState
+  },
+
+  14: (state: any) => {
+    const newState = { ...state }
+    newState.biometricSettings = {
+      requiredForAppAccess: state.wallet.isBiometricAuthEnabled,
+      requiredForTransactions: state.wallet.isBiometricAuthEnabled,
+    }
+    delete newState.wallet?.isBiometricAuthEnabled
+    return newState
+  },
+
+  15: (state: any) => {
+    const newState = { ...state }
+    const accounts = newState?.wallet?.accounts ?? {}
+    for (const account of Object.keys(accounts)) {
+      if (newS
