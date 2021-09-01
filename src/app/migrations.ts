@@ -301,4 +301,100 @@ export const migrations = {
 
   20: (state: any) => {
     const newState = { ...state }
-    newState.notificat
+    newState.notifications = { ...state?.notifications, lastTxNotificationUpdate: {} }
+    return newState
+  },
+
+  21: (state: any) => {
+    const newState = { ...state }
+    // newState.experiments = { experiments: {}, featureFlags: {} }
+    return {
+      ...newState,
+      experiments: { experiments: {}, featureFlags: {} },
+    }
+  },
+
+  22: (state: any) => {
+    const newState = { ...state }
+    delete newState.coingeckoApi
+    delete newState.tokens?.watchedTokens
+    delete newState.tokens?.tokenPairs
+    return newState
+  },
+
+  23: (state: any) => {
+    const newState = { ...state }
+    // Reset values because of changed types for these two optional variables
+    delete newState.wallet.settings?.tokensOrderBy
+    delete newState.wallet.settings?.tokensMetadataDisplayType
+    return newState
+  },
+
+  24: (state: any) => {
+    const newState = { ...state }
+    const notificationCount = state.notifications?.notificationCount
+    const notificationStatus = Object.keys(notificationCount ?? {}).reduce((obj, address) => {
+      const count = notificationCount[address]
+      if (count) {
+        return { ...obj, [address]: true }
+      }
+
+      return { ...obj, [address]: false }
+    }, {})
+
+    delete newState.notifications?.notificationCount
+    newState.notifications = { ...newState.notifications, notificationStatus }
+    return newState
+  },
+
+  25: (state: any) => {
+    return {
+      ...state,
+      passwordLockout: { passwordAttempts: 0 },
+    }
+  },
+
+  26: (state: any) => {
+    const newState = { ...state }
+    delete newState.wallet.settings.showSmallBalances
+    return newState
+  },
+
+  27: (state: any) => {
+    const newState = { ...state }
+    // Reset tokensOrder by because of updated types of TokensOrderBy
+    delete newState.wallet.settings.tokensOrderBy
+    return newState
+  },
+
+  28: (state: any) => {
+    const newState = { ...state }
+    // Removed storing tokensMetadataDisplayType
+    delete newState.wallet.settings.tokensMetadataDisplayType
+    return newState
+  },
+
+  29: (state: any) => {
+    const newState = { ...state }
+    delete newState.tokenLists
+    delete newState.tokens?.customTokens
+    return newState
+  },
+
+  // Fiat onramp tx typeInfo schema changed
+  // Updates every fiat onramp tx in store to new schema
+  // leaves non-for txs untouched
+  30: function MigrateFiatPurchaseTransactionInfo(state: any) {
+    const newState = { ...state }
+
+    const oldTransactionState = state?.transactions
+    const newTransactionState: any = {}
+
+    const addresses = Object.keys(oldTransactionState ?? {})
+    for (const address of addresses) {
+      const chainIds = Object.keys(oldTransactionState[address] ?? {})
+      for (const chainId of chainIds) {
+        const transactions = oldTransactionState[address][chainId]
+        const txIds = Object.keys(transactions ?? {})
+
+        for (const txId of txIds)
