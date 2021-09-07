@@ -16,4 +16,36 @@ const preloadedState = {
   ...mockWalletPreloadedState,
   modals: {
     ...initialModalState,
-    [ModalName.AccountSwitcher]: { is
+    [ModalName.AccountSwitcher]: { isOpen: true },
+  },
+} as unknown as PreloadedState<RootState>
+
+const AccountListMock: MockedResponse<AccountListQuery> = {
+  request: {
+    query: AccountListDocument,
+    variables: {
+      addresses: [ACCOUNT_ADDRESS_ONE],
+    },
+  },
+  result: {
+    data: {
+      portfolios: Portfolios,
+    },
+  },
+}
+
+// TODO [MOB-3961]: Figure out how to do snapshot tests when there is a BottomSheetModal
+describe(AccountSwitcher, () => {
+  it('renders correctly', () => {
+    const tree = render(
+      <AccountSwitcher
+        onClose={(): void => {
+          return
+        }}
+      />,
+      { preloadedState, mocks: [AccountListMock] }
+    ).toJSON()
+
+    expect(tree).toMatchSnapshot()
+  })
+})
