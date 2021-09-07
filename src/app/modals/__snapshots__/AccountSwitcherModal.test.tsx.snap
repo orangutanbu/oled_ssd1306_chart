@@ -119,4 +119,99 @@ exports[`AccountSwitcher renders correctly 1`] = `
           onPress={[Function]}
         >
           <View
-    
+            accessible={true}
+            collapsable={false}
+            focusable={true}
+            hitSlop={
+              Object {
+                "bottom": 5,
+                "left": 5,
+                "right": 5,
+                "top": 5,
+              }
+            }
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "display": "flex",
+                "opacity": 1,
+                "paddingBottom": 12,
+                "paddingHorizontal": 24,
+                "paddingTop": 8,
+              }
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "flexDirection": "row",
+                    "justifyContent": "flex-start",
+                  },
+                ]
+              }
+              testID="account_item/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "display": "flex",
+                      "flexDirection": "row",
+                      "flexShrink": 1,
+                      "justifyContent": "flex-start",
+                    },
+                  ]
+                }
+              >
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "display": "flex",
+                        "height": "100%",
+                        "position": "relative",
+                      },
+                    ]
+                  }
+                >
+                  <View
+                    style={
+                      Array [
+                        Object {
+                          "backgroundColor": "transparent",
+                          "borderColor": "transparent",
+                          "borderRadius": 999999,
+                          "borderWidth": 0,
+                          "display": "flex",
+                          "position": "relative",
+                        },
+                        Object {
+                          "padding": 0,
+                        },
+                      ]
+                    }
+                  >
+                    <View
+                      style={
+                        Array [
+                          Object {
+                            "display": "flex",
+                            "height": 40,
+                            "width": 40,
+                          },
+                        ]
+                      }
+                    >
+                      <View
+                        style={
+                      
