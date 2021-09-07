@@ -9,3 +9,19 @@ export function TransferTokenModal(): JSX.Element {
   const theme = useAppTheme()
   const appDispatch = useAppDispatch()
   const modalState = useAppSelector(selectModalState(ModalName.Send))
+
+  const onClose = useCallback((): void => {
+    appDispatch(closeModal({ name: ModalName.Send }))
+  }, [appDispatch])
+
+  return (
+    <BottomSheetModal
+      fullScreen
+      hideKeyboardOnDismiss
+      backgroundColor={theme.colors.background1}
+      name={ModalName.Send}
+      onClose={onClose}>
+      <TransferFlow prefilledState={modalState.initialState} onClose={onClose} />
+    </BottomSheetModal>
+  )
+}

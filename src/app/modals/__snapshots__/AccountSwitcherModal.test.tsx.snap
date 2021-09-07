@@ -1,0 +1,122 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AccountSwitcher renders correctly 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "alignItems": "stretch",
+        "display": "flex",
+        "flex": 1,
+        "flexDirection": "column",
+        "justifyContent": "flex-start",
+        "marginBottom": 12,
+        "maxHeight": 1187.26,
+      },
+    ]
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "center",
+          "borderBottomColor": "#D2D9EE",
+          "display": "flex",
+          "flexDirection": "row",
+          "justifyContent": "flex-start",
+          "marginBottom": 16,
+        },
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "display": "flex",
+            "flex": 1,
+            "paddingLeft": 24,
+          },
+        ]
+      }
+    >
+      <Text
+        allowFontScaling={true}
+        maxFontSizeMultiplier={1.4}
+        style={
+          Array [
+            Object {
+              "color": "#0E1524",
+              "display": "flex",
+              "fontFamily": "Inter-Medium",
+              "fontSize": 17,
+              "lineHeight": 24,
+              "textAlign": "left",
+            },
+          ]
+        }
+      >
+        Your wallets
+      </Text>
+    </View>
+  </View>
+  <View
+    style={
+      Array [
+        Object {
+          "display": "flex",
+          "flexGrow": 0,
+          "flexShrink": 0,
+          "height": 0,
+        },
+      ]
+    }
+  />
+  <View
+    style={
+      Array [
+        Object {
+          "display": "flex",
+          "flexShrink": 1,
+          "position": "relative",
+        },
+      ]
+    }
+  >
+    ExpoLinearGradient
+    <RCTScrollView
+      bounces={false}
+      collapsable={false}
+      handlerTag={1}
+      handlerType="NativeViewGestureHandler"
+      onGestureHandlerEvent={[Function]}
+      onGestureHandlerStateChange={[Function]}
+      scrollEnabled={false}
+      showsVerticalScrollIndicator={false}
+      waitFor={
+        Array [
+          Object {
+            "current": null,
+          },
+        ]
+      }
+    >
+      <View>
+        <ContextMenu
+          actions={
+            Array [
+              Object {
+                "systemIcon": "doc.on.doc",
+                "title": "Copy wallet address",
+              },
+              Object {
+                "systemIcon": "gearshape",
+                "title": "Wallet settings",
+              },
+            ]
+          }
+          onPress={[Function]}
+        >
+          <View
+    
