@@ -397,4 +397,78 @@ export const migrations = {
         const transactions = oldTransactionState[address][chainId]
         const txIds = Object.keys(transactions ?? {})
 
-        for (const txId of txIds)
+        for (const txId of txIds) {
+          const txDetails = transactions[txId]
+
+          if (!txDetails) {
+            // we iterative over very chain, need to no-op on some combinations
+            continue
+          }
+
+          if (txDetails.typeInfo.type !== TransactionType.FiatPurchase) {
+            newTransactionState[address] ??= {}
+            newTransactionState[address][chainId] ??= {}
+            newTransactionState[address][chainId][txId] = txDetails
+
+            continue
+          }
+
+          if (txDetails.status === TransactionStatus.Failed) {
+            // delete failed moonpay transactions as we do not have enough information to migrate
+            continue
+          }
+
+          const {
+            explorerUrl,
+            outputTokenAddress,
+            outputCurrencyAmountFormatted,
+            outputCurrencyAmountPrice,
+            syncedWithBackend,
+          } = txDetails.typeInfo
+
+          const newTypeInfo = {
+            type: TransactionType.FiatPurchase,
+            explorerUrl,
+            inputCurrency: undefined,
+            inputCurrencyAmount: outputCurrencyAmountFormatted / outputCurrencyAmountPrice,
+            outputCurrency: {
+              type: 'crypto',
+              metadata: { chainId: undefined, contractAddress: outputTokenAddress },
+            },
+            outputCurrencyAmount: undefined,
+            syncedWithBackend,
+          }
+
+          newTransactionState[address] ??= {}
+          newTransactionState[address][chainId] ??= {}
+          newTransactionState[address][chainId][txId] = { ...txDetails, typeInfo: newTypeInfo }
+        }
+      }
+    }
+
+    return { ...newState, transactions: newTransactionState }
+  },
+
+  31: function emptyMigration(state: any) {
+    // no persisted state removed but need to update schema
+    return state
+  },
+
+  32: function resetEnsApi(state: any) {
+    const newState = { ...state }
+
+    delete newState[ensApi.reducerPath]
+
+    return newState
+  },
+
+  33: function addReplaceAccount(state: any) {
+    const newState = { ...state }
+
+    newState.wallet.replaceAccountOptions = {
+      isReplacingAccount: false,
+      skipToSeedPhrase: false,
+    }
+    return newState
+  },
+}
