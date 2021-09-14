@@ -78,4 +78,24 @@ export function useEagerExternalProfileRootNavigation(): {
     [load]
   )
 
-  const navigate = useCallbac
+  const navigate = useCallback((address: string, callback?: () => void) => {
+    rootNavigate(Screens.ExternalProfile, { address }).then(() => {
+      callback?.()
+    })
+  }, [])
+
+  return { preload, navigate }
+}
+
+/**
+ * Utility hook that checks if the caller is part of the navigation tree.
+ *
+ * Inspired by how the navigation library checks if the the navigation object exists.
+ * https://github.com/react-navigation/react-navigation/blob/d7032ba8bb6ae24030a47f0724b61b561132fca6/packages/core/src/useNavigation.tsx#L18
+ */
+export function useIsPartOfNavigationTree(): boolean {
+  const root = useContext(NavigationContainerRefContext)
+  const navigation = useContext(NavigationContext)
+
+  return navigation !== undefined || root !== undefined
+}

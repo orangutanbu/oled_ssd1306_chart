@@ -1,0 +1,10 @@
+import { combineReducers } from '@reduxjs/toolkit'
+import { monitoredSagaReducers } from 'src/app/rootSaga'
+import { onChainBalanceApi } from 'src/features/balances/api'
+import { biometricSettingsReducer } from 'src/features/biometrics/slice'
+import { chainsReducer } from 'src/features/chains/chainsSlice'
+import { cloudBackupReducer } from 'src/features/CloudBackup/cloudBackupSlice'
+import { passwordLockoutReducer } from 'src/features/CloudBackup/passwordLockoutSlice'
+import { ensApi } from 'src/features/ens/api'
+import { experimentsReducer } from 'src/features/experiments/slice'
+import { searchHistoryRe
