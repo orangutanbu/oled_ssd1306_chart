@@ -27,4 +27,104 @@ import {
 } from 'src/features/transactions/swap/wrapSaga'
 import { transactionWatcher } from 'src/features/transactions/transactionWatcherSaga'
 import {
-  transferTokenActions
+  transferTokenActions,
+  transferTokenReducer,
+  transferTokenSaga,
+  transferTokenSagaName,
+} from 'src/features/transactions/transfer/transferTokenSaga'
+import {
+  createAccountActions,
+  createAccountReducer,
+  createAccountSaga,
+  createAccountSagaName,
+} from 'src/features/wallet/createAccountSaga'
+import {
+  editAccountActions,
+  editAccountReducer,
+  editAccountSaga,
+  editAccountSagaName,
+} from 'src/features/wallet/editAccountSaga'
+import {
+  pendingAccountActions,
+  pendingAccountReducer,
+  pendingAccountSaga,
+  pendingAccountSagaName,
+} from 'src/features/wallet/pendingAccountsSaga'
+import { signWcRequestSaga, walletConnectSaga } from 'src/features/walletConnect/saga'
+import { walletConnectV2Saga } from 'src/features/walletConnectV2/saga'
+import { SagaState } from 'src/utils/saga'
+
+// All regular sagas must be included here
+const sagas = [
+  amplitudeSaga,
+  initProviders,
+  initFirebase,
+  deepLinkWatcher,
+  transactionWatcher,
+  firebaseDataWatcher,
+  notificationWatcher,
+  walletConnectSaga,
+  walletConnectV2Saga,
+  signWcRequestSaga,
+  cloudBackupsManagerSaga,
+]
+
+interface MonitoredSaga {
+  // TODO(MOB-3857): Add more specific types
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any
+}
+// All monitored sagas must be included here
+export const monitoredSagas: Record<string, MonitoredSaga> = {
+  [createAccountSagaName]: {
+    name: createAccountSagaName,
+    wrappedSaga: createAccountSaga,
+    reducer: createAccountReducer,
+    actions: createAccountActions,
+  },
+  [editAccountSagaName]: {
+    name: editAccountSagaName,
+    wrappedSaga: editAccountSaga,
+    reducer: editAccountReducer,
+    actions: editAccountActions,
+  },
+  [importAccountSagaName]: {
+    name: importAccountSagaName,
+    wrappedSaga: importAccountSaga,
+    reducer: importAccountReducer,
+    actions: importAccountActions,
+  },
+  [pendingAccountSagaName]: {
+    name: pendingAccountSagaName,
+    wrappedSaga: pendingAccountSaga,
+    reducer: pendingAccountReducer,
+    actions: pendingAccountActions,
+  },
+  [transferTokenSagaName]: {
+    name: transferTokenSagaName,
+    wrappedSaga: transferTokenSaga,
+    reducer: transferTokenReducer,
+    actions: transferTokenActions,
+  },
+  [swapSagaName]: {
+    name: swapSagaName,
+    wrappedSaga: swapSaga,
+    reducer: swapReducer,
+    actions: swapActions,
+  },
+  [tokenWrapSagaName]: {
+    name: tokenWrapSagaName,
+    wrappedSaga: tokenWrapSaga,
+    reducer: tokenWrapReducer,
+    actions: tokenWrapActions,
+  },
+}
+
+type MonitoredSagaReducer = Reducer<Record<string, SagaState>>
+export const monitoredSagaReducers: MonitoredSagaReducer = combineReducers(
+  Object.keys(monitoredSagas).reduce(
+    (acc: { [name: string]: Reducer<SagaState> }, sagaName: string) => {
+      // Safe non-null assertion because key `sagaName` comes from `Object.keys(monitoredSagas)`
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      acc[sagaName] = monitoredSagas[sagaName]!.reducer
+ 
