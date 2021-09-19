@@ -129,3 +129,90 @@ export const v6Schema = {
     settings: {},
   },
 }
+
+export const v7Schema = { ...v6Schema }
+
+export const v8Schema = {
+  ...v7Schema,
+  cloudBackup: {
+    backupsFound: [],
+  },
+}
+// schema did not change, but we removed private key wallets
+export const v9Schema = { ...v8Schema }
+
+// schema did not change, removed the demo account
+export const v10Schema = { ...v9Schema }
+
+export const v11Schema = {
+  ...v10Schema,
+  biometricSettings: { requiredForAppAccess: false, requiredForTransactions: false },
+}
+
+// schema did not change, added `pushNotificationsEnabled` prop to the Account type
+export const v12Schema = { ...v11Schema }
+
+export const v13Schema = { ...v12Schema, ens: { ensForAddress: {} } }
+
+export const v14Schema = { ...v13Schema }
+
+export const v15Schema = { ...v14Schema }
+
+export const v16Schema = { ...v15Schema }
+
+export const v17Schema = { ...v16Schema }
+
+export const v18Schema = { ...v17Schema }
+
+export const v19Schema = { ...v18Schema }
+
+export const v20Schema = { ...v19Schema }
+
+export const v21Schema = { ...v20Schema, experiments: { experiments: {}, featureFlags: {} } }
+
+export const v22Schema = { ...v21Schema }
+
+// schema did not change, updated the types of `wallet.settings.tokensOrderBy` and `wallet.settings.tokensMetadataDisplayType`
+export const v23Schema = { ...v22Schema }
+
+export const v24Schema = {
+  ...v23Schema,
+  notifications: {
+    notificationQueue: [],
+    notificationStatus: {},
+    lastTxNotificationUpdate: {},
+  },
+}
+
+export const v25Schema = { ...v24Schema, passwordLockout: { passwordAttempts: 0 } }
+
+export const v26Schema = { ...v25Schema }
+
+export const v27Schema = { ...v26Schema }
+
+export const v28Schema = { ...v27Schema }
+
+export const v29Schema = { ...v28Schema }
+
+export const v30Schema = { ...v29Schema }
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const { tokenLists, ...v31SchemaIntermediate } = { ...v30Schema }
+export const v31Schema = v31SchemaIntermediate
+
+export const v32Schema = { ...v31Schema }
+
+export const v33Schema = {
+  ...v32Schema,
+  wallet: {
+    ...v32Schema.wallet,
+    replaceAccountOptions: {
+      isReplacingAccount: false,
+      skipToSeedPhrase: false,
+    },
+  },
+}
+
+// TODO: [MOB-3864] use function with typed output when API reducers are removed from rootReducer
+// export const getSchema = (): RootState => v0Schema
+export const getSchema = (): typeof v33Schema => v33Schema
