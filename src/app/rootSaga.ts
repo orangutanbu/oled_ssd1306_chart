@@ -127,4 +127,18 @@ export const monitoredSagaReducers: MonitoredSagaReducer = combineReducers(
       // Safe non-null assertion because key `sagaName` comes from `Object.keys(monitoredSagas)`
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       acc[sagaName] = monitoredSagas[sagaName]!.reducer
- 
+      return acc
+    },
+    {}
+  )
+)
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+export function* rootSaga() {
+  for (const s of sagas) {
+    yield spawn(s)
+  }
+  for (const m of Object.values(monitoredSagas)) {
+    yield spawn(m.wrappedSaga)
+  }
+}
