@@ -73,4 +73,78 @@ export function AddressDisplay({
   const dispatch = useAppDispatch()
   const theme = useAppTheme()
   const displayName = useDisplayName(address)
-  const { data: avatar } = us
+  const { data: avatar } = useENSAvatar(address)
+
+  const showAddressAsSubtitle = !hideAddressInSubtitle && displayName?.type !== 'address'
+
+  const onPressCopyAddress = (): void => {
+    if (!address) return
+    dispatch(pushNotification({ type: AppNotificationType.Copied }))
+    setClipboard(address)
+  }
+
+  // Extract sizes so copy icon can match font variants
+  const mainSize = theme.textVariants[variant].fontSize
+  const captionSize = theme.textVariants[captionVariant].fontSize
+  const itemAlignment =
+    textAlign || (!showAccountIcon || direction === 'column' ? 'center' : 'flex-start')
+
+  const icon = useMemo(() => {
+    return (
+      <AccountIcon
+        address={address}
+        avatarUri={avatar}
+        showBackground={showIconBackground}
+        size={size}
+      />
+    )
+  }, [address, avatar, showIconBackground, size])
+
+  return (
+    <Flex alignItems={contentAlign} flexDirection={direction} gap={horizontalGap}>
+      {showAccountIcon && icon}
+      <Box alignItems={itemAlignment} flexShrink={1}>
+        <CopyButtonWrapper
+          onPress={showCopy && !showAddressAsSubtitle ? onPressCopyAddress : undefined}>
+          <Flex centered row gap="spacing12">
+            <Text
+              color="textPrimary"
+              ellipsizeMode="tail"
+              numberOfLines={1}
+              testID={`address-display/name/${displayName?.name}`}
+              variant={variant}>
+              {displayName?.name}
+            </Text>
+            {showCopy && !showAddressAsSubtitle && (
+              <CopyIcon color={theme.colors.textPrimary} height={mainSize} width={mainSize} />
+            )}
+          </Flex>
+        </CopyButtonWrapper>
+        {showAddressAsSubtitle && (
+          <CopyButtonWrapper onPress={showCopy ? onPressCopyAddress : undefined}>
+            <Flex
+              centered
+              row
+              backgroundColor={showCopyWrapperButton ? 'backgroundOverlay' : 'none'}
+              borderRadius="roundedFull"
+              gap="spacing4"
+              marginTop={showCopyWrapperButton ? 'spacing8' : 'none'}
+              px={showCopyWrapperButton ? 'spacing8' : 'none'}
+              py={showCopyWrapperButton ? 'spacing4' : 'none'}>
+              <Text color="textSecondary" variant={captionVariant}>
+                {sanitizeAddressText(shortenAddress(address))}
+              </Text>
+              {showCopy && (
+                <CopyIcon
+                  color={theme.colors.textSecondary}
+                  height={captionSize}
+                  width={captionSize}
+                />
+              )}
+            </Flex>
+          </CopyButtonWrapper>
+        )}
+      </Box>
+    </Flex>
+  )
+}
