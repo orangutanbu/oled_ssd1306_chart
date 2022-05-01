@@ -53,4 +53,22 @@ export function TokenLogo({
           px="spacing8"
           width={size}>
           <Text adjustsFontSizeToFit color="textPrimary" numberOfLines={1} textAlign="center">
-            {symbol?.sl
+            {symbol?.slice(0, 3).toUpperCase()}
+          </Text>
+        </Box>
+      )}
+      {showNetworkLogo && (
+        <Box
+          bottom={0}
+          position="absolute"
+          right={0}
+          shadowColor="black"
+          shadowOffset={SHADOW_OFFSET}
+          shadowOpacity={0.1}
+          shadowRadius={2}>
+          <NetworkLogo chainId={chainId} size={size * (2 / 5)} />
+        </Box>
+      )}
+    </Box>
+  )
+}
