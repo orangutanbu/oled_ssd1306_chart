@@ -20,4 +20,8 @@ export function NFTTransfer({
         <Box borderRadius="roundedFull" height={28} overflow="hidden" width={28}>
           <NFTViewer uri={asset?.collection?.image?.url} />
         </Box>
-        <Text 
+        <Text variant="buttonLabelLarge">{asset?.name}</Text>
+      </Flex>
+    </Flex>
+  )
+}
