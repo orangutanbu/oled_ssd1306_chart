@@ -422,4 +422,45 @@ exports[`NetworkFee renders a NetworkFee with a warning 1`] = `
                 importantForAccessibility="no-hide-descendants"
               >
                 <Text
-                  
+                  allowFontScaling={true}
+                  maxFontSizeMultiplier={1.4}
+                  style={
+                    Array [
+                      Object {
+                        "color": "#0E1524",
+                        "display": "flex",
+                        "fontFamily": "Inter-Medium",
+                        "fontSize": 15,
+                        "lineHeight": 20,
+                        "opacity": 0,
+                      },
+                    ]
+                  }
+                >
+                  $00.00
+                </Text>
+              </View>
+              <View
+                style={
+                  Array [
+                    Object {
+                      "backgroundColor": "#E8ECFB",
+                      "borderRadius": 4,
+                      "bottom": "5%",
+                      "display": "flex",
+                      "left": 0,
+                      "position": "absolute",
+                      "right": 0,
+                      "top": "5%",
+                    },
+                  ]
+                }
+              />
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
