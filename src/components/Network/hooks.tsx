@@ -35,4 +35,23 @@ export function useNetworkOptions(
                 px="spacing24"
                 py="spacing16">
                 <NetworkLogo chainId={chainId} size={iconSizes.icon24} />
-                <Text
+                <Text color="textPrimary" variant="bodyLarge">
+                  {info.label}
+                </Text>
+                <Box height={iconSizes.icon20} width={iconSizes.icon20}>
+                  {selectedChain === chainId && (
+                    <Check
+                      color={theme.colors.accentActive}
+                      height={iconSizes.icon20}
+                      width={iconSizes.icon20}
+                    />
+                  )}
+                </Box>
+              </Flex>
+            </>
+          ),
+        }
+      }),
+    [activeChains, onPress, selectedChain, theme.colors.accentActive]
+  )
+}
