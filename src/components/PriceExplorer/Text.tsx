@@ -31,4 +31,31 @@ export function RelativeChangeText({
   const icon = useDerivedValue(() => (relativeChange.value.value > 0 ? '↗' : '↘'))
   const styles = useAnimatedStyle(() => ({
     color:
-      rel
+      relativeChange.value.value > 0 ? theme.colors.accentSuccess : theme.colors.accentCritical,
+  }))
+
+  if (loading) {
+    return <Text loading loadingPlaceholderText="00.00%" variant="bodyLarge" />
+  }
+
+  return (
+    <Flex row gap="spacing2">
+      <AnimatedText style={styles} testID="relative-change-icon" text={icon} variant="bodyLarge" />
+      <AnimatedText
+        style={styles}
+        testID="relative-change-text"
+        text={relativeChange.formatted}
+        variant="bodyLarge"
+      />
+    </Flex>
+  )
+}
+
+export function DatetimeText({ loading }: { loading: boolean }): JSX.Element | null {
+  // `datetime` when scrubbing the chart
+  const datetime = useLineChartDatetime()
+
+  if (loading) return null
+
+  return <AnimatedText color="textSecondary" text={datetime.formatted} variant="bodyLarge" />
+}
