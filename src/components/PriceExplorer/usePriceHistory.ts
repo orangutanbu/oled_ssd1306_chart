@@ -47,4 +47,47 @@ export function useTokenPriceHistory(
   })
 
   const { price, pricePercentChange24h, priceHistory } =
-    priceData?.tokenProjects?.[0]?.mar
+    priceData?.tokenProjects?.[0]?.markets?.[0] ?? {}
+
+  const spot = useMemo(
+    () =>
+      price && pricePercentChange24h
+        ? {
+            value: { value: price?.value },
+            relativeChange: { value: pricePercentChange24h?.value },
+          }
+        : undefined,
+    [price, pricePercentChange24h]
+  )
+
+  const formattedPriceHistory = useMemo(() => {
+    const formatted = priceHistory
+      ?.filter((x): x is TimestampedAmount => Boolean(x))
+      .map((x) => ({ timestamp: x.timestamp * 1000, value: x.value }))
+
+    // adds the current price to the chart given we show spot price/24h change
+    if (formatted && spot?.value) {
+      formatted?.push({ timestamp: Date.now(), value: spot.value.value })
+    }
+
+    return formatted
+  }, [priceHistory, spot?.value])
+
+  const retry = useCallback(() => {
+    refetch({ contract: currencyIdToContractInput(currencyId) })
+  }, [refetch, currencyId])
+
+  return useMemo(
+    () => ({
+      data: {
+        priceHistory: formattedPriceHistory,
+        spot: duration === HistoryDuration.Day ? spot : undefined,
+      },
+      loading: isNonPollingRequestInFlight(networkStatus),
+      error: isError(networkStatus, !!priceData),
+      refetch: retry,
+      setDuration,
+    }),
+    [duration, formattedPriceHistory, networkStatus, priceData, retry, spot]
+  )
+}
