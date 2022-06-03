@@ -54,4 +54,22 @@ interface RecipientProps {
   onPress: (recipient: string) => void
 }
 
-export function RecipientRow({ recipient, onPress }: R
+export function RecipientRow({ recipient, onPress }: RecipientProps): JSX.Element {
+  return (
+    <TouchableArea onPress={(): void => onPress(recipient.address)}>
+      <AddressDisplay address={recipient.address} size={35} />
+    </TouchableArea>
+  )
+}
+
+export function RecipientLoadingRow(): JSX.Element {
+  const { t } = useTranslation()
+  return (
+    <AnimatedFlex entering={FadeIn} exiting={FadeOut} mx="spacing8">
+      <Text color="textTertiary" variant="bodySmall">
+        {t('Search Results')}
+      </Text>
+      <Loader.Token />
+    </AnimatedFlex>
+  )
+}
