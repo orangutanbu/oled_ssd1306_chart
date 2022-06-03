@@ -55,4 +55,49 @@ export function _RecipientSelect({
 
   const onPressQRScanner = useCallback(() => {
     Keyboard.dismiss()
-    setShowQRScan
+    setShowQRScanner(true)
+  }, [setShowQRScanner])
+
+  const onCloseQRScanner = useCallback(() => {
+    setShowQRScanner(false)
+  }, [setShowQRScanner])
+
+  const noResults = pattern && pattern?.length > 0 && !loading && filteredSections.length === 0
+
+  return (
+    <>
+      <AnimatedFlex entering={FadeIn} exiting={FadeOut} gap="spacing12" px="spacing16" width="100%">
+        <SearchBar
+          autoFocus
+          backgroundColor="background2"
+          endAdornment={<QRScannerIconButton onPress={onPressQRScanner} />}
+          hideBackButton={!recipient}
+          placeholder={t('Search addresses or ENS names')}
+          value={pattern ?? ''}
+          onBack={onToggleShowRecipientSelector}
+          onChangeText={onChangePattern}
+        />
+        {loading && <RecipientLoadingRow />}
+        {noResults ? (
+          <Flex centered gap="spacing12" mt="spacing24" px="spacing24">
+            <Text variant="buttonLabelMedium">{t('No results found')}</Text>
+            <Text color="textTertiary" textAlign="center" variant="bodyLarge">
+              {t('The address you typed either does not exist or is spelled incorrectly.')}
+            </Text>
+          </Flex>
+        ) : (
+          // Show either suggested recipients or filtered sections based on query
+          <RecipientList
+            sections={filteredSections.length === 0 ? sections : filteredSections}
+            onPress={onSelectRecipient}
+          />
+        )}
+      </AnimatedFlex>
+      {showQRScanner && (
+        <RecipientScanModal onClose={onCloseQRScanner} onSelectRecipient={onSelectRecipient} />
+      )}
+    </>
+  )
+}
+
+export const RecipientSelect = memo(_RecipientSelect)
