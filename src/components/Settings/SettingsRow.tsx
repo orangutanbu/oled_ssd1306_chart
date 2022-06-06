@@ -56,4 +56,27 @@ export function SettingsRow({
   return (
     <TouchableArea disabled={Boolean(action)} onPress={handleRow}>
       <Flex row alignItems="center" minHeight={40}>
-        <Flex grow row alignItems={subText ? 'flex-start' : 'center'} flexBa
+        <Flex grow row alignItems={subText ? 'flex-start' : 'center'} flexBasis={0} gap="spacing12">
+          <Flex centered height={32} width={32}>
+            {icon}
+          </Flex>
+          <Flex alignItems="stretch" flex={1} gap="none">
+            <Text variant="bodyLarge">{text}</Text>
+            {subText && (
+              <Text color="textSecondary" numberOfLines={1} variant="buttonLabelMicro">
+                {subText}
+              </Text>
+            )}
+          </Flex>
+        </Flex>
+        {screen ? (
+          <Chevron color={theme.colors.textTertiary} direction="e" height={24} width={24} />
+        ) : externalLink ? (
+          <Arrow color={theme.colors.textTertiary} direction="ne" size={24} />
+        ) : (
+          action
+        )}
+      </Flex>
+    </TouchableArea>
+  )
+}
