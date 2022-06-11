@@ -38,4 +38,20 @@ export function TokenDetailsHeader({
           style={flex.shrink}
           variant="subheadLarge">
           {token?.name ?? '—'}
-   
+        </Text>
+        {/* Suppress warning icon on low warning level */}
+        {(tokenProject?.safetyLevel === SafetyLevel.StrongWarning ||
+          tokenProject?.safetyLevel === SafetyLevel.Blocked) && (
+          <TouchableArea onPress={onPressWarningIcon}>
+            <WarningIcon
+              height={theme.iconSizes.icon20}
+              safetyLevel={tokenProject?.safetyLevel}
+              strokeColorOverride="textSecondary"
+              width={theme.imageSizes.image20}
+            />
+          </TouchableArea>
+        )}
+      </Flex>
+    </Flex>
+  )
+}
