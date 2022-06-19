@@ -56,4 +56,25 @@ export function useTokenDetailsNavigation(): {
 
   const preload = (currencyId: CurrencyId): void => {
     load({
-      variables: currencyIdToContractInput(currencyId)
+      variables: currencyIdToContractInput(currencyId),
+    })
+  }
+
+  // the desired behavior is to push the new token details screen onto the stack instead of replacing it
+  // however, `push` could create an infinitely deep navigation stack that is hard to get out of
+  // for that reason, we first `pop` token details from the stack, and then push it.
+  //
+  // Use whenever we want to avoid nested token details screens in the nav stack.
+  const navigateWithPop = (currencyId: CurrencyId, currencyName?: string): void => {
+    if (navigation.canGoBack()) {
+      navigation.pop()
+    }
+    navigation.push(Screens.TokenDetails, { currencyId, currencyName })
+  }
+
+  const navigate = (currencyId: CurrencyId, currencyName?: string): void => {
+    navigation.navigate(Screens.TokenDetails, { currencyId, currencyName })
+  }
+
+  return { preload, navigate, navigateWithPop }
+}
