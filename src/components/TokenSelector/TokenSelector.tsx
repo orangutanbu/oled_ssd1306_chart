@@ -38,4 +38,31 @@ function _TokenSelector({
 
   const { t } = useTranslation()
 
-  ret
+  return (
+    <AnimatedFlex
+      entering={FadeIn}
+      exiting={FadeOut}
+      gap="spacing12"
+      overflow="hidden"
+      px="spacing16"
+      width="100%">
+      <SearchBar
+        autoFocus
+        backgroundColor="background2"
+        placeholder={t('Search tokens')}
+        value={searchFilter ?? ''}
+        onBack={onBack}
+        onChangeText={onChangeText}
+      />
+      <TokenSearchResultList
+        chainFilter={chainFilter}
+        searchFilter={searchFilter}
+        variation={variation}
+        onChangeChainFilter={onChangeChainFilter}
+        onSelectCurrency={onSelectCurrency}
+      />
+    </AnimatedFlex>
+  )
+}
+
+export const TokenSelector = memo(_TokenSelector)
