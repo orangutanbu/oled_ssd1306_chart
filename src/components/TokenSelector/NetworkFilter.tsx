@@ -55,4 +55,56 @@ export function NetworkFilter({ selectedChain, onPressChain }: NetworkFilterProp
                 alignItems="center"
                 justifyContent="space-between"
                 px="spacing24"
-                py="spacing1
+                py="spacing16">
+                <Box height={iconSizes.icon24} width={iconSizes.icon24} />
+                <Text color="textPrimary" variant="bodyLarge">
+                  {t('All networks')}
+                </Text>
+                <Box height={iconSizes.icon24} width={iconSizes.icon24}>
+                  {!selectedChain && (
+                    <Check
+                      color={theme.colors.accentActive}
+                      height={iconSizes.icon24}
+                      width={iconSizes.icon24}
+                    />
+                  )}
+                </Box>
+              </Flex>
+            </>
+          ),
+        },
+      ].concat(...networkOptions),
+    [networkOptions, onPressChain, selectedChain, t, theme.colors.accentActive]
+  )
+
+  return (
+    <>
+      <TouchableArea
+        py="spacing8"
+        onPress={(): void => {
+          Keyboard.dismiss()
+          setShowModal(true)
+        }}>
+        <Flex centered row bg="background2" borderRadius="rounded20" gap="spacing4" p="spacing8">
+          {selectedChain && <NetworkLogo chainId={selectedChain} size={iconSizes.icon16} />}
+          <Text color="textSecondary" pl="spacing2" textAlign="center" variant="buttonLabelSmall">
+            {selectedChain ? CHAIN_INFO[selectedChain].label : t('All networks')}
+          </Text>
+          <Chevron color={theme.colors.textSecondary} direction="s" height={16} width={16} />
+        </Flex>
+      </TouchableArea>
+
+      <ActionSheetModal
+        header={
+          <Flex centered gap="spacing4" py="spacing16">
+            <Text variant="buttonLabelMedium">{t('Switch Network')}</Text>
+          </Flex>
+        }
+        isVisible={showModal}
+        name={ModalName.NetworkSelector}
+        options={options}
+        onClose={(): void => setShowModal(false)}
+      />
+    </>
+  )
+}
