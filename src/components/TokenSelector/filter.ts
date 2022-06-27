@@ -49,4 +49,57 @@ const getSymbolSearchPattern = (
 const getNameSearchPattern = (
   name?: string
 ): {
-  'currencyInfo.currency.n
+  'currencyInfo.currency.name': string
+} | null =>
+  name
+    ? // include-match name
+      { 'currencyInfo.currency.name': `'${name}` }
+    : null
+
+/**
+ * Returns a flat list of `TokenOption`s filtered by chainFilter and searchFilter
+ * @param tokenOptions list of `TokenOption`s to filter
+ * @param chainFilter chain id to keep
+ * @param searchFilter filter to apply to currency adddress, name, and symbol
+ */
+export function filter(
+  tokenOptions: TokenOption[] | null,
+  chainFilter: ChainId | null,
+  searchFilter?: string
+): TokenOption[] {
+  if (!tokenOptions || !tokenOptions.length) return []
+  if (!chainFilter && !searchFilter) return tokenOptions
+
+  const andPatterns: Fuse.Expression[] = []
+  const orPatterns: Fuse.Expression[] = []
+
+  const chainSearchPattern = getChainSearchPattern(chainFilter)
+  if (chainSearchPattern) andPatterns.push(chainSearchPattern)
+
+  const addressSearchPattern = getAddressSearchPattern(searchFilter)
+  if (addressSearchPattern) orPatterns.push(addressSearchPattern)
+
+  const symbolSearchPattern = getSymbolSearchPattern(searchFilter)
+  if (symbolSearchPattern) orPatterns.push(symbolSearchPattern)
+
+  const nameSearchPattern = getNameSearchPattern(searchFilter)
+  if (nameSearchPattern) orPatterns.push(nameSearchPattern)
+
+  const searchPattern: Fuse.Expression = {
+    $and: [
+      ...andPatterns,
+      ...(orPatterns.length > 0
+        ? [
+            {
+              $or: orPatterns,
+            },
+          ]
+        : []),
+    ],
+  }
+
+  const fuse = new Fuse(tokenOptions, searchOptions)
+
+  const r = fuse.search(searchPattern)
+  return r.map((result) => result.item)
+}
