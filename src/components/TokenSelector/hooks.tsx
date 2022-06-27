@@ -27,4 +27,49 @@ export function useAllCommonBaseCurrencies(): GqlResult<CurrencyInfo[]> {
   const { data: baseCurrencyInfos, loading, error, refetch } = useTokenProjects(baseCurrencyIds)
   const persistedError = usePersistedError(loading, error)
 
-  // TokenProjects returns MATIC on Mainnet and Polyg
+  // TokenProjects returns MATIC on Mainnet and Polygon, but we only want MATIC on Polygon
+  const filteredBaseCurrencyInfos = useMemo(() => {
+    return baseCurrencyInfos?.filter(
+      (currencyInfo) =>
+        !areAddressesEqual((currencyInfo.currency as Token).address, MATIC_MAINNET_ADDRESS)
+    )
+  }, [baseCurrencyInfos])
+
+  return { data: filteredBaseCurrencyInfos, loading, error: persistedError, refetch }
+}
+
+export function useFilterCallbacks(chainId: ChainId | null): {
+  chainFilter: ChainId | null
+  searchFilter: string | null
+  onChangeChainFilter: (newChainFilter: ChainId | null) => void
+  onClearSearchFilter: () => void
+  onChangeText: (newSearchFilter: string) => void
+} {
+  const [chainFilter, setChainFilter] = useState<ChainId | null>(chainId)
+  const [searchFilter, setSearchFilter] = useState<string | null>(null)
+
+  useEffect(() => {
+    setChainFilter(chainId)
+  }, [chainId])
+
+  const onChangeChainFilter = useCallback((newChainFilter: typeof chainFilter) => {
+    setChainFilter(newChainFilter)
+  }, [])
+
+  const onClearSearchFilter = useCallback(() => {
+    setSearchFilter(null)
+  }, [])
+
+  const onChangeText = useCallback(
+    (newSearchFilter: string) => setSearchFilter(newSearchFilter),
+    [setSearchFilter]
+  )
+
+  return {
+    chainFilter,
+    searchFilter,
+    onChangeChainFilter,
+    onClearSearchFilter,
+    onChangeText,
+  }
+}
