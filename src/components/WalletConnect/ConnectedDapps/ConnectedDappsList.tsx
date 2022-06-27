@@ -33,3 +33,58 @@ export function ConnectedDappsList({ backButton, sessions }: ConnectedDappsProps
   )
   const header = backButton ? (
     <Flex row alignItems="center" justifyContent="space-between">
+      {backButton}
+      {headerText}
+      <Box width={theme.iconSizes.icon24} />
+    </Flex>
+  ) : (
+    <BackHeader alignment="center">{headerText}</BackHeader>
+  )
+
+  return (
+    <>
+      <AnimatedFlex fill entering={FadeIn} exiting={FadeOut} pt="spacing16" px="spacing24">
+        {header}
+
+        {sessions.length > 0 ? (
+          <FlatList
+            columnWrapperStyle={ColumnStyle.base}
+            data={sessions}
+            keyExtractor={(item): string => item.id}
+            numColumns={2}
+            renderItem={({ item }): JSX.Element => (
+              <DappConnectionItem
+                session={item}
+                onPressChangeNetwork={(session): void => setSelectedSession(session)}
+              />
+            )}
+          />
+        ) : (
+          <Flex fill alignItems="center" gap="spacing8" style={emptyCardStyle}>
+            <Text color="textPrimary" variant="subheadLarge">
+              {t('No apps connected')}
+            </Text>
+            <Text color="textSecondary" textAlign="center" variant="bodySmall">
+              {t('Connect to an app by scanning a code via WalletConnect')}
+            </Text>
+          </Flex>
+        )}
+      </AnimatedFlex>
+      {selectedSession && (
+        <DappSwitchNetworkModal
+          selectedSession={selectedSession}
+          onClose={(): void => setSelectedSession(undefined)}
+        />
+      )}
+    </>
+  )
+}
+
+const ColumnStyle = StyleSheet.create({
+  base: {
+    justifyContent: 'space-between',
+  },
+})
+const emptyCardStyle: ViewStyle = {
+  paddingTop: dimensions.fullHeight / 5,
+}
