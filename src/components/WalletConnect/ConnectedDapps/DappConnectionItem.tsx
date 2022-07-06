@@ -129,4 +129,12 @@ function ChangeNetworkButton({
           </Text>
         )}
         <Chevron
-          color={theme.colors.textTertiar
+          color={theme.colors.textTertiary}
+          direction="s"
+          height={theme.iconSizes.icon20}
+          width={theme.iconSizes.icon20}
+        />
+      </Flex>
+    </TouchableArea>
+  )
+}
