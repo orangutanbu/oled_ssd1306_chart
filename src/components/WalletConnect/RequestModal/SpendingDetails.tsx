@@ -10,4 +10,36 @@ import { iconSizes } from 'src/styles/sizing'
 import { formatCurrencyAmount, formatUSDPrice, NumberType } from 'src/utils/format'
 import { tryParseRawAmount } from 'src/utils/tryParseAmount'
 
-export function SpendingDet
+export function SpendingDetails({
+  value,
+  chainId,
+}: {
+  value: string
+  chainId: ChainId
+}): JSX.Element {
+  const { t } = useTranslation()
+
+  const nativeCurrencyInfo = useNativeCurrencyInfo(chainId)
+  const nativeCurrencyAmount = nativeCurrencyInfo
+    ? tryParseRawAmount(value, nativeCurrencyInfo.currency)
+    : null
+  const usdValue = useUSDValue(chainId, value)
+
+  return (
+    <Flex row alignItems="center" gap="spacing16">
+      <Text color="textSecondary" variant="bodySmall">
+        {t('Sending')}:
+      </Text>
+      <Flex row alignItems="center" gap="spacing4">
+        <CurrencyLogo currencyInfo={nativeCurrencyInfo} size={iconSizes.icon16} />
+        <Text variant="subheadSmall">
+          {formatCurrencyAmount(nativeCurrencyAmount, NumberType.TokenTx)}{' '}
+          {nativeCurrencyInfo?.currency.symbol}
+        </Text>
+        <Text color="textSecondary" loading={!usdValue} variant="subheadSmall">
+          ({formatUSDPrice(usdValue)})
+        </Text>
+      </Flex>
+    </Flex>
+  )
+}
