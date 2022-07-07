@@ -30,4 +30,98 @@ import {
   isPrimaryTypePermit,
   WCEventType,
   WCRequestOutcome,
-} from 'src/features/walletConnect/
+} from 'src/features/walletConnect/types'
+import { rejectRequest } from 'src/features/walletConnect/WalletConnect'
+import {
+  isTransactionRequest,
+  SignRequest,
+  TransactionRequest,
+  WalletConnectRequest,
+} from 'src/features/walletConnect/walletConnectSlice'
+import { iconSizes } from 'src/styles/sizing'
+import { toSupportedChainId } from 'src/utils/chainId'
+import { buildCurrencyId } from 'src/utils/currencyId'
+import { logger } from 'src/utils/logger'
+
+const MAX_MODAL_MESSAGE_HEIGHT = 200
+
+interface Props {
+  onClose: () => void
+  request: SignRequest | TransactionRequest
+}
+
+const isPotentiallyUnsafe = (request: WalletConnectRequest): boolean =>
+  request.type !== EthMethod.PersonalSign
+
+const methodCostsGas = (request: WalletConnectRequest): request is TransactionRequest =>
+  request.type === EthMethod.EthSendTransaction
+
+/** If the request is a permit then parse the relevant information otherwise return undefined. */
+const getPermitInfo = (request: WalletConnectRequest): PermitInfo | undefined => {
+  if (request.type !== EthMethod.SignTypedDataV4) {
+    return undefined
+  }
+
+  try {
+    const message = JSON.parse(request.rawMessage)
+    if (!isPrimaryTypePermit(message)) {
+      return undefined
+    }
+
+    const { domain, message: permitPayload } = message
+    const currencyId = buildCurrencyId(domain.chainId, domain.verifyingContract)
+    const amount = permitPayload.value
+
+    return { currencyId, amount }
+  } catch (e) {
+    logger.error('WalletConnectRequestModal', 'getPermitInfo', 'invalid JSON message', e)
+    return undefined
+  }
+}
+
+const VALID_REQUEST_TYPES = [
+  EthMethod.PersonalSign,
+  EthMethod.SignTypedData,
+  EthMethod.SignTypedDataV4,
+  EthMethod.EthSign,
+  EthMethod.EthSignTransaction,
+  EthMethod.EthSendTransaction,
+]
+
+function SectionContainer({
+  children,
+  style,
+}: PropsWithChildren<{ style?: StyleProp<ViewStyle> }>): JSX.Element | null {
+  return children ? (
+    <Box p="spacing16" style={style}>
+      {children}
+    </Box>
+  ) : null
+}
+
+const spacerProps: BoxProps = {
+  borderBottomColor: 'background1',
+  borderBottomWidth: 1,
+}
+
+export function WalletConnectRequestModal({ onClose, request }: Props): JSX.Element | null {
+  const theme = useAppTheme()
+  const netInfo = useNetInfo()
+  const chainId = toSupportedChainId(request.dapp.chain_id) ?? undefined
+
+  const tx: providers.TransactionRequest | null = useMemo(() => {
+    if (!chainId || !isTransactionRequest(request)) {
+      return null
+    }
+
+    return { ...request.transaction, chainId }
+  }, [chainId, request])
+
+  const signerAccounts = useSignerAccounts()
+  const signerAccount = signerAccounts.find((account) => account.address === request.account)
+  const gasFeeInfo = useTransactionGasFee(tx, GasSpeed.Urgent)
+  const hasSufficientFunds = useHasSufficientFunds({
+    account: request.account,
+    chainId,
+    gasFeeInfo,
+    value: isTransactionRequest(request) ? request.transaction.val
