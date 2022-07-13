@@ -124,4 +124,88 @@ export function WalletConnectRequestModal({ onClose, request }: Props): JSX.Elem
     account: request.account,
     chainId,
     gasFeeInfo,
-    value: isTransactionRequest(request) ? request.transaction.val
+    value: isTransactionRequest(request) ? request.transaction.value : undefined,
+  })
+
+  const { isBlocked, isBlockedLoading } = useIsBlocked(request.account)
+
+  const checkConfirmEnabled = (): boolean => {
+    if (!netInfo.isInternetReachable) return false
+
+    if (!signerAccount) return false
+
+    if (isBlocked || isBlockedLoading) return false
+
+    if (methodCostsGas(request)) return !!(tx && hasSufficientFunds && gasFeeInfo)
+
+    if (isTransactionRequest(request)) return !!tx
+
+    return true
+  }
+
+  const confirmEnabled = checkConfirmEnabled()
+
+  const { t } = useTranslation()
+  const dispatch = useAppDispatch()
+  /**
+   * TODO: [MOB-3908] implement this behavior in a less janky way. Ideally if we can distinguish between `onClose` being called programmatically and `onClose` as a results of a user dismissing the modal then we can determine what this value should be without this class variable.
+   * Indicates that the modal can reject the request when the modal happens. This will be false when the modal closes as a result of the user explicitly confirming or rejecting a request and true otherwise.
+   */
+  const rejectOnCloseRef = useRef(true)
+
+  const onReject = (): void => {
+    rejectRequest(request.internalId)
+    rejectOnCloseRef.current = false
+
+    sendAnalyticsEvent(MobileEventName.WalletConnectSheetCompleted, {
+      request_type: isTransactionRequest(request)
+        ? WCEventType.TransactionRequest
+        : WCEventType.SignRequest,
+      eth_method: request.type,
+      dapp_url: request.dapp.url,
+      dapp_name: request.dapp.name,
+      chain_id: request.dapp.chain_id,
+      outcome: WCRequestOutcome.Reject,
+      wc_version: '1',
+    })
+
+    onClose()
+  }
+
+  const onConfirm = async (): Promise<void> => {
+    if (!confirmEnabled || !signerAccount) return
+    if (
+      request.type === EthMethod.EthSignTransaction ||
+      request.type === EthMethod.EthSendTransaction
+    ) {
+      if (!gasFeeInfo) return // appeasing typescript
+      dispatch(
+        signWcRequestActions.trigger({
+          requestInternalId: request.internalId,
+          method: request.type,
+          transaction: { ...tx, ...gasFeeInfo.params },
+          account: signerAccount,
+          dapp: request.dapp,
+        })
+      )
+    } else {
+      dispatch(
+        signWcRequestActions.trigger({
+          requestInternalId: request.internalId,
+          method: request.type,
+          // this is EthSignMessage type
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          message: (request as any).message || (request as any).rawMessage,
+          account: signerAccount,
+          dapp: request.dapp,
+        })
+      )
+    }
+
+    rejectOnCloseRef.current = false
+
+    sendAnalyticsEvent(MobileEventName.WalletConnectSheetCompleted, {
+      request_type: isTransactionRequest(request)
+        ? WCEventType.TransactionRequest
+        : WCEventType.SignRequest,
+      
