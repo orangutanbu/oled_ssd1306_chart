@@ -296,4 +296,66 @@ export function WalletConnectRequestModal({ onClose, request }: Props): JSX.Elem
               emphasis={ButtonEmphasis.Tertiary}
               label={t('Cancel')}
               name={ElementName.Cancel}
-              size={Bu
+              size={ButtonSize.Medium}
+              onPress={onReject}
+            />
+            <Button
+              fill
+              disabled={!confirmEnabled}
+              label={isTransactionRequest(request) ? t('Accept') : t('Sign')}
+              name={ElementName.Confirm}
+              size={ButtonSize.Medium}
+              onPress={(): void => {
+                if (requiredForTransactions) {
+                  actionButtonTrigger()
+                } else {
+                  onConfirm()
+                }
+              }}
+            />
+          </Flex>
+        </Flex>
+      </Flex>
+    </BottomSheetModal>
+  )
+}
+
+function WarningSection({
+  request,
+  showUnsafeWarning,
+  isBlockedAddress,
+}: {
+  request: WalletConnectRequest
+  showUnsafeWarning: boolean
+  isBlockedAddress: boolean
+}): JSX.Element | null {
+  const theme = useAppTheme()
+  const { t } = useTranslation()
+
+  if (!showUnsafeWarning && !isBlockedAddress) return null
+
+  if (isBlockedAddress) {
+    return <BlockedAddressWarning centered row alignSelf="center" />
+  }
+
+  return (
+    <Flex centered row alignSelf="center" gap="spacing8">
+      <AlertTriangle
+        color={theme.colors.accentWarning}
+        height={iconSizes.icon16}
+        width={iconSizes.icon16}
+      />
+      <Text color="textSecondary" fontStyle="italic" variant="bodyMicro">
+        {t('Be careful: this {{ requestType }} may transfer assets', {
+          requestType: isTransactionRequest(request) ? 'transaction' : 'message',
+        })}
+      </Text>
+    </Flex>
+  )
+}
+
+const requestMessageStyle: StyleProp<ViewStyle> = {
+  // need a fixed height here or else modal gets confused about total height
+  maxHeight: MAX_MODAL_MESSAGE_HEIGHT,
+  overflow: 'hidden',
+}
