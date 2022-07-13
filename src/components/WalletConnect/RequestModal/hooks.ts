@@ -28,4 +28,12 @@ export function useHasSufficientFunds({
       ? CurrencyAmount.fromRawAmount(nativeCurrency, value)
       : undefined
 
-    return hasSufficientFundsIncludingGas(
+    return hasSufficientFundsIncludingGas({
+      transactionAmount,
+      gasFee: gasFeeInfo?.gasFee,
+      nativeCurrencyBalance: nativeBalance,
+    })
+  }, [value, gasFeeInfo, nativeCurrency, nativeBalance])
+
+  return hasSufficientFunds
+}
