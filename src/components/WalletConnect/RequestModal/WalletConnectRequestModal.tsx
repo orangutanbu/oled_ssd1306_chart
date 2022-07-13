@@ -208,4 +208,92 @@ export function WalletConnectRequestModal({ onClose, request }: Props): JSX.Elem
       request_type: isTransactionRequest(request)
         ? WCEventType.TransactionRequest
         : WCEventType.SignRequest,
-      
+      eth_method: request.type,
+      dapp_url: request.dapp.url,
+      dapp_name: request.dapp.name,
+      chain_id: request.dapp.chain_id,
+      outcome: WCRequestOutcome.Confirm,
+      wc_version: '1',
+    })
+
+    onClose()
+  }
+
+  const { trigger: actionButtonTrigger } = useBiometricPrompt(onConfirm)
+  const { requiredForTransactions } = useBiometricAppSettings()
+
+  if (!VALID_REQUEST_TYPES.includes(request.type)) {
+    return null
+  }
+
+  const handleClose = (): void => {
+    if (rejectOnCloseRef.current) {
+      onReject()
+    } else {
+      onClose()
+    }
+  }
+
+  const nativeCurrency = chainId && NativeCurrency.onChain(chainId)
+  const permitInfo = getPermitInfo(request)
+
+  return (
+    <BottomSheetModal name={ModalName.WCSignRequest} onClose={handleClose}>
+      <Flex gap="spacing24" paddingBottom="spacing48" paddingHorizontal="spacing16" pt="spacing36">
+        <ClientDetails permitInfo={permitInfo} request={request} />
+        <Flex gap="spacing12">
+          <Flex
+            backgroundColor="background2"
+            borderRadius="rounded16"
+            gap="none"
+            spacerProps={spacerProps}>
+            {!permitInfo && (
+              <SectionContainer style={requestMessageStyle}>
+                <Flex gap="spacing12">
+                  <RequestDetails request={request} />
+                </Flex>
+              </SectionContainer>
+            )}
+
+            {methodCostsGas(request) && chainId && (
+              <NetworkFee chainId={chainId} gasFee={gasFeeInfo?.gasFee} />
+            )}
+
+            <SectionContainer>
+              <AccountDetails address={request.account} />
+              {!hasSufficientFunds && (
+                <Text color="accentWarning" paddingTop="spacing8" variant="bodySmall">
+                  {t("You don't have enough {{symbol}} to complete this transaction.", {
+                    symbol: nativeCurrency?.symbol,
+                  })}
+                </Text>
+              )}
+            </SectionContainer>
+          </Flex>
+          {!netInfo.isInternetReachable ? (
+            <BaseCard.InlineErrorState
+              backgroundColor="accentWarningSoft"
+              icon={
+                <AlertTriangle
+                  color={theme.colors.accentWarning}
+                  height={theme.iconSizes.icon16}
+                  width={theme.iconSizes.icon16}
+                />
+              }
+              textColor="accentWarning"
+              title={t('Internet or network connection error')}
+            />
+          ) : (
+            <WarningSection
+              isBlockedAddress={isBlocked}
+              request={request}
+              showUnsafeWarning={isPotentiallyUnsafe(request)}
+            />
+          )}
+          <Flex row gap="spacing12">
+            <Button
+              fill
+              emphasis={ButtonEmphasis.Tertiary}
+              label={t('Cancel')}
+              name={ElementName.Cancel}
+              size={Bu
