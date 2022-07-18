@@ -103,4 +103,89 @@ export function WalletConnectModal({
       activeAddress,
       hasScanError,
       navigate,
-      
+      onClose,
+      preload,
+      setHasScanError,
+      setShouldFreezeCamera,
+      shouldFreezeCamera,
+      t,
+    ]
+  )
+
+  const onPressBottomToggle = (): void => {
+    if (currentScreenState === ScannerModalState.ScanQr) {
+      setCurrentScreenState(ScannerModalState.WalletQr)
+    } else {
+      setCurrentScreenState(ScannerModalState.ScanQr)
+    }
+  }
+
+  const onPressShowConnectedDapps = (): void => {
+    setCurrentScreenState(ScannerModalState.ConnectedDapps)
+  }
+
+  const onPressShowScanQr = (): void => {
+    setCurrentScreenState(ScannerModalState.ScanQr)
+  }
+
+  if (!activeAddress) return null
+
+  return (
+    <BottomSheetModal
+      fullScreen
+      backgroundColor={theme.colors.background1}
+      name={ModalName.WalletConnectScan}
+      onClose={onClose}>
+      {pendingSession ? (
+        <PendingConnection pendingSession={pendingSession} onClose={onClose} />
+      ) : (
+        <>
+          {currentScreenState === ScannerModalState.ConnectedDapps && (
+            <ConnectedDappsList
+              backButton={
+                <TouchableArea hapticFeedback onPress={onPressShowScanQr}>
+                  <BackButtonView />
+                </TouchableArea>
+              }
+              sessions={sessions}
+            />
+          )}
+          {currentScreenState === ScannerModalState.ScanQr && (
+            <QRCodeScanner
+              numConnections={sessions.length}
+              shouldFreezeCamera={shouldFreezeCamera}
+              onPressConnections={onPressShowConnectedDapps}
+              onScanCode={onScanCode}
+            />
+          )}
+          {currentScreenState === ScannerModalState.WalletQr && (
+            <WalletQRCode address={activeAddress} />
+          )}
+          <Flex centered mb="spacing36" mt="spacing16" mx="spacing16">
+            <TouchableArea
+              hapticFeedback
+              borderColor={isDarkMode ? 'none' : 'backgroundOutline'}
+              borderRadius="roundedFull"
+              borderWidth={1}
+              name={ElementName.QRCodeModalToggle}
+              p="spacing16"
+              paddingEnd="spacing24"
+              style={{ backgroundColor: theme.colors.backgroundOverlay }}
+              onPress={onPressBottomToggle}>
+              <Flex row alignItems="center" gap="spacing12">
+                {currentScreenState === ScannerModalState.ScanQr ? (
+                  <Scan color={theme.colors.textPrimary} height={24} width={24} />
+                ) : (
+                  <ScanQRIcon color={theme.colors.textPrimary} height={24} width={24} />
+                )}
+                <Text color="textPrimary" variant="buttonLabelMedium">
+                  {currentScreenState === ScannerModalState.ScanQr
+                    ? t('Show my QR code')
+                    : t('Scan a QR code')}
+                </Text>
+              </Flex>
+            </TouchableArea>
+          </Flex>
+        </>
+      )}
+    </BottomSheetModal>
