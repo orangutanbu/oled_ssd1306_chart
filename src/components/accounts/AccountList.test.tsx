@@ -53,4 +53,12 @@ describe(AccountList, () => {
       await screen.findByText(
         formatUSDPrice(
           Portfolios[0].tokensTotalDenominatedValue?.value,
-          NumberType.PortfolioBalanc
+          NumberType.PortfolioBalance
+        )
+      )
+    ).toBeDefined()
+    fireEvent.press(screen.getByTestId(`account_item/${account.address}`), ON_PRESS_EVENT_PAYLOAD)
+
+    expect(onPressSpy).toHaveBeenCalledTimes(1)
+  })
+})
