@@ -79,4 +79,79 @@ export function AccountList({
     })
   }, [accounts, data, isPortfolioValueLoading])
 
-  const signerAccounts 
+  const signerAccounts = useMemo(() => {
+    return accountsWithPortfolioValue.filter(
+      (account) => account.account.type === AccountType.SignerMnemonic
+    )
+  }, [accountsWithPortfolioValue])
+
+  const viewOnlyAccounts = useMemo(() => {
+    return accountsWithPortfolioValue.filter(
+      (account) => account.account.type === AccountType.Readonly
+    )
+  }, [accountsWithPortfolioValue])
+
+  const hasViewOnlyAccounts = viewOnlyAccounts.length > 0
+
+  const renderAccountCardItem = (item: AccountWithPortfolioValue): JSX.Element => (
+    <AccountCardItem
+      key={item.account.address}
+      address={item.account.address}
+      isActive={!!activeAccount && activeAccount.address === item.account.address}
+      isPortfolioValueLoading={item.isPortfolioValueLoading}
+      isViewOnly={item.account.type === AccountType.Readonly}
+      portfolioValue={item.portfolioValue}
+      onPress={onPress}
+      onPressEdit={onPressEdit}
+    />
+  )
+
+  return (
+    <Box flexShrink={1} position="relative">
+      {/* TODO: [MOB-3938] attempt to switch gradients to react-native-svg#LinearGradient and avoid new clear color */}
+      <LinearGradient
+        colors={[theme.colors.clearBackground1Backdrop, theme.colors.background1]}
+        end={{ x: 0, y: 0 }}
+        start={{ x: 0, y: 1 }}
+        style={ListSheet.topGradient}
+      />
+      <ScrollView
+        bounces={false}
+        scrollEnabled={accountsWithPortfolioValue.length >= MIN_ACCOUNTS_TO_ENABLE_SCROLL}
+        showsVerticalScrollIndicator={false}>
+        {signerAccounts.map(renderAccountCardItem)}
+        {hasViewOnlyAccounts && (
+          <>
+            <Spacer height={theme.spacing.spacing8} />
+            <ViewOnlyHeader />
+            {viewOnlyAccounts.map(renderAccountCardItem)}
+          </>
+        )}
+      </ScrollView>
+      <LinearGradient
+        colors={[theme.colors.clearBackground1Backdrop, theme.colors.background1]}
+        end={{ x: 0, y: 1 }}
+        start={{ x: 0, y: 0 }}
+        style={ListSheet.bottomGradient}
+      />
+    </Box>
+  )
+}
+
+const ListSheet = StyleSheet.create({
+  bottomGradient: {
+    bottom: 0,
+    height: spacing.spacing16,
+    left: 0,
+    position: 'absolute',
+    width: '100%',
+  },
+  topGradient: {
+    height: spacing.spacing16,
+    left: 0,
+    position: 'absolute',
+    top: 0,
+    width: '100%',
+    zIndex: 1,
+  },
+})
