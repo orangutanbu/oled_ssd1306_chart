@@ -1,0 +1,98 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AccountList renders without error 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "display": "flex",
+        "flexShrink": 1,
+        "position": "relative",
+      },
+    ]
+  }
+>
+  ExpoLinearGradient
+  <RCTScrollView
+    bounces={false}
+    collapsable={false}
+    handlerTag={1}
+    handlerType="NativeViewGestureHandler"
+    onGestureHandlerEvent={[Function]}
+    onGestureHandlerStateChange={[Function]}
+    scrollEnabled={false}
+    showsVerticalScrollIndicator={false}
+    waitFor={
+      Array [
+        Object {
+          "current": null,
+        },
+      ]
+    }
+  >
+    <View>
+      <ContextMenu
+        actions={
+          Array [
+            Object {
+              "systemIcon": "doc.on.doc",
+              "title": "Copy wallet address",
+            },
+            Object {
+              "systemIcon": "gearshape",
+              "title": "Wallet settings",
+            },
+          ]
+        }
+        onPress={[Function]}
+      >
+        <View
+          accessible={true}
+          collapsable={false}
+          focusable={true}
+          hitSlop={
+            Object {
+              "bottom": 5,
+              "left": 5,
+              "right": 5,
+              "top": 5,
+            }
+          }
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Object {
+              "display": "flex",
+              "opacity": 1,
+              "paddingBottom": 12,
+              "paddingHorizontal": 24,
+              "paddingTop": 8,
+            }
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "display": "flex",
+                  "flexDirection": "row",
+                  "justifyContent": "flex-start",
+                },
+              ]
+            }
+            testID="account_item/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "flexDirection": "row",
+                  

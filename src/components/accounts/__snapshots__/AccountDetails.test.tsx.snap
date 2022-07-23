@@ -632,3 +632,22 @@ exports[`AccountDetails renders without error with chevron 1`] = `
         >
           <RNSVGPath
             d="M15 6L9 12L15 18"
+            propList={
+              Array [
+                "stroke",
+                "strokeWidth",
+                "strokeLinecap",
+                "strokeLinejoin",
+              ]
+            }
+            stroke={4284311429}
+            strokeLinecap={1}
+            strokeLinejoin={1}
+            strokeWidth="3"
+          />
+        </RNSVGGroup>
+      </RNSVGSvgView>
+    </View>
+  </View>
+</View>
+`;
