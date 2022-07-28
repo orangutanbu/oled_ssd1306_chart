@@ -238,4 +238,95 @@ exports[`AccountList renders without error 1`] = `
                       >
                         <View
                           color="#000000"
-    
+                          height={37}
+                          opacity={0.08}
+                          width={37}
+                          x={0}
+                          y={0}
+                        />
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </View>
+              <View
+                style={
+                  Array [
+                    Object {
+                      "display": "flex",
+                      "flexGrow": 0,
+                      "flexShrink": 0,
+                      "height": 16,
+                      "width": 16,
+                    },
+                  ]
+                }
+              />
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "stretch",
+                      "display": "flex",
+                      "flex": 1,
+                      "flexDirection": "column",
+                      "justifyContent": "flex-start",
+                    },
+                  ]
+                }
+              >
+                <Text
+                  allowFontScaling={true}
+                  maxFontSizeMultiplier={1.4}
+                  numberOfLines={1}
+                  style={
+                    Array [
+                      Object {
+                        "color": "#0E1524",
+                        "display": "flex",
+                        "fontFamily": "Inter-Medium",
+                        "fontSize": 20,
+                        "lineHeight": 24,
+                      },
+                    ]
+                  }
+                >
+                  0x​f39F...2266
+                </Text>
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "display": "flex",
+                        "flexGrow": 0,
+                        "flexShrink": 0,
+                        "height": 0,
+                      },
+                    ]
+                  }
+                />
+                <Text
+                  allowFontScaling={true}
+                  maxFontSizeMultiplier={1.4}
+                  style={
+                    Array [
+                      Object {
+                        "color": "#888FAB",
+                        "display": "flex",
+                        "fontFamily": "Inter-Medium",
+                        "fontSize": 15,
+                        "lineHeight": 20,
+                      },
+                    ]
+                  }
+                >
+                  $55.00
+                </Text>
+              </View>
+            </View>
+            <View
+              style={
+                Array [
+                  Object {
+                    "display": "flex",
+                    "flexG
