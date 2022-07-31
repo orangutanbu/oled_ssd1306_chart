@@ -329,4 +329,31 @@ exports[`AccountList renders without error 1`] = `
                 Array [
                   Object {
                     "display": "flex",
-                    "flexG
+                    "flexGrow": 0,
+                    "flexShrink": 0,
+                    "height": 16,
+                    "width": 16,
+                  },
+                ]
+              }
+            />
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "flexDirection": "row",
+                    "justifyContent": "flex-start",
+                  },
+                ]
+              }
+            />
+          </View>
+        </View>
+      </ContextMenu>
+    </View>
+  </RCTScrollView>
+  ExpoLinearGradient
+</View>
+`;
