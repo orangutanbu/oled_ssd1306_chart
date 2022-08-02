@@ -69,4 +69,13 @@ LargeWarningButton.args = {
 export const LargeDetrimentalButton = Template.bind({})
 LargeDetrimentalButton.args = {
   ...DefaultButton.args,
-  label: 'Detrime
+  label: 'Detrimental Button',
+  emphasis: ButtonEmphasis.Detrimental,
+  size: ButtonSize.Large,
+}
+
+export const MediumIconButton = Template.bind({})
+MediumIconButton.args = {
+  size: ButtonSize.Medium,
+  IconName: SendIcon,
+}
