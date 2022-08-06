@@ -32,4 +32,28 @@ export function LinkButton({
   ...rest
 }: LinkButtonProps): JSX.Element {
   const theme = useAppTheme()
-  const colorStyles = useMemo(() =>
+  const colorStyles = useMemo(() => {
+    return color
+      ? { style: { color } }
+      : // if a hex color is not defined, don't give the Text component a style prop, because that will override its default behavior of using textPrimary when no color prop is defined
+        {}
+  }, [color])
+
+  return (
+    <TouchableArea
+      onPress={(): Promise<void> => openUri(url, openExternalBrowser, isSafeUri)}
+      {...rest}>
+      <Flex row alignItems="center" gap="spacing4" justifyContent={justifyContent}>
+        <Text {...colorStyles} variant={textVariant}>
+          {label}
+        </Text>
+        <ExternalLinkIcon
+          color={iconColor ?? color ?? theme.colors.accentActive}
+          height={size}
+          strokeWidth={1.5}
+          width={size}
+        />
+      </Flex>
+    </TouchableArea>
+  )
+}
