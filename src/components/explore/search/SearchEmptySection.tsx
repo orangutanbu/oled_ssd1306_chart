@@ -78,3 +78,34 @@ export function SearchEmptySection(): JSX.Element {
       <FlatList
         ListHeaderComponent={
           <Text color="textSecondary" mb="spacing4" mx="spacing8" variant="subheadSmall">
+            {t('Suggested wallets')}
+          </Text>
+        }
+        data={SUGGESTED_WALLETS}
+        keyExtractor={walletKey}
+        listKey="wallets"
+        renderItem={renderWalletItem}
+      />
+    </AnimatedFlex>
+  )
+}
+
+const renderSearchHistoryItem = ({
+  item: searchResult,
+}: ListRenderItemInfo<SearchResult>): JSX.Element => {
+  if (searchResult.type === SearchResultType.Token) {
+    return <SearchTokenItem token={searchResult} />
+  } else if (searchResult.type === SearchResultType.Wallet) {
+    return <SearchWalletItem wallet={searchResult} />
+  } else {
+    return <SearchEtherscanItem etherscanResult={searchResult} />
+  }
+}
+
+const renderWalletItem = ({ item }: ListRenderItemInfo<WalletSearchResult>): JSX.Element => (
+  <SearchWalletItem wallet={item} />
+)
+
+const walletKey = (wallet: WalletSearchResult): string => {
+  return wallet.address
+}
