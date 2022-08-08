@@ -91,4 +91,16 @@ export default function FavoriteWalletCard({
               {icon}
               <Text color="textPrimary" numberOfLines={1} style={flex.shrink} variant="bodyLarge">
                 {displayName?.name}
-       
+              </Text>
+            </Flex>
+            {isEditing ? (
+              <RemoveButton onPress={onRemove} />
+            ) : (
+              <Box height={theme.imageSizes.image24} />
+            )}
+          </Flex>
+        </BaseCard.Shadow>
+      </TouchableArea>
+    </ContextMenu>
+  )
+}
