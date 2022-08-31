@@ -726,3 +726,125 @@ exports[`SearchPopularTokens renders without error 1`] = `
                       ]
                     }
                   />
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`SearchPopularTokens renders without error 2`] = `
+<RCTScrollView
+  data={
+    Array [
+      Object {
+        "address": null,
+        "chainId": 1,
+        "logoUrl": "ethlogo.png",
+        "name": "Ethereum",
+        "symbol": "ETH",
+        "type": 1,
+      },
+      Object {
+        "address": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+        "chainId": 1,
+        "logoUrl": "wbtclogo.png",
+        "name": "Wrapped Bitcoin",
+        "symbol": "WBTC",
+        "type": 1,
+      },
+      Object {
+        "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "chainId": 1,
+        "logoUrl": "usdclogo.png",
+        "name": "USD Coin",
+        "symbol": "USDC",
+        "type": 1,
+      },
+    ]
+  }
+  getItem={[Function]}
+  getItemCount={[Function]}
+  keyExtractor={[Function]}
+  listKey="tokens"
+  onContentSizeChange={[Function]}
+  onLayout={[Function]}
+  onMomentumScrollBegin={[Function]}
+  onMomentumScrollEnd={[Function]}
+  onScroll={[Function]}
+  onScrollBeginDrag={[Function]}
+  onScrollEndDrag={[Function]}
+  removeClippedSubviews={false}
+  renderItem={[Function]}
+  scrollEventThrottle={50}
+  stickyHeaderIndices={Array []}
+  viewabilityConfigCallbackPairs={Array []}
+>
+  <View>
+    <View
+      onLayout={[Function]}
+      style={null}
+    >
+      <View
+        accessible={true}
+        collapsable={false}
+        focusable={true}
+        hitSlop={
+          Object {
+            "bottom": 5,
+            "left": 5,
+            "right": 5,
+            "top": 5,
+          }
+        }
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "display": "flex",
+            "opacity": 1,
+          }
+        }
+        testID="search-token-item"
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "display": "flex",
+                "flexDirection": "row",
+                "justifyContent": "flex-start",
+                "paddingHorizontal": 8,
+                "paddingVertical": 12,
+              },
+            ]
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "display": "flex",
+                  "height": 40,
+                  "justifyContent": "center",
+                  "width": 40,
+                },
+              ]
+            }
+          >
+            <Image
+              source={
+                Object {
+                  "uri": "ethlogo.png",
+        
