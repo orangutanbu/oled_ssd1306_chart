@@ -1290,4 +1290,8 @@ exports[`SearchPopularTokens renders without error 2`] = `
             </Text>
           </View>
         </View>
-     
+      </View>
+    </View>
+  </View>
+</RCTScrollView>
+`;
