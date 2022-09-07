@@ -47,4 +47,40 @@ export const TokensTab = forwardRef<FlashList<any>, TokensTabProps>(
       if (isFiatOnRampEnabled) {
         dispatch(openModal({ name: ModalName.FiatOnRamp }))
       } else {
-     
+        dispatch(
+          openModal({ name: ModalName.WalletConnectScan, initialState: ScannerModalState.WalletQr })
+        )
+      }
+    }
+
+    return (
+      <Flex grow bg="background0" style={TAB_STYLES.tabListContainer}>
+        <TokenBalanceList
+          ref={ref}
+          containerProps={containerProps}
+          empty={
+            <Flex centered flex={1}>
+              <BaseCard.EmptyState
+                buttonLabel={isFiatOnRampEnabled ? t('Buy crypto') : t('Receive tokens')}
+                description={
+                  isFiatOnRampEnabled
+                    ? t('Buy crypto at the lowest rates on Uniswap Wallet, powered by MoonPay.')
+                    : t(
+                        'Transfer tokens from a centralized exchange or another wallet to get started.'
+                      )
+                }
+                icon={<NoTokens />}
+                title={t('No tokens yet')}
+                onPress={onPressAction}
+              />
+            </Flex>
+          }
+          isExternalProfile={isExternalProfile}
+          owner={owner}
+          scrollHandler={scrollHandler}
+          onPressToken={onPressToken}
+        />
+      </Flex>
+    )
+  }
+)
