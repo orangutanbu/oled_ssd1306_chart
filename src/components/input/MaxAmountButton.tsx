@@ -34,3 +34,12 @@ export function MaxAmountButton({
 
     onSetMax(maxInputAmount.toExact())
   }
+
+  return (
+    <TouchableArea disabled={disableMaxButton} style={style} onPress={onPress}>
+      <Text color={disableMaxButton ? 'textTertiary' : 'magentaVibrant'} variant="subheadSmall">
+        {t('Max')}
+      </Text>
+    </TouchableArea>
+  )
+}
