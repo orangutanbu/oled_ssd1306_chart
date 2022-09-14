@@ -41,4 +41,23 @@ export const AmountInput = forwardRef<NativeTextInput, Props>(
 
         ...rest,
       }),
-      [dimTextColor
+      [dimTextColor, formattedValue, handleChange, rest, value, ref]
+    )
+
+    // break down into two different components depending on value of showSoftInputOnFocus
+    // when showSoftInputOnFocus value changes from false to true, React does not remount the component
+    // and therefore the keyboard does not pop up on TextInput focus.
+    // returning a separately named component guarantees the remount
+    if (showSoftInputOnFocus) {
+      return <TextInputWithNativeKeyboard {...textInputProps} />
+    }
+
+    return <TextInput {...textInputProps} showSoftInputOnFocus={false} />
+  }
+)
+
+const TextInputWithNativeKeyboard = forwardRef<NativeTextInput, TextInputProps>(
+  (props: TextInputProps, ref) => {
+    return <TextInput ref={ref} {...props} />
+  }
+)
