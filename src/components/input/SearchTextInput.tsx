@@ -140,3 +140,108 @@ export const SearchTextInput = forwardRef<NativeTextInput, SearchTextInputProps>
           translateX: isFocus.value
             ? withTiming(0, { duration: 0 })
             : withTiming(dimensions.fullWidth, { duration: 650 }),
+        },
+      ],
+    }
+  })
+
+  const shadowProps = showShadow
+    ? {
+        shadowColor: isDarkMode ? 'black' : 'brandedAccentSoft',
+        shadowOffset: SHADOW_OFFSET_SMALL,
+        shadowOpacity: 0.25,
+        shadowRadius: 6,
+      }
+    : null
+
+  return (
+    <Box alignItems="center" flexDirection="row" flexShrink={1}>
+      <AnimatedFlex
+        row
+        alignItems="center"
+        backgroundColor={backgroundColorValue}
+        borderRadius="roundedFull"
+        flex={1}
+        flexGrow={1}
+        gap="spacing8"
+        minHeight={48}
+        px="spacing16"
+        py="spacing12"
+        style={textInputStyle}
+        {...shadowProps}>
+        <Box py="spacing4">
+          <SearchIcon
+            color={isDarkMode ? theme.colors.textSecondary : theme.colors.textTertiary}
+            height={theme.iconSizes.icon20}
+            width={theme.iconSizes.icon20}
+          />
+        </Box>
+        <TextInput
+          ref={ref}
+          autoCapitalize="none"
+          autoCorrect={false}
+          autoFocus={autoFocus}
+          backgroundColor="none"
+          borderWidth={0}
+          flex={1}
+          fontFamily={theme.textVariants.bodyLarge.fontFamily}
+          fontSize={theme.textVariants.bodyLarge.fontSize}
+          maxFontSizeMultiplier={theme.textVariants.bodyLarge.maxFontSizeMultiplier}
+          placeholder={placeholder}
+          placeholderTextColor={isDarkMode ? theme.colors.textSecondary : theme.colors.textTertiary}
+          px="none"
+          py="none"
+          returnKeyType="done"
+          textContentType="none"
+          value={value}
+          onChangeText={onChangeTextInput}
+          onFocus={onTextInputFocus}
+          onSubmitEditing={onTextInputSubmitEditing}
+        />
+        {showClearButton.value ? (
+          <AnimatedBox style={[clearButtonStyle]}>
+            <ClearButton clearIcon={clearIcon} onPress={onClear} />
+          </AnimatedBox>
+        ) : (
+          <AnimatedBox style={[endAdornmentStyle]}>{endAdornment}</AnimatedBox>
+        )}
+      </AnimatedFlex>
+      {showCancelButton && (
+        <AnimatedBox
+          style={[cancelButtonStyle, CancelButtonDefaultStyle]}
+          onLayout={onCancelLayout}>
+          <TouchableArea onPress={onPressCancel}>
+            <Text variant="buttonLabelMedium">{t('Cancel')}</Text>
+          </TouchableArea>
+        </AnimatedBox>
+      )}
+    </Box>
+  )
+})
+
+const CancelButtonDefaultStyle: ViewStyle = {
+  position: 'absolute',
+  right: 0,
+}
+
+interface ClearButtonProps {
+  clearIcon: SearchTextInputProps['clearIcon']
+  onPress: () => void
+}
+
+function ClearButton(props: ClearButtonProps): JSX.Element {
+  const theme = useAppTheme()
+
+  const { onPress, clearIcon = <X color={theme.colors.textSecondary} height={16} width={16} /> } =
+    props
+
+  return (
+    <TouchableArea
+      backgroundColor="backgroundOutline"
+      borderRadius="roundedFull"
+      p="spacing4"
+      onPress={onPress}>
+      {clearIcon}
+    </TouchableArea>
+  )
+}
