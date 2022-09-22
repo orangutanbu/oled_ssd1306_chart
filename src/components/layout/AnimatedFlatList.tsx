@@ -25,4 +25,40 @@ const createCellRenderer = (
     return (
       <AnimatedView layout={itemLayoutAnimation as never} onLayout={props.onLayout}>
         {props.children}
-      </Animated
+      </AnimatedView>
+    )
+  }
+
+  return cellRenderer
+}
+
+interface ReanimatedFlatlistProps<T> extends FlatListProps<T> {
+  itemLayoutAnimation?: ILayoutAnimationBuilder
+  FlatListComponent?: FlatList
+}
+
+/**
+ * re-create Reanimated FlatList but correctly pass on forwardRef in order to use scrollTo to scroll to the next page in our horizontal FlatList
+ *
+ * Source: https://github.com/software-mansion/react-native-reanimated/blob/main/src/reanimated2/component/FlatList.tsx
+ *
+ * TODO: [MOB-3870] remove this and use Animated.FlatList directly when can use refs with it. Also type the generic T properly for FlatList and dont use `any`
+ */
+export const AnimatedFlatList = forwardRef<Animated.FlatList<any>, ReanimatedFlatlistProps<any>>(
+  ({ itemLayoutAnimation, FlatListComponent = ReanimatedFlatList, ...restProps }, ref) => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const cellRenderer = React.useMemo(() => createCellRenderer(itemLayoutAnimation), [])
+    return <FlatListComponent ref={ref} {...restProps} CellRendererComponent={cellRenderer} />
+  }
+)
+
+/**
+ * In bottom sheet contexts, this will support pull to dismiss.
+ * See AnimatedFlatList for other props.
+ */
+export const AnimatedBottomSheetFlatList = forwardRef<
+  Animated.FlatList<any>,
+  ReanimatedFlatlistProps<any>
+>((props, ref) => (
+  <AnimatedFlatList {...props} ref={ref} FlatListComponent={ReanimatedBottomSheetFlatList} />
+))
