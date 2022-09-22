@@ -146,4 +146,118 @@ function EmptyState({
           </TouchableArea>
         )}
         {additionalButtonLabel && (
-          <TouchableArea onPress={onPr
+          <TouchableArea onPress={onPressAdditional}>
+            <Text color="magentaVibrant" variant="buttonLabelSmall">
+              {additionalButtonLabel}
+            </Text>
+          </TouchableArea>
+        )}
+      </Flex>
+    </Flex>
+  )
+}
+
+// Error State
+type ErrorStateProps = {
+  title?: string
+  description?: string
+  onRetry?: () => void
+  retryButtonLabel?: string
+  icon?: ReactNode
+}
+
+function ErrorState(props: ErrorStateProps): JSX.Element {
+  const { t } = useTranslation()
+  const { title, description = t('Something went wrong'), retryButtonLabel, onRetry, icon } = props
+  return (
+    <Flex centered grow gap="spacing24" p="spacing12" width="100%">
+      <Flex centered>
+        {icon}
+        <Flex centered gap="spacing8">
+          {title ? (
+            <Text textAlign="center" variant="buttonLabelMedium">
+              {title}
+            </Text>
+          ) : null}
+          <Text color="textSecondary" textAlign="center" variant="bodySmall">
+            {description}
+          </Text>
+        </Flex>
+      </Flex>
+      <Flex row>
+        {retryButtonLabel ? (
+          <TouchableArea hapticFeedback onPress={onRetry}>
+            <Text color="magentaVibrant" variant="buttonLabelSmall">
+              {retryButtonLabel}
+            </Text>
+          </TouchableArea>
+        ) : null}
+      </Flex>
+    </Flex>
+  )
+}
+
+type InlineErrorStateProps = {
+  backgroundColor?: keyof Theme['colors']
+  textColor?: keyof Theme['colors']
+} & Pick<ErrorStateProps, 'icon' | 'title' | 'onRetry' | 'retryButtonLabel'>
+
+function InlineErrorState(props: InlineErrorStateProps): JSX.Element {
+  const theme = useAppTheme()
+  const { t } = useTranslation()
+  const {
+    backgroundColor = 'background2',
+    textColor = 'textPrimary',
+    title = t('Oops! Something went wrong.'),
+    onRetry: retry,
+    retryButtonLabel = t('Retry'),
+    icon = (
+      <AlertTriangle
+        color={theme.colors.textTertiary}
+        height={theme.iconSizes.icon16}
+        width={theme.iconSizes.icon16}
+      />
+    ),
+  } = props
+
+  return (
+    <Flex
+      grow
+      row
+      alignItems="center"
+      bg={backgroundColor}
+      borderRadius="rounded16"
+      gap="spacing24"
+      justifyContent="space-between"
+      p="spacing12"
+      width="100%">
+      <Flex row shrink alignItems="center" gap="spacing8">
+        {icon}
+        <Text
+          color={textColor}
+          ellipsizeMode="tail"
+          numberOfLines={1}
+          textAlign="center"
+          variant="subheadSmall">
+          {title}
+        </Text>
+      </Flex>
+      {retry ? (
+        <TouchableArea hapticFeedback onPress={retry}>
+          <Text color="accentActive" variant="buttonLabelSmall">
+            {retryButtonLabel}
+          </Text>
+        </TouchableArea>
+      ) : null}
+    </Flex>
+  )
+}
+
+export const BaseCard = {
+  Container,
+  EmptyState,
+  ErrorState,
+  Header,
+  InlineErrorState,
+  Shadow,
+}
