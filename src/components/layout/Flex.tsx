@@ -76,4 +76,13 @@ export function Flex({
       justifyContent={centered ? 'center' : justifyContent}
       {...boxProps}>
       {childrenArr.map((child, index, array) => (
-        <React.Fragment key={index}
+        <React.Fragment key={index}>
+          {child}
+          {gap && index < array.length - 1 && <Spacer {...spacerProps} x={x} y={y} />}
+        </React.Fragment>
+      ))}
+    </Box>
+  )
+}
+
+export const AnimatedFlex = withAnimated(Flex)
