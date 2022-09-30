@@ -57,4 +57,16 @@ export function Shimmer({ children }: Props): JSX.Element {
         <MaskedView
           maskElement={
             <LinearGradient
-              colors={['transparent', 'black', 'black', 'black', 'trans
+              colors={['transparent', 'black', 'black', 'black', 'transparent']}
+              end={{ x: 1, y: 0 }}
+              start={{ x: 0, y: 0 }}
+              style={StyleSheet.absoluteFill}
+            />
+          }
+          style={StyleSheet.absoluteFill}>
+          <Box backgroundColor="backgroundOutline" style={StyleSheet.absoluteFill} />
+        </MaskedView>
+      </Reanimated.View>
+    </MaskedView>
+  )
+}
