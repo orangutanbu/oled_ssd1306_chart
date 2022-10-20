@@ -35,4 +35,21 @@ export function TransactionLoader({ opacity }: TransactionLoaderProps): JSX.Elem
             <Flex row alignItems="center" gap="spacing4">
               <Text
                 loading
-                
+                loadingPlaceholderText="Contract Interaction"
+                numberOfLines={1}
+                variant="bodyLarge"
+              />
+            </Flex>
+            <Text
+              loading
+              color="textSecondary"
+              loadingPlaceholderText="Caption Text"
+              numberOfLines={1}
+              variant="subheadSmall"
+            />
+          </Flex>
+        </Flex>
+      </Flex>
+    </Flex>
+  )
+}
