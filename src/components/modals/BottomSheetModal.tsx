@@ -118,4 +118,98 @@ export function BottomSheetModal({
 
   const renderBlurredBg = useCallback(
     () => (
-   
+      <BlurView intensity={90} style={BlurViewStyle.base} tint={isDarkMode ? 'dark' : 'light'} />
+    ),
+    [isDarkMode]
+  )
+
+  const background = blurredBackground ? { backgroundComponent: renderBlurredBg } : undefined
+  const backdrop = { backdropComponent: renderBackdrop }
+
+  // onAnimated is called when the sheet is about to animate to a new position.
+  // `About to` is crucial here, cause we want to start hiding the keyboard during the process of hiding the sheet.
+  // See here: https://gorhom.github.io/react-native-bottom-sheet/props#onanimate
+  //
+  // onDismiss on the other hand is called when a sheet is already closed, hence too late for us here.
+  const onAnimate = useCallback(
+    (fromIndex: number, toIndex: number): void => {
+      if (
+        hideKeyboardOnDismiss &&
+        fromIndex === APPEARS_ON_INDEX &&
+        toIndex === DISAPPEARS_ON_INDEX
+      ) {
+        Keyboard.dismiss()
+      }
+    },
+    [hideKeyboardOnDismiss]
+  )
+
+  return (
+    <BaseModal
+      {...background}
+      {...backdrop}
+      ref={modalRef}
+      backgroundStyle={{
+        backgroundColor: backgroundColorValue,
+      }}
+      contentHeight={animatedContentHeight}
+      enableContentPanningGesture={isDismissible}
+      enableHandlePanningGesture={isDismissible}
+      handleComponent={renderHandleBar}
+      handleHeight={animatedHandleHeight}
+      snapPoints={animatedSnapPoints}
+      stackBehavior={stackBehavior}
+      topInset={renderBehindInset ? undefined : insets.top}
+      onAnimate={onAnimate}
+      onDismiss={onClose}>
+      <Trace logImpression modal={name} properties={properties}>
+        <BottomSheetView
+          style={[
+            { height: fullScreen ? fullScreenContentHeight : undefined },
+            BottomSheetStyle.view,
+            renderBehindInset ? BottomSheetStyle.rounded : undefined,
+          ]}
+          onLayout={handleContentLayout}>
+          {children}
+        </BottomSheetView>
+      </Trace>
+    </BaseModal>
+  )
+}
+
+export function BottomSheetDetachedModal({
+  children,
+  name,
+  onClose,
+  snapPoints = CONTENT_HEIGHT_SNAP_POINTS,
+  stackBehavior = 'push',
+  fullScreen,
+  hideHandlebar,
+  backgroundColor,
+}: Props): JSX.Element {
+  const insets = useSafeAreaInsets()
+  const modalRef = useRef<BaseModal>(null)
+  const { animatedHandleHeight, animatedSnapPoints, animatedContentHeight, handleContentLayout } =
+    useBottomSheetDynamicSnapPoints(snapPoints)
+  const theme = useAppTheme()
+
+  const fullScreenContentHeight = FULL_HEIGHT * dimensions.fullHeight
+
+  useEffect(() => {
+    modalRef.current?.present()
+  }, [modalRef])
+
+  const renderHandleBar = useCallback(
+    (props) => {
+      return <HandleBar {...props} backgroundColor={backgroundColor} hidden={hideHandlebar} />
+    },
+    [backgroundColor, hideHandlebar]
+  )
+
+  return (
+    <BaseModal
+      ref={modalRef}
+      backdropComponent={Backdrop}
+      backgroundStyle={{
+        backgroundColor: backgroundColor ?? theme.colors.background0,
+     
