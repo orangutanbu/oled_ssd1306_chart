@@ -212,4 +212,50 @@ export function BottomSheetDetachedModal({
       backdropComponent={Backdrop}
       backgroundStyle={{
         backgroundColor: backgroundColor ?? theme.colors.background0,
-     
+      }}
+      bottomInset={theme.spacing.spacing48}
+      contentHeight={animatedContentHeight}
+      detached={true}
+      handleComponent={renderHandleBar}
+      handleHeight={animatedHandleHeight}
+      snapPoints={animatedSnapPoints}
+      stackBehavior={stackBehavior}
+      style={BottomSheetStyle.detached}
+      topInset={insets.top}
+      onDismiss={onClose}>
+      <Trace logImpression modal={name}>
+        <BottomSheetView
+          style={[
+            {
+              height: fullScreen ? fullScreenContentHeight : undefined,
+            },
+            BottomSheetStyle.view,
+          ]}
+          onLayout={handleContentLayout}>
+          {children}
+        </BottomSheetView>
+      </Trace>
+    </BaseModal>
+  )
+}
+
+const BottomSheetStyle = StyleSheet.create({
+  detached: {
+    marginHorizontal: spacing.spacing12,
+  },
+  rounded: {
+    borderRadius: FixedTheme.borderRadii.rounded24,
+    overflow: 'hidden',
+  },
+  view: {
+    flex: 1,
+  },
+})
+
+const BlurViewStyle = StyleSheet.create({
+  base: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: FixedTheme.borderRadii.rounded24,
+    overflow: 'hidden',
+  },
+})
