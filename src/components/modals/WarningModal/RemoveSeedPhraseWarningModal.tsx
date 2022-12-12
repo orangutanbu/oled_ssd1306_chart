@@ -63,4 +63,17 @@ export default function RemoveSeedPhraseWarningModal({
             <Flex grow row alignItems="center" justifyContent="space-between">
               <AddressDisplay address={account.address} size={36} variant="subheadSmall" />
               <DecimalNumber
-                adjustsFontSizeToFit={!loa
+                adjustsFontSizeToFit={!loading}
+                formattedNumber={formatUSDPrice(totalBalanceAtIndex(index))}
+                loading={loading}
+                number={totalBalanceAtIndex(index)}
+                numberOfLines={1}
+                variant="monospace"
+              />
+            </Flex>
+          )
+        })}
+      </Flex>
+    </WarningModal>
+  )
+}
