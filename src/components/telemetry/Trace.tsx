@@ -114,4 +114,74 @@ function _Trace({
 
   // Measure marks if needed
   useEffect(() => {
-    if (!endMark) 
+    if (!endMark) {
+      return
+    }
+
+    const markStartTime = parentTrace.marks?.[endMark]
+    if (!markStartTime) {
+      return
+    }
+
+    const markDuration = Date.now() - markStartTime
+    logger.info('telemetry', 'Trace', `${endMark}: ${markDuration}ms`)
+  }, [combinedProps, endMark, parentTrace.marks])
+
+  if (!isPartOfNavigationTree) {
+    return <TraceContext.Provider value={combinedProps}>{children}</TraceContext.Provider>
+  }
+
+  return (
+    <NavAwareTrace
+      combinedProps={combinedProps}
+      directFromPage={directFromPage}
+      logImpression={logImpression}
+      properties={properties}>
+      <TraceContext.Provider value={combinedProps}>{children}</TraceContext.Provider>
+    </NavAwareTrace>
+  )
+}
+
+type NavAwareTraceProps = Pick<TraceProps, 'logImpression' | 'properties' | 'directFromPage'>
+
+// Internal component to keep track of navigation events
+// Needed since we need to rely on `navigation.useFocusEffect` to track
+// impressions of pages that are not unmounted when navigating away from them
+function NavAwareTrace({
+  logImpression,
+  directFromPage,
+  combinedProps,
+  children,
+  properties,
+}: { combinedProps: ITraceContext } & PropsWithChildren<NavAwareTraceProps>): JSX.Element {
+  // this still doesn't captures navigating back from modals
+  // analysis will need to be done on the backend to determine the last screen impression
+  useFocusEffect(
+    React.useCallback(() => {
+      if (logImpression) {
+        const eventProps = { ...combinedProps, ...properties }
+        if (shouldLogScreen(directFromPage, (properties as ITraceContext | undefined)?.screen)) {
+          sendAnalyticsEvent(SharedEventName.PAGE_VIEWED, eventProps)
+        }
+      }
+    }, [combinedProps, directFromPage, logImpression, properties])
+  )
+
+  return <>{children}</>
+}
+
+export const Trace = memo(_Trace)
+
+export const DIRECT_LOG_ONLY_SCREENS: AppScreen[] = [
+  Screens.TokenDetails,
+  Screens.ExternalProfile,
+  Screens.NFTItem,
+  Screens.NFTCollection,
+]
+
+function shouldLogScreen(
+  directFromPage: boolean | undefined,
+  screen: AppScreen | undefined
+): boolean {
+  return directFromPage || screen === undefined || !DIRECT_LOG_ONLY_SCREENS.includes(screen)
+}
