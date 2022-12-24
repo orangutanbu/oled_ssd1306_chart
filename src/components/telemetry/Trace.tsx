@@ -19,4 +19,99 @@ export interface ITraceContext {
 
   element?: ElementName
 
-  // Keeps 
+  // Keeps track of start time for given marks
+  marks?: Record<MarkNames, number>
+}
+
+export const TraceContext = createContext<ITraceContext>({})
+
+export type TraceProps = {
+  logImpression?: boolean // whether to log impression on mount
+
+  // verifies an impression has come from that page directly to override the direct only skip list
+  directFromPage?: boolean
+
+  // additional properties to log with impression
+  // (eg. TokenDetails Impression: { tokenAddress: 'address', tokenName: 'name' })
+  properties?: Record<string, unknown>
+
+  // registers a mark to later be measured
+  startMark?: MarkNames
+  // finalized mark measurements and logs duration between start and end mark timestamps
+  endMark?: MarkNames
+} & ITraceContext
+
+/**
+ * Telemetry instrumentation component that combines parent telemetry context
+ * with its own context to provide children a richer telemetry context (eg Screen, Section, Modal, Element)
+ *
+ * Optionally can also log an “impression” event to analytics
+ * (eg: Page Viewed, Modal Opened type of events that indicate the User has seen this component).
+ *
+ * Marks: inspired by Web Performance API
+ * @example
+ *  // Track start timestamp with a mark
+ *  <Trace startMark={Marks.Rehydration}>
+ *    ...
+ *    // Log end timestamp for that mark
+ *    <Trace endMark={Marks.Rehydration}>
+ *      ...
+ *    </Trace>
+ * </Trace>
+ */
+function _Trace({
+  children,
+  logImpression,
+  directFromPage,
+  screen,
+  section,
+  element,
+  modal,
+  startMark,
+  endMark,
+  properties,
+}: PropsWithChildren<TraceProps>): JSX.Element {
+  const initialRenderTimestamp = useRef<number>(Date.now())
+  const isPartOfNavigationTree = useIsPartOfNavigationTree()
+
+  const parentTrace = useTrace()
+
+  // Component props are destructured to ensure shallow comparison
+  const combinedProps = useMemo(
+    () => ({
+      ...parentTrace,
+      // removes `undefined` values
+      ...JSON.parse(
+        JSON.stringify({
+          screen,
+          section,
+          modal,
+          element,
+        })
+      ),
+      marks: startMark
+        ? {
+            ...parentTrace.marks,
+            // progressively accumulate marks so they can later be measured
+            [startMark]: initialRenderTimestamp.current,
+          }
+        : parentTrace.marks,
+    }),
+    [parentTrace, startMark, screen, section, modal, element]
+  )
+
+  // Log impression on mount for elements that are not part of the navigation tree
+  useEffect(() => {
+    if (logImpression && !isPartOfNavigationTree) {
+      const eventProps = { ...combinedProps, ...properties }
+      if (shouldLogScreen(directFromPage, (properties as ITraceContext | undefined)?.screen)) {
+        sendAnalyticsEvent(SharedEventName.PAGE_VIEWED, eventProps)
+      }
+    }
+    // Impressions should only be logged on mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [logImpression, directFromPage])
+
+  // Measure marks if needed
+  useEffect(() => {
+    if (!endMark) 
