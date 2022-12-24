@@ -64,4 +64,14 @@ export function TraceUserProperties(): null {
 
   useEffect(() => {
     setUserProperty(
-      UserPropertyName.AppOpenAuthM
+      UserPropertyName.AppOpenAuthMethod,
+      getAuthMethod(biometricsAppSettingsState.requiredForAppAccess, touchId, faceId)
+    )
+    setUserProperty(
+      UserPropertyName.TransactionAuthMethod,
+      getAuthMethod(biometricsAppSettingsState.requiredForTransactions, touchId, faceId)
+    )
+  }, [biometricsAppSettingsState, touchId, faceId])
+
+  return null
+}
