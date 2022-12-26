@@ -56,4 +56,10 @@ export function RelativeChange(props: RelativeChangeProps): JSX.Element {
           semanticColor ? (isPositiveChange ? 'accentSuccess' : 'accentCritical') : 'textSecondary'
         }
         loading={loading}
-        loadingPlaceholderText="$0.00 (0.00)%
+        loadingPlaceholderText="$0.00 (0.00)%"
+        variant={variant}>
+        {absoluteChange ? `${formattedAbsChange} (${formattedChange})` : formattedChange}
+      </Text>
+    </Flex>
+  )
+}
