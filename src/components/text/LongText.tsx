@@ -93,4 +93,35 @@ export function LongText(props: LongTextProps): JSX.Element {
               paragraph: {
                 marginBottom: 0,
                 marginTop: 0,
-                fontSi
+                fontSize: theme.textVariants.bodySmall.fontSize,
+                lineHeight: theme.textVariants.bodySmall.lineHeight,
+              },
+            }}
+            onLinkPress={(url): false => {
+              // add our own custom link handler since it has security checks that only open http/https links
+              openUri(url)
+              return false
+            }}>
+            {text}
+          </Markdown>
+        ) : (
+          text
+        )}
+      </Text>
+
+      {/* Text is removed vs hidden using opacity to ensure spacing after the element is consistent in all cases.
+      This will cause mild thrash as data loads into a page but will ensure consistent spacing */}
+      {textLengthExceedsLimit ? (
+        <Text
+          my="none"
+          py="none"
+          style={{ color: readMoreOrLessColor }}
+          testID="read-more-button"
+          variant="buttonLabelSmall"
+          onPress={toggleExpanded}>
+          {expanded ? t('Read less') : t('Read more')}
+        </Text>
+      ) : null}
+    </Flex>
+  )
+}
