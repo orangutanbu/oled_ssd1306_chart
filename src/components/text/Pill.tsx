@@ -35,4 +35,20 @@ export function Pill({
       flexDirection={flexDirection}
       gap="spacing8"
       justifyContent="center"
-      p
+      px={px}
+      py={py}
+      style={{
+        ...(customBackgroundColor ? { backgroundColor: customBackgroundColor } : {}),
+        ...(customBorderColor ? { borderColor: customBorderColor } : {}),
+      }}
+      {...rest}>
+      {icon ?? null}
+      {label ? (
+        <Text style={{ color: foregroundColor }} variant={textVariant}>
+          {label}
+        </Text>
+      ) : null}
+      {children}
+    </Flex>
+  )
+}
