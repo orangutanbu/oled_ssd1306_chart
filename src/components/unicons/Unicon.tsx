@@ -112,4 +112,54 @@ function UniconSvg({
 
   return (
     <Canvas style={flex.fill}>
-      <Mask clip={true} mask={<UniconMask 
+      <Mask clip={true} mask={<UniconMask attributeData={attributeData} size={size} />}>
+        <GradientBlur
+          blurColor={blurColor}
+          gradientEnd={attributeData[UniconAttributes.GradientEnd]}
+          gradientStart={attributeData[UniconAttributes.GradientStart]}
+          size={size}
+        />
+      </Mask>
+      {lightModeOverlay && (
+        <Mask clip={true} mask={<UniconMask overlay attributeData={attributeData} size={size} />}>
+          <Rect
+            color="#000000"
+            height={ORIGINAL_SVG_SIZE}
+            opacity={0.08}
+            width={ORIGINAL_SVG_SIZE}
+            x={0}
+            y={0}
+          />
+        </Mask>
+      )}
+    </Canvas>
+  )
+}
+
+interface Props {
+  address: string
+  size: number
+  randomSeed?: number
+  border?: boolean
+}
+
+export const Unicon = memo(_Unicon)
+
+export function _Unicon({ address, size, randomSeed = 0 }: Props): JSX.Element | null {
+  // TODO(MOB-2992): move this into a mandatory boolean prop for the Unicon component (e.g. `lightModeOverlay`) so that any consumer of the Unicon component has to decide whether or not to show the light mode overlay (presumably based on whether the current theme is light or dark)
+  const isLightMode = useColorScheme() === 'light'
+
+  // Renders a Unicon inside a (size) x (size) pixel square Box
+  const attributeIndices = useMemo(
+    () => deriveUniconAttributeIndices(address, randomSeed),
+    [address, randomSeed]
+  )
+
+  if (!address || !isEthAddress(address) || !attributeIndices) return null
+
+  return (
+    <Box height={size} width={size}>
+      <UniconSvg attributeIndices={attributeIndices} lightModeOverlay={isLightMode} size={size} />
+    </Box>
+  )
+}
