@@ -31,4 +31,59 @@ export const deriveUniconAttributeIndices = (
     [UniconAttributes.GradientEnd]: 0,
     [UniconAttributes.Container]: 0,
     [UniconAttributes.Shape]: 0,
-  } as Un
+  } as UniconAttributesToIndices
+  for (const a of UniconAttributesArray) {
+    const optionHex = hexAddr.slice(
+      NUM_CHARS_TO_USE_PER_ATTRIBUTE * a,
+      NUM_CHARS_TO_USE_PER_ATTRIBUTE * (a + 1)
+    )
+    const optionDec = parseInt(optionHex, 16) + randomSeed
+    const optionIndex = optionDec % UniconNumOptions[a]
+    newIndices[a] = optionIndex
+  }
+  return newIndices
+}
+
+export const getUniconAttributeData = (
+  attributeIndices: UniconAttributesToIndices
+): UniconAttributeData => {
+  return {
+    [UniconAttributes.GradientStart]:
+      gradientStarts[attributeIndices[UniconAttributes.GradientStart]],
+    [UniconAttributes.GradientEnd]: gradientEnds[attributeIndices[UniconAttributes.GradientEnd]],
+    [UniconAttributes.Container]: containerPaths[attributeIndices[UniconAttributes.Container]],
+    [UniconAttributes.Shape]: emblemPaths[attributeIndices[UniconAttributes.Shape]],
+  } as UniconAttributeData
+}
+
+export const useUniconColors = (
+  activeAddress: string | undefined
+): {
+  glow: string
+  gradientStart: string
+  gradientEnd: string
+} => {
+  const theme = useAppTheme()
+  const attributeIndices = deriveUniconAttributeIndices(activeAddress || '')
+  if (!attributeIndices)
+    return {
+      gradientStart: theme.colors.accentAction,
+      gradientEnd: theme.colors.accentActionSoft,
+      glow: theme.colors.accentAction,
+    }
+
+  const attributeData = getUniconAttributeData(attributeIndices)
+  const blurColor = blurs[attributeIndices[UniconAttributes.GradientStart]]
+  if (!blurColor)
+    return {
+      gradientStart: theme.colors.accentAction,
+      gradientEnd: theme.colors.accentActionSoft,
+      glow: theme.colors.accentAction,
+    }
+
+  return {
+    gradientStart: attributeData[UniconAttributes.GradientStart].toString(),
+    gradientEnd: attributeData[UniconAttributes.GradientEnd].toString(),
+    glow: blurColor.toString(),
+  }
+}
