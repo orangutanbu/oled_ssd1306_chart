@@ -25,4 +25,16 @@ export const UNI_ADDRESS = constructSameAddressMap(
 export const SWAP_ROUTER_ADDRESSES = constructSameAddressMap(
   '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45',
   SUPPORTED_L1_L2_CHAINS
-) as AddressMap<type
+) as AddressMap<typeof SUPPORTED_L1_L2_CHAINS> & AddressMap<typeof L1_CHAIN_IDS>
+
+function constructSameAddressMap<T extends string>(
+  address: T,
+  additionalNetworks: ChainId[] = []
+): { [chainId: number]: T } {
+  return (L1_CHAIN_IDS as readonly ChainId[])
+    .concat(additionalNetworks)
+    .reduce<{ [chainId: number]: T }>((memo, chainId) => {
+      memo[chainId] = address
+      return memo
+    }, {})
+}
