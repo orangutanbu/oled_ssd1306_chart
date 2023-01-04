@@ -107,3 +107,59 @@ Fragments **cannot be fetched by themselves**, they must be included in a query.
 
 ```tsx
 type Props = {
+  queryRef: OfflineQuery
+}
+
+function TokenDetailsScreen() {
+  const data = usePreloadedQuery(
+    graphql`
+      query TokenDetailsScreenQuery($contract: ContractInput!) {
+        tokenProjects(contracts: [$contract]) {
+          # Fragment from step 1
+          ...TokenDetailsStats_tokenProject
+        }
+      }
+    `,
+    queryRef
+  )
+
+  return <TokenDetailsStats tokenProject={data.tokenProject} />
+}
+```
+
+#### Step 4. Preload and navigate
+
+The token details screen is now ready to receive a preloaded query, and components have defined the data they need through fragments.
+
+```tsx
+function TokenRow({ currency }) {
+
+  // Get preload utils for tokenDetailsQuery
+  const { registerNavigationIntent, preloadedNavigate } = useEagerNavigation(tokenDetailsScreenQuery)
+
+  // Eagerly fetch token details data
+  const onPressIn = () => {
+    registerNavigationIntent({
+      chain: currency.chain,
+      address: currency.address
+    })
+  }
+
+  // Navigate to TokenDetails with preloaded query ref
+  const onPress = () => {
+    preloadedNavigate(Screens.TokenDetails, { currency })
+  }
+
+  return <Button onPressIn={onPressIn} onPress={onPress} />
+}
+```
+
+### Data fetching without preloading
+
+`useLazyLoadQuery`: https://relay.dev/docs/api-reference/use-lazy-load-query/
+
+Fetches query *during render*, possibly triggering nested or waterfalling roundtrips, degrading performance.
+
+**Examples use cases**
+* search query in explore
+* quote from Routing API (if/when migrated to gql)
