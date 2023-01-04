@@ -632,3 +632,1847 @@ export type PortfolioAssetActivitiesArgs = {
   pageSize?: InputMaybe<Scalars['Int']>;
 };
 
+
+export type PortfolioTokensTotalDenominatedValueChangeArgs = {
+  duration?: InputMaybe<HistoryDuration>;
+};
+
+export type Query = {
+  __typename?: 'Query';
+  nftActivity?: Maybe<NftActivityConnection>;
+  nftAssets?: Maybe<NftAssetConnection>;
+  nftBalances?: Maybe<NftBalanceConnection>;
+  nftCollections?: Maybe<NftCollectionConnection>;
+  nftCollectionsById?: Maybe<Array<Maybe<NftCollection>>>;
+  nftRoute?: Maybe<NftRouteResponse>;
+  portfolios?: Maybe<Array<Maybe<Portfolio>>>;
+  searchTokenProjects?: Maybe<Array<Maybe<TokenProject>>>;
+  searchTokens?: Maybe<Array<Maybe<Token>>>;
+  token?: Maybe<Token>;
+  tokenProjects?: Maybe<Array<Maybe<TokenProject>>>;
+  tokens?: Maybe<Array<Maybe<Token>>>;
+  topTokens?: Maybe<Array<Maybe<Token>>>;
+};
+
+
+export type QueryNftActivityArgs = {
+  chain?: InputMaybe<Chain>;
+  cursor?: InputMaybe<Scalars['String']>;
+  filter?: InputMaybe<NftActivityFilterInput>;
+  limit?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryNftAssetsArgs = {
+  address: Scalars['String'];
+  after?: InputMaybe<Scalars['String']>;
+  asc?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  chain?: InputMaybe<Chain>;
+  filter?: InputMaybe<NftAssetsFilterInput>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<NftAssetSortableField>;
+};
+
+
+export type QueryNftBalancesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  chain?: InputMaybe<Chain>;
+  cursor?: InputMaybe<Scalars['String']>;
+  filter?: InputMaybe<NftBalancesFilterInput>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  ownerAddress: Scalars['String'];
+};
+
+
+export type QueryNftCollectionsArgs = {
+  chain?: InputMaybe<Chain>;
+  cursor?: InputMaybe<Scalars['String']>;
+  filter?: InputMaybe<NftCollectionsFilterInput>;
+  limit?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryNftCollectionsByIdArgs = {
+  collectionIds?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+};
+
+
+export type QueryNftRouteArgs = {
+  chain?: InputMaybe<Chain>;
+  nftTrades: Array<NftTradeInput>;
+  senderAddress: Scalars['String'];
+  tokenTrades?: InputMaybe<Array<TokenTradeInput>>;
+};
+
+
+export type QueryPortfoliosArgs = {
+  ownerAddresses: Array<Scalars['String']>;
+};
+
+
+export type QuerySearchTokenProjectsArgs = {
+  searchQuery: Scalars['String'];
+};
+
+
+export type QuerySearchTokensArgs = {
+  searchQuery: Scalars['String'];
+};
+
+
+export type QueryTokenArgs = {
+  address?: InputMaybe<Scalars['String']>;
+  chain: Chain;
+};
+
+
+export type QueryTokenProjectsArgs = {
+  contracts: Array<ContractInput>;
+};
+
+
+export type QueryTokensArgs = {
+  contracts: Array<ContractInput>;
+};
+
+
+export type QueryTopTokensArgs = {
+  chain?: InputMaybe<Chain>;
+  orderBy?: InputMaybe<TokenSortableField>;
+  page?: InputMaybe<Scalars['Int']>;
+  pageSize?: InputMaybe<Scalars['Int']>;
+};
+
+export enum SafetyLevel {
+  Blocked = 'BLOCKED',
+  MediumWarning = 'MEDIUM_WARNING',
+  StrongWarning = 'STRONG_WARNING',
+  Verified = 'VERIFIED'
+}
+
+export type TimestampedAmount = IAmount & {
+  __typename?: 'TimestampedAmount';
+  currency?: Maybe<Currency>;
+  id: Scalars['ID'];
+  timestamp: Scalars['Int'];
+  value: Scalars['Float'];
+};
+
+export type Token = IContract & {
+  __typename?: 'Token';
+  address?: Maybe<Scalars['String']>;
+  chain: Chain;
+  decimals?: Maybe<Scalars['Int']>;
+  id: Scalars['ID'];
+  market?: Maybe<TokenMarket>;
+  name?: Maybe<Scalars['String']>;
+  project?: Maybe<TokenProject>;
+  standard?: Maybe<TokenStandard>;
+  symbol?: Maybe<Scalars['String']>;
+};
+
+
+export type TokenMarketArgs = {
+  currency?: InputMaybe<Currency>;
+};
+
+export type TokenAmount = {
+  __typename?: 'TokenAmount';
+  currency: Currency;
+  id: Scalars['ID'];
+  value: Scalars['String'];
+};
+
+export type TokenAmountInput = {
+  amount: Scalars['String'];
+  token: TokenInput;
+};
+
+export type TokenApproval = {
+  __typename?: 'TokenApproval';
+  approvedAddress: Scalars['String'];
+  /**   can be erc20 or erc1155 */
+  asset: Token;
+  id: Scalars['ID'];
+  quantity: Scalars['String'];
+  tokenStandard: TokenStandard;
+};
+
+export type TokenBalance = {
+  __typename?: 'TokenBalance';
+  blockNumber?: Maybe<Scalars['Int']>;
+  blockTimestamp?: Maybe<Scalars['Int']>;
+  denominatedValue?: Maybe<Amount>;
+  id: Scalars['ID'];
+  ownerAddress: Scalars['String'];
+  quantity?: Maybe<Scalars['Float']>;
+  token?: Maybe<Token>;
+  tokenProjectMarket?: Maybe<TokenProjectMarket>;
+};
+
+export type TokenInput = {
+  address: Scalars['String'];
+  chainId: Scalars['Int'];
+  decimals: Scalars['Int'];
+  isNative: Scalars['Boolean'];
+};
+
+export type TokenMarket = {
+  __typename?: 'TokenMarket';
+  id: Scalars['ID'];
+  price?: Maybe<Amount>;
+  priceHighLow?: Maybe<Amount>;
+  priceHistory?: Maybe<Array<Maybe<TimestampedAmount>>>;
+  pricePercentChange?: Maybe<Amount>;
+  token: Token;
+  totalValueLocked?: Maybe<Amount>;
+  volume?: Maybe<Amount>;
+};
+
+
+export type TokenMarketPriceHighLowArgs = {
+  duration: HistoryDuration;
+  highLow: HighLow;
+};
+
+
+export type TokenMarketPriceHistoryArgs = {
+  duration: HistoryDuration;
+};
+
+
+export type TokenMarketPricePercentChangeArgs = {
+  duration: HistoryDuration;
+};
+
+
+export type TokenMarketVolumeArgs = {
+  duration: HistoryDuration;
+};
+
+export type TokenProject = {
+  __typename?: 'TokenProject';
+  description?: Maybe<Scalars['String']>;
+  homepageUrl?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  isSpam?: Maybe<Scalars['Boolean']>;
+  logo?: Maybe<Image>;
+  logoUrl?: Maybe<Scalars['String']>;
+  markets?: Maybe<Array<Maybe<TokenProjectMarket>>>;
+  name?: Maybe<Scalars['String']>;
+  safetyLevel?: Maybe<SafetyLevel>;
+  smallLogo?: Maybe<Image>;
+  spamCode?: Maybe<Scalars['Int']>;
+  tokens: Array<Token>;
+  twitterName?: Maybe<Scalars['String']>;
+};
+
+
+export type TokenProjectMarketsArgs = {
+  currencies: Array<Currency>;
+};
+
+export type TokenProjectMarket = {
+  __typename?: 'TokenProjectMarket';
+  currency: Currency;
+  /** @deprecated Use marketCap */
+  fullyDilutedMarketCap?: Maybe<Amount>;
+  id: Scalars['ID'];
+  marketCap?: Maybe<Amount>;
+  price?: Maybe<Amount>;
+  priceHighLow?: Maybe<Amount>;
+  priceHistory?: Maybe<Array<Maybe<TimestampedAmount>>>;
+  pricePercentChange?: Maybe<Amount>;
+  /** @deprecated Use pricePercentChange */
+  pricePercentChange24h?: Maybe<Amount>;
+  tokenProject: TokenProject;
+  /** @deprecated Use TokenMarket.volume for Uniswap volume */
+  volume?: Maybe<Amount>;
+  /** @deprecated Use TokenMarket.volume with duration DAY for Uniswap volume */
+  volume24h?: Maybe<Amount>;
+};
+
+
+export type TokenProjectMarketPriceHighLowArgs = {
+  duration: HistoryDuration;
+  highLow: HighLow;
+};
+
+
+export type TokenProjectMarketPriceHistoryArgs = {
+  duration: HistoryDuration;
+};
+
+
+export type TokenProjectMarketPricePercentChangeArgs = {
+  duration: HistoryDuration;
+};
+
+
+export type TokenProjectMarketVolumeArgs = {
+  duration: HistoryDuration;
+};
+
+export enum TokenSortableField {
+  MarketCap = 'MARKET_CAP',
+  Popularity = 'POPULARITY',
+  TotalValueLocked = 'TOTAL_VALUE_LOCKED',
+  Volume = 'VOLUME'
+}
+
+export enum TokenStandard {
+  Erc20 = 'ERC20',
+  Erc1155 = 'ERC1155',
+  Native = 'NATIVE'
+}
+
+export type TokenTradeInput = {
+  permit?: InputMaybe<PermitInput>;
+  routes?: InputMaybe<TokenTradeRoutesInput>;
+  slippageToleranceBasisPoints?: InputMaybe<Scalars['Int']>;
+  tokenAmount: TokenAmountInput;
+};
+
+export type TokenTradeRouteInput = {
+  inputAmount: TokenAmountInput;
+  outputAmount: TokenAmountInput;
+  pools: Array<TradePoolInput>;
+};
+
+export type TokenTradeRoutesInput = {
+  mixedRoutes?: InputMaybe<Array<TokenTradeRouteInput>>;
+  tradeType: TokenTradeType;
+  v2Routes?: InputMaybe<Array<TokenTradeRouteInput>>;
+  v3Routes?: InputMaybe<Array<TokenTradeRouteInput>>;
+};
+
+export enum TokenTradeType {
+  ExactInput = 'EXACT_INPUT',
+  ExactOutput = 'EXACT_OUTPUT'
+}
+
+export type TokenTransfer = {
+  __typename?: 'TokenTransfer';
+  asset: Token;
+  direction: TransactionDirection;
+  id: Scalars['ID'];
+  quantity: Scalars['String'];
+  recipient: Scalars['String'];
+  sender: Scalars['String'];
+  tokenStandard: TokenStandard;
+  transactedValue?: Maybe<Amount>;
+};
+
+export type TradePoolInput = {
+  pair?: InputMaybe<PairInput>;
+  pool?: InputMaybe<PoolInput>;
+};
+
+export type Transaction = {
+  __typename?: 'Transaction';
+  blockNumber: Scalars['Int'];
+  from: Scalars['String'];
+  gasLimit?: Maybe<Scalars['Float']>;
+  hash: Scalars['String'];
+  id: Scalars['ID'];
+  maxFeePerGas?: Maybe<Scalars['Float']>;
+  nonce: Scalars['Int'];
+  status: TransactionStatus;
+  to: Scalars['String'];
+};
+
+export enum TransactionDirection {
+  In = 'IN',
+  Out = 'OUT',
+  Self = 'SELF'
+}
+
+export enum TransactionStatus {
+  Confirmed = 'CONFIRMED',
+  Failed = 'FAILED',
+  Pending = 'PENDING'
+}
+
+export type TokenPriceHistoryQueryVariables = Exact<{
+  contract: ContractInput;
+  duration?: InputMaybe<HistoryDuration>;
+}>;
+
+
+export type TokenPriceHistoryQuery = { __typename?: 'Query', tokenProjects?: Array<{ __typename?: 'TokenProject', id: string, name?: string | null, markets?: Array<{ __typename?: 'TokenProjectMarket', id: string, price?: { __typename?: 'Amount', id: string, value: number } | null, pricePercentChange24h?: { __typename?: 'Amount', id: string, value: number } | null, priceHistory?: Array<{ __typename?: 'TimestampedAmount', id: string, timestamp: number, value: number } | null> | null } | null> | null, tokens: Array<{ __typename?: 'Token', id: string, chain: Chain, address?: string | null, symbol?: string | null, decimals?: number | null }> } | null> | null };
+
+export type AccountListQueryVariables = Exact<{
+  addresses: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type AccountListQuery = { __typename?: 'Query', portfolios?: Array<{ __typename?: 'Portfolio', id: string, tokensTotalDenominatedValue?: { __typename?: 'Amount', id: string, value: number } | null } | null> | null };
+
+export type SearchPopularTokensQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SearchPopularTokensQuery = { __typename?: 'Query', topTokens?: Array<{ __typename?: 'Token', id: string, address?: string | null, chain: Chain, name?: string | null, symbol?: string | null, project?: { __typename?: 'TokenProject', id: string, logoUrl?: string | null } | null } | null> | null, eth?: Array<{ __typename?: 'Token', id: string, address?: string | null, chain: Chain, name?: string | null, symbol?: string | null, project?: { __typename?: 'TokenProject', id: string, logoUrl?: string | null } | null } | null> | null };
+
+export type NftsQueryVariables = Exact<{
+  ownerAddress: Scalars['String'];
+}>;
+
+
+export type NftsQuery = { __typename?: 'Query', portfolios?: Array<{ __typename?: 'Portfolio', id: string, nftBalances?: Array<{ __typename?: 'NftBalance', id: string, ownedAsset?: { __typename?: 'NftAsset', id: string, description?: string | null, name?: string | null, tokenId: string, collection?: { __typename?: 'NftCollection', id: string, collectionId: string, description?: string | null, isVerified?: boolean | null, name?: string | null, numAssets?: number | null, image?: { __typename?: 'Image', id: string, url: string } | null, markets?: Array<{ __typename?: 'NftCollectionMarket', id: string, owners?: number | null, floorPrice?: { __typename?: 'TimestampedAmount', id: string, value: number } | null, volume24h?: { __typename?: 'Amount', id: string, value: number } | null, totalVolume?: { __typename?: 'TimestampedAmount', id: string, value: number } | null }> | null } | null, image?: { __typename?: 'Image', id: string, url: string } | null, nftContract?: { __typename?: 'NftContract', id: string, address: string, chain: Chain, standard?: NftStandard | null } | null, thumbnail?: { __typename?: 'Image', id: string, url: string } | null, creator?: { __typename?: 'NftProfile', id: string, address: string, username?: string | null } | null } | null } | null> | null } | null> | null };
+
+export type NftItemScreenQueryVariables = Exact<{
+  contractAddress: Scalars['String'];
+  filter?: InputMaybe<NftAssetsFilterInput>;
+}>;
+
+
+export type NftItemScreenQuery = { __typename?: 'Query', nftAssets?: { __typename?: 'NftAssetConnection', edges: Array<{ __typename?: 'NftAssetEdge', node: { __typename?: 'NftAsset', id: string, description?: string | null, name?: string | null, tokenId: string, collection?: { __typename?: 'NftCollection', id: string, collectionId: string, description?: string | null, isVerified?: boolean | null, name?: string | null, numAssets?: number | null, image?: { __typename?: 'Image', id: string, url: string } | null, markets?: Array<{ __typename?: 'NftCollectionMarket', id: string, owners?: number | null, floorPrice?: { __typename?: 'TimestampedAmount', id: string, value: number } | null, totalVolume?: { __typename?: 'TimestampedAmount', id: string, value: number } | null }> | null, nftContracts?: Array<{ __typename?: 'NftContract', id: string, address: string }> | null } | null, image?: { __typename?: 'Image', id: string, url: string } | null, nftContract?: { __typename?: 'NftContract', id: string, address: string, chain: Chain, standard?: NftStandard | null } | null, creator?: { __typename?: 'NftProfile', id: string, address: string, username?: string | null } | null } }> } | null };
+
+export type NftCollectionScreenQueryVariables = Exact<{
+  contractAddress: Scalars['String'];
+  first?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type NftCollectionScreenQuery = { __typename?: 'Query', nftCollections?: { __typename?: 'NftCollectionConnection', edges: Array<{ __typename?: 'NftCollectionEdge', node: { __typename?: 'NftCollection', id: string, isVerified?: boolean | null, numAssets?: number | null, description?: string | null, homepageUrl?: string | null, twitterName?: string | null, name?: string | null, bannerImage?: { __typename?: 'Image', id: string, url: string } | null, image?: { __typename?: 'Image', id: string, url: string } | null, markets?: Array<{ __typename?: 'NftCollectionMarket', id: string, owners?: number | null, floorPrice?: { __typename?: 'TimestampedAmount', id: string, value: number } | null, volume24h?: { __typename?: 'Amount', id: string, value: number } | null, totalVolume?: { __typename?: 'TimestampedAmount', id: string, value: number } | null }> | null } }> } | null, nftAssets?: { __typename?: 'NftAssetConnection', edges: Array<{ __typename?: 'NftAssetEdge', node: { __typename?: 'NftAsset', ownerAddress?: string | null, id: string, name?: string | null, tokenId: string, nftContract?: { __typename?: 'NftContract', id: string, address: string } | null, collection?: { __typename?: 'NftCollection', id: string, collectionId: string, name?: string | null } | null, image?: { __typename?: 'Image', id: string, url: string, dimensions?: { __typename?: 'Dimensions', id: string, width?: number | null, height?: number | null } | null } | null } }>, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: string | null } } | null };
+
+export type NftsTabQueryVariables = Exact<{
+  ownerAddress: Scalars['String'];
+  first?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type NftsTabQuery = { __typename?: 'Query', nftBalances?: { __typename?: 'NftBalanceConnection', edges: Array<{ __typename?: 'NftBalanceEdge', node: { __typename?: 'NftBalance', ownedAsset?: { __typename?: 'NftAsset', id: string, name?: string | null, tokenId: string, description?: string | null, collection?: { __typename?: 'NftCollection', id: string, name?: string | null, isVerified?: boolean | null, markets?: Array<{ __typename?: 'NftCollectionMarket', id: string, floorPrice?: { __typename?: 'TimestampedAmount', value: number } | null }> | null } | null, image?: { __typename?: 'Image', id: string, url: string, dimensions?: { __typename?: 'Dimensions', id: string, width?: number | null, height?: number | null } | null } | null, nftContract?: { __typename?: 'NftContract', id: string, address: string } | null } | null } }>, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: string | null } } | null };
+
+export type PortfolioBalancesQueryVariables = Exact<{
+  ownerAddress: Scalars['String'];
+}>;
+
+
+export type PortfolioBalancesQuery = { __typename?: 'Query', portfolios?: Array<{ __typename?: 'Portfolio', id: string, tokenBalances?: Array<{ __typename?: 'TokenBalance', id: string, quantity?: number | null, denominatedValue?: { __typename?: 'Amount', id: string, currency?: Currency | null, value: number } | null, token?: { __typename?: 'Token', id: string, chain: Chain, address?: string | null, name?: string | null, symbol?: string | null, decimals?: number | null, project?: { __typename?: 'TokenProject', id: string, logoUrl?: string | null, safetyLevel?: SafetyLevel | null, isSpam?: boolean | null } | null } | null, tokenProjectMarket?: { __typename?: 'TokenProjectMarket', relativeChange24?: { __typename?: 'Amount', id: string, value: number } | null } | null } | null> | null } | null> | null };
+
+export type SelectWalletScreenQueryVariables = Exact<{
+  ownerAddresses: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type SelectWalletScreenQuery = { __typename?: 'Query', portfolios?: Array<{ __typename?: 'Portfolio', id: string, ownerAddress: string, tokensTotalDenominatedValue?: { __typename?: 'Amount', id: string, value: number } | null } | null> | null };
+
+export type TransactionHistoryUpdaterQueryVariables = Exact<{
+  addresses: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type TransactionHistoryUpdaterQuery = { __typename?: 'Query', portfolios?: Array<{ __typename?: 'Portfolio', id: string, ownerAddress: string, assetActivities?: Array<{ __typename?: 'AssetActivity', id: string, timestamp: number, transaction: { __typename?: 'Transaction', id: string, hash: string } } | null> | null } | null> | null };
+
+export type TokenQueryVariables = Exact<{
+  chain: Chain;
+  address?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type TokenQuery = { __typename?: 'Query', token?: { __typename?: 'Token', id: string, name?: string | null, symbol?: string | null, decimals?: number | null, chain: Chain, address?: string | null, project?: { __typename?: 'TokenProject', id: string, logoUrl?: string | null, safetyLevel?: SafetyLevel | null, isSpam?: boolean | null } | null } | null };
+
+export type TokenDetailsScreenQueryVariables = Exact<{
+  chain: Chain;
+  address?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type TokenDetailsScreenQuery = { __typename?: 'Query', token?: { __typename?: 'Token', id: string, address?: string | null, chain: Chain, name?: string | null, symbol?: string | null, market?: { __typename?: 'TokenMarket', id: string, volume?: { __typename?: 'Amount', id: string, value: number } | null } | null, project?: { __typename?: 'TokenProject', id: string, description?: string | null, homepageUrl?: string | null, twitterName?: string | null, safetyLevel?: SafetyLevel | null, logoUrl?: string | null, markets?: Array<{ __typename?: 'TokenProjectMarket', id: string, price?: { __typename?: 'Amount', id: string, value: number } | null, marketCap?: { __typename?: 'Amount', id: string, value: number } | null, fullyDilutedMarketCap?: { __typename?: 'Amount', id: string, value: number } | null, priceHigh52W?: { __typename?: 'Amount', id: string, value: number } | null, priceLow52W?: { __typename?: 'Amount', id: string, value: number } | null } | null> | null, tokens: Array<{ __typename?: 'Token', id: string, chain: Chain, address?: string | null }> } | null } | null };
+
+export type TokenProjectsQueryVariables = Exact<{
+  contracts: Array<ContractInput> | ContractInput;
+}>;
+
+
+export type TokenProjectsQuery = { __typename?: 'Query', tokenProjects?: Array<{ __typename?: 'TokenProject', id: string, logoUrl?: string | null, safetyLevel?: SafetyLevel | null, tokens: Array<{ __typename?: 'Token', id: string, chain: Chain, address?: string | null, name?: string | null, decimals?: number | null, symbol?: string | null }> } | null> | null };
+
+export type TransactionListQueryVariables = Exact<{
+  address: Scalars['String'];
+}>;
+
+
+export type TransactionListQuery = { __typename?: 'Query', portfolios?: Array<{ __typename?: 'Portfolio', id: string, assetActivities?: Array<{ __typename?: 'AssetActivity', id: string, timestamp: number, type: ActivityType, transaction: { __typename?: 'Transaction', id: string, hash: string, status: TransactionStatus, to: string, from: string }, assetChanges: Array<{ __typename: 'NftApproval' } | { __typename: 'NftApproveForAll' } | { __typename: 'NftTransfer', id: string, nftStandard: NftStandard, sender: string, recipient: string, direction: TransactionDirection, asset: { __typename?: 'NftAsset', id: string, name?: string | null, tokenId: string, nftContract?: { __typename?: 'NftContract', id: string, chain: Chain, address: string } | null, image?: { __typename?: 'Image', id: string, url: string } | null, collection?: { __typename?: 'NftCollection', id: string, name?: string | null } | null } } | { __typename: 'TokenApproval', id: string, tokenStandard: TokenStandard, approvedAddress: string, quantity: string, asset: { __typename?: 'Token', id: string, name?: string | null, symbol?: string | null, decimals?: number | null, address?: string | null, chain: Chain } } | { __typename: 'TokenTransfer', id: string, tokenStandard: TokenStandard, quantity: string, sender: string, recipient: string, direction: TransactionDirection, asset: { __typename?: 'Token', id: string, name?: string | null, symbol?: string | null, address?: string | null, decimals?: number | null, chain: Chain, project?: { __typename?: 'TokenProject', id: string, isSpam?: boolean | null } | null }, transactedValue?: { __typename?: 'Amount', id: string, currency?: Currency | null, value: number } | null } | null> } | null> | null } | null> | null };
+
+export type TopTokensQueryVariables = Exact<{
+  chain?: InputMaybe<Chain>;
+  page?: InputMaybe<Scalars['Int']>;
+  pageSize?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<TokenSortableField>;
+}>;
+
+
+export type TopTokensQuery = { __typename?: 'Query', topTokens?: Array<{ __typename?: 'Token', id: string, address?: string | null, chain: Chain, decimals?: number | null, name?: string | null, symbol?: string | null, project?: { __typename?: 'TokenProject', id: string, isSpam?: boolean | null, logoUrl?: string | null, safetyLevel?: SafetyLevel | null } | null } | null> | null };
+
+export type SearchTokensQueryVariables = Exact<{
+  searchQuery: Scalars['String'];
+}>;
+
+
+export type SearchTokensQuery = { __typename?: 'Query', searchTokens?: Array<{ __typename?: 'Token', id: string, chain: Chain, address?: string | null, decimals?: number | null, name?: string | null, symbol?: string | null, project?: { __typename?: 'TokenProject', id: string, logoUrl?: string | null, safetyLevel?: SafetyLevel | null } | null } | null> | null };
+
+export type ExploreSearchTokensQueryVariables = Exact<{
+  searchQuery: Scalars['String'];
+}>;
+
+
+export type ExploreSearchTokensQuery = { __typename?: 'Query', searchTokens?: Array<{ __typename?: 'Token', id: string, chain: Chain, address?: string | null, decimals?: number | null, name?: string | null, symbol?: string | null, market?: { __typename?: 'TokenMarket', volume?: { __typename?: 'Amount', id: string, value: number } | null } | null, project?: { __typename?: 'TokenProject', id: string, logoUrl?: string | null, safetyLevel?: SafetyLevel | null } | null } | null> | null };
+
+export type SpotPricesQueryVariables = Exact<{
+  contracts: Array<ContractInput> | ContractInput;
+}>;
+
+
+export type SpotPricesQuery = { __typename?: 'Query', tokenProjects?: Array<{ __typename?: 'TokenProject', id: string, markets?: Array<{ __typename?: 'TokenProjectMarket', id: string, price?: { __typename?: 'Amount', id: string, value: number } | null, pricePercentChange24h?: { __typename?: 'Amount', id: string, value: number } | null } | null> | null } | null> | null };
+
+export type TopTokenPartsFragment = { __typename?: 'Token', id: string, name?: string | null, symbol?: string | null, chain: Chain, address?: string | null, market?: { __typename?: 'TokenMarket', id: string, totalValueLocked?: { __typename?: 'Amount', id: string, value: number } | null, volume?: { __typename?: 'Amount', id: string, value: number } | null } | null, project?: { __typename?: 'TokenProject', id: string, logoUrl?: string | null, markets?: Array<{ __typename?: 'TokenProjectMarket', id: string, price?: { __typename?: 'Amount', id: string, value: number } | null, pricePercentChange24h?: { __typename?: 'Amount', id: string, value: number } | null, marketCap?: { __typename?: 'Amount', id: string, value: number } | null } | null> | null } | null };
+
+export type ExploreTokensTabQueryVariables = Exact<{
+  topTokensOrderBy: TokenSortableField;
+}>;
+
+
+export type ExploreTokensTabQuery = { __typename?: 'Query', topTokens?: Array<{ __typename?: 'Token', id: string, name?: string | null, symbol?: string | null, chain: Chain, address?: string | null, market?: { __typename?: 'TokenMarket', id: string, totalValueLocked?: { __typename?: 'Amount', id: string, value: number } | null, volume?: { __typename?: 'Amount', id: string, value: number } | null } | null, project?: { __typename?: 'TokenProject', id: string, logoUrl?: string | null, markets?: Array<{ __typename?: 'TokenProjectMarket', id: string, price?: { __typename?: 'Amount', id: string, value: number } | null, pricePercentChange24h?: { __typename?: 'Amount', id: string, value: number } | null, marketCap?: { __typename?: 'Amount', id: string, value: number } | null } | null> | null } | null } | null> | null, eth?: { __typename?: 'Token', id: string, name?: string | null, symbol?: string | null, chain: Chain, address?: string | null, market?: { __typename?: 'TokenMarket', id: string, totalValueLocked?: { __typename?: 'Amount', id: string, value: number } | null, volume?: { __typename?: 'Amount', id: string, value: number } | null } | null, project?: { __typename?: 'TokenProject', id: string, logoUrl?: string | null, markets?: Array<{ __typename?: 'TokenProjectMarket', id: string, price?: { __typename?: 'Amount', id: string, value: number } | null, pricePercentChange24h?: { __typename?: 'Amount', id: string, value: number } | null, marketCap?: { __typename?: 'Amount', id: string, value: number } | null } | null> | null } | null } | null };
+
+export type FavoriteTokenCardQueryVariables = Exact<{
+  chain: Chain;
+  address?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type FavoriteTokenCardQuery = { __typename?: 'Query', token?: { __typename?: 'Token', id: string, name?: string | null, symbol?: string | null, chain: Chain, address?: string | null, project?: { __typename?: 'TokenProject', id: string, logoUrl?: string | null, markets?: Array<{ __typename?: 'TokenProjectMarket', id: string, price?: { __typename?: 'Amount', id: string, value: number } | null, pricePercentChange24h?: { __typename?: 'Amount', id: string, value: number } | null } | null> | null } | null } | null };
+
+export type PortfolioBalanceQueryVariables = Exact<{
+  owner: Scalars['String'];
+}>;
+
+
+export type PortfolioBalanceQuery = { __typename?: 'Query', portfolios?: Array<{ __typename?: 'Portfolio', id: string, tokensTotalDenominatedValue?: { __typename?: 'Amount', id: string, value: number } | null, tokensTotalDenominatedValueChange?: { __typename?: 'AmountChange', absolute?: { __typename?: 'Amount', id: string, value: number } | null, percentage?: { __typename?: 'Amount', id: string, value: number } | null } | null } | null> | null };
+
+export const TopTokenPartsFragmentDoc = gql`
+    fragment TopTokenParts on Token {
+  id
+  name
+  symbol
+  chain
+  address
+  market {
+    id
+    totalValueLocked {
+      id
+      value
+    }
+    volume(duration: DAY) {
+      id
+      value
+    }
+  }
+  project {
+    id
+    logoUrl
+    markets(currencies: [USD]) {
+      id
+      price {
+        id
+        value
+      }
+      pricePercentChange24h {
+        id
+        value
+      }
+      marketCap {
+        id
+        value
+      }
+    }
+  }
+}
+    `;
+export const TokenPriceHistoryDocument = gql`
+    query TokenPriceHistory($contract: ContractInput!, $duration: HistoryDuration = DAY) {
+  tokenProjects(contracts: [$contract]) {
+    id
+    name
+    markets(currencies: [USD]) {
+      id
+      price {
+        id
+        value
+      }
+      pricePercentChange24h {
+        id
+        value
+      }
+      priceHistory(duration: $duration) {
+        id
+        timestamp
+        value
+      }
+    }
+    tokens {
+      id
+      chain
+      address
+      symbol
+      decimals
+    }
+  }
+}
+    `;
+
+/**
+ * __useTokenPriceHistoryQuery__
+ *
+ * To run a query within a React component, call `useTokenPriceHistoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTokenPriceHistoryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTokenPriceHistoryQuery({
+ *   variables: {
+ *      contract: // value for 'contract'
+ *      duration: // value for 'duration'
+ *   },
+ * });
+ */
+export function useTokenPriceHistoryQuery(baseOptions: Apollo.QueryHookOptions<TokenPriceHistoryQuery, TokenPriceHistoryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TokenPriceHistoryQuery, TokenPriceHistoryQueryVariables>(TokenPriceHistoryDocument, options);
+      }
+export function useTokenPriceHistoryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TokenPriceHistoryQuery, TokenPriceHistoryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TokenPriceHistoryQuery, TokenPriceHistoryQueryVariables>(TokenPriceHistoryDocument, options);
+        }
+export type TokenPriceHistoryQueryHookResult = ReturnType<typeof useTokenPriceHistoryQuery>;
+export type TokenPriceHistoryLazyQueryHookResult = ReturnType<typeof useTokenPriceHistoryLazyQuery>;
+export type TokenPriceHistoryQueryResult = Apollo.QueryResult<TokenPriceHistoryQuery, TokenPriceHistoryQueryVariables>;
+export const AccountListDocument = gql`
+    query AccountList($addresses: [String!]!) {
+  portfolios(ownerAddresses: $addresses) {
+    id
+    tokensTotalDenominatedValue {
+      id
+      value
+    }
+  }
+}
+    `;
+
+/**
+ * __useAccountListQuery__
+ *
+ * To run a query within a React component, call `useAccountListQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAccountListQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAccountListQuery({
+ *   variables: {
+ *      addresses: // value for 'addresses'
+ *   },
+ * });
+ */
+export function useAccountListQuery(baseOptions: Apollo.QueryHookOptions<AccountListQuery, AccountListQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AccountListQuery, AccountListQueryVariables>(AccountListDocument, options);
+      }
+export function useAccountListLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AccountListQuery, AccountListQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AccountListQuery, AccountListQueryVariables>(AccountListDocument, options);
+        }
+export type AccountListQueryHookResult = ReturnType<typeof useAccountListQuery>;
+export type AccountListLazyQueryHookResult = ReturnType<typeof useAccountListLazyQuery>;
+export type AccountListQueryResult = Apollo.QueryResult<AccountListQuery, AccountListQueryVariables>;
+export const SearchPopularTokensDocument = gql`
+    query SearchPopularTokens {
+  topTokens(chain: ETHEREUM, orderBy: VOLUME, page: 1, pageSize: 3) {
+    id
+    address
+    chain
+    name
+    symbol
+    project {
+      id
+      logoUrl
+    }
+  }
+  eth: tokens(contracts: [{address: null, chain: ETHEREUM}]) {
+    id
+    address
+    chain
+    name
+    symbol
+    project {
+      id
+      logoUrl
+    }
+  }
+}
+    `;
+
+/**
+ * __useSearchPopularTokensQuery__
+ *
+ * To run a query within a React component, call `useSearchPopularTokensQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchPopularTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchPopularTokensQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSearchPopularTokensQuery(baseOptions?: Apollo.QueryHookOptions<SearchPopularTokensQuery, SearchPopularTokensQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchPopularTokensQuery, SearchPopularTokensQueryVariables>(SearchPopularTokensDocument, options);
+      }
+export function useSearchPopularTokensLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchPopularTokensQuery, SearchPopularTokensQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchPopularTokensQuery, SearchPopularTokensQueryVariables>(SearchPopularTokensDocument, options);
+        }
+export type SearchPopularTokensQueryHookResult = ReturnType<typeof useSearchPopularTokensQuery>;
+export type SearchPopularTokensLazyQueryHookResult = ReturnType<typeof useSearchPopularTokensLazyQuery>;
+export type SearchPopularTokensQueryResult = Apollo.QueryResult<SearchPopularTokensQuery, SearchPopularTokensQueryVariables>;
+export const NftsDocument = gql`
+    query Nfts($ownerAddress: String!) {
+  portfolios(ownerAddresses: [$ownerAddress]) {
+    id
+    nftBalances {
+      id
+      ownedAsset {
+        id
+        collection {
+          id
+          collectionId
+          description
+          image {
+            id
+            url
+          }
+          isVerified
+          name
+          numAssets
+          markets(currencies: [USD]) {
+            id
+            floorPrice {
+              id
+              value
+            }
+            owners
+            volume24h {
+              id
+              value
+            }
+            totalVolume {
+              id
+              value
+            }
+          }
+        }
+        description
+        image {
+          id
+          url
+        }
+        name
+        nftContract {
+          id
+          address
+          chain
+          standard
+        }
+        thumbnail {
+          id
+          url
+        }
+        tokenId
+        creator {
+          id
+          address
+          username
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useNftsQuery__
+ *
+ * To run a query within a React component, call `useNftsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNftsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNftsQuery({
+ *   variables: {
+ *      ownerAddress: // value for 'ownerAddress'
+ *   },
+ * });
+ */
+export function useNftsQuery(baseOptions: Apollo.QueryHookOptions<NftsQuery, NftsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<NftsQuery, NftsQueryVariables>(NftsDocument, options);
+      }
+export function useNftsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NftsQuery, NftsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<NftsQuery, NftsQueryVariables>(NftsDocument, options);
+        }
+export type NftsQueryHookResult = ReturnType<typeof useNftsQuery>;
+export type NftsLazyQueryHookResult = ReturnType<typeof useNftsLazyQuery>;
+export type NftsQueryResult = Apollo.QueryResult<NftsQuery, NftsQueryVariables>;
+export const NftItemScreenDocument = gql`
+    query NFTItemScreen($contractAddress: String!, $filter: NftAssetsFilterInput) {
+  nftAssets(address: $contractAddress, filter: $filter) {
+    edges {
+      node {
+        id
+        collection {
+          id
+          collectionId
+          description
+          image {
+            id
+            url
+          }
+          isVerified
+          name
+          numAssets
+          markets(currencies: [USD]) {
+            id
+            floorPrice {
+              id
+              value
+            }
+            owners
+            totalVolume {
+              id
+              value
+            }
+          }
+          nftContracts {
+            id
+            address
+          }
+        }
+        description
+        image {
+          id
+          url
+        }
+        name
+        nftContract {
+          id
+          address
+          chain
+          standard
+        }
+        tokenId
+        creator {
+          id
+          address
+          username
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useNftItemScreenQuery__
+ *
+ * To run a query within a React component, call `useNftItemScreenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNftItemScreenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNftItemScreenQuery({
+ *   variables: {
+ *      contractAddress: // value for 'contractAddress'
+ *      filter: // value for 'filter'
+ *   },
+ * });
+ */
+export function useNftItemScreenQuery(baseOptions: Apollo.QueryHookOptions<NftItemScreenQuery, NftItemScreenQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<NftItemScreenQuery, NftItemScreenQueryVariables>(NftItemScreenDocument, options);
+      }
+export function useNftItemScreenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NftItemScreenQuery, NftItemScreenQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<NftItemScreenQuery, NftItemScreenQueryVariables>(NftItemScreenDocument, options);
+        }
+export type NftItemScreenQueryHookResult = ReturnType<typeof useNftItemScreenQuery>;
+export type NftItemScreenLazyQueryHookResult = ReturnType<typeof useNftItemScreenLazyQuery>;
+export type NftItemScreenQueryResult = Apollo.QueryResult<NftItemScreenQuery, NftItemScreenQueryVariables>;
+export const NftCollectionScreenDocument = gql`
+    query NftCollectionScreen($contractAddress: String!, $first: Int, $after: String) {
+  nftCollections(filter: {addresses: [$contractAddress]}) {
+    edges {
+      node {
+        id
+        bannerImage {
+          id
+          url
+        }
+        isVerified
+        numAssets
+        description
+        homepageUrl
+        twitterName
+        image {
+          id
+          url
+        }
+        name
+        markets(currencies: [USD]) {
+          id
+          floorPrice {
+            id
+            value
+          }
+          owners
+          volume24h {
+            id
+            value
+          }
+          totalVolume {
+            id
+            value
+          }
+        }
+      }
+    }
+  }
+  nftAssets(address: $contractAddress, first: $first, after: $after) {
+    edges {
+      node {
+        ownerAddress
+        id
+        name
+        tokenId
+        nftContract {
+          id
+          address
+        }
+        collection {
+          id
+          collectionId
+          name
+        }
+        image {
+          id
+          url
+          dimensions {
+            id
+            width
+            height
+          }
+        }
+      }
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+      hasPreviousPage
+      startCursor
+    }
+  }
+}
+    `;
+
+/**
+ * __useNftCollectionScreenQuery__
+ *
+ * To run a query within a React component, call `useNftCollectionScreenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNftCollectionScreenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNftCollectionScreenQuery({
+ *   variables: {
+ *      contractAddress: // value for 'contractAddress'
+ *      first: // value for 'first'
+ *      after: // value for 'after'
+ *   },
+ * });
+ */
+export function useNftCollectionScreenQuery(baseOptions: Apollo.QueryHookOptions<NftCollectionScreenQuery, NftCollectionScreenQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<NftCollectionScreenQuery, NftCollectionScreenQueryVariables>(NftCollectionScreenDocument, options);
+      }
+export function useNftCollectionScreenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NftCollectionScreenQuery, NftCollectionScreenQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<NftCollectionScreenQuery, NftCollectionScreenQueryVariables>(NftCollectionScreenDocument, options);
+        }
+export type NftCollectionScreenQueryHookResult = ReturnType<typeof useNftCollectionScreenQuery>;
+export type NftCollectionScreenLazyQueryHookResult = ReturnType<typeof useNftCollectionScreenLazyQuery>;
+export type NftCollectionScreenQueryResult = Apollo.QueryResult<NftCollectionScreenQuery, NftCollectionScreenQueryVariables>;
+export const NftsTabDocument = gql`
+    query NftsTab($ownerAddress: String!, $first: Int, $after: String) {
+  nftBalances(ownerAddress: $ownerAddress, first: $first, after: $after) {
+    edges {
+      node {
+        ownedAsset {
+          id
+          collection {
+            id
+            name
+            isVerified
+            markets(currencies: [ETH]) {
+              id
+              floorPrice {
+                value
+              }
+            }
+          }
+          image {
+            id
+            url
+            dimensions {
+              id
+              width
+              height
+            }
+          }
+          name
+          tokenId
+          description
+          nftContract {
+            id
+            address
+          }
+        }
+      }
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+      hasPreviousPage
+      startCursor
+    }
+  }
+}
+    `;
+
+/**
+ * __useNftsTabQuery__
+ *
+ * To run a query within a React component, call `useNftsTabQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNftsTabQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNftsTabQuery({
+ *   variables: {
+ *      ownerAddress: // value for 'ownerAddress'
+ *      first: // value for 'first'
+ *      after: // value for 'after'
+ *   },
+ * });
+ */
+export function useNftsTabQuery(baseOptions: Apollo.QueryHookOptions<NftsTabQuery, NftsTabQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<NftsTabQuery, NftsTabQueryVariables>(NftsTabDocument, options);
+      }
+export function useNftsTabLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NftsTabQuery, NftsTabQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<NftsTabQuery, NftsTabQueryVariables>(NftsTabDocument, options);
+        }
+export type NftsTabQueryHookResult = ReturnType<typeof useNftsTabQuery>;
+export type NftsTabLazyQueryHookResult = ReturnType<typeof useNftsTabLazyQuery>;
+export type NftsTabQueryResult = Apollo.QueryResult<NftsTabQuery, NftsTabQueryVariables>;
+export const PortfolioBalancesDocument = gql`
+    query PortfolioBalances($ownerAddress: String!) {
+  portfolios(ownerAddresses: [$ownerAddress]) {
+    id
+    tokenBalances {
+      id
+      quantity
+      denominatedValue {
+        id
+        currency
+        value
+      }
+      token {
+        id
+        chain
+        address
+        name
+        symbol
+        decimals
+        project {
+          id
+          logoUrl
+          safetyLevel
+          isSpam
+        }
+      }
+      tokenProjectMarket {
+        relativeChange24: pricePercentChange(duration: DAY) {
+          id
+          value
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __usePortfolioBalancesQuery__
+ *
+ * To run a query within a React component, call `usePortfolioBalancesQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePortfolioBalancesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePortfolioBalancesQuery({
+ *   variables: {
+ *      ownerAddress: // value for 'ownerAddress'
+ *   },
+ * });
+ */
+export function usePortfolioBalancesQuery(baseOptions: Apollo.QueryHookOptions<PortfolioBalancesQuery, PortfolioBalancesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PortfolioBalancesQuery, PortfolioBalancesQueryVariables>(PortfolioBalancesDocument, options);
+      }
+export function usePortfolioBalancesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PortfolioBalancesQuery, PortfolioBalancesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PortfolioBalancesQuery, PortfolioBalancesQueryVariables>(PortfolioBalancesDocument, options);
+        }
+export type PortfolioBalancesQueryHookResult = ReturnType<typeof usePortfolioBalancesQuery>;
+export type PortfolioBalancesLazyQueryHookResult = ReturnType<typeof usePortfolioBalancesLazyQuery>;
+export type PortfolioBalancesQueryResult = Apollo.QueryResult<PortfolioBalancesQuery, PortfolioBalancesQueryVariables>;
+export const SelectWalletScreenDocument = gql`
+    query SelectWalletScreen($ownerAddresses: [String!]!) {
+  portfolios(ownerAddresses: $ownerAddresses) {
+    id
+    ownerAddress
+    tokensTotalDenominatedValue {
+      id
+      value
+    }
+  }
+}
+    `;
+
+/**
+ * __useSelectWalletScreenQuery__
+ *
+ * To run a query within a React component, call `useSelectWalletScreenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectWalletScreenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectWalletScreenQuery({
+ *   variables: {
+ *      ownerAddresses: // value for 'ownerAddresses'
+ *   },
+ * });
+ */
+export function useSelectWalletScreenQuery(baseOptions: Apollo.QueryHookOptions<SelectWalletScreenQuery, SelectWalletScreenQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SelectWalletScreenQuery, SelectWalletScreenQueryVariables>(SelectWalletScreenDocument, options);
+      }
+export function useSelectWalletScreenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectWalletScreenQuery, SelectWalletScreenQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SelectWalletScreenQuery, SelectWalletScreenQueryVariables>(SelectWalletScreenDocument, options);
+        }
+export type SelectWalletScreenQueryHookResult = ReturnType<typeof useSelectWalletScreenQuery>;
+export type SelectWalletScreenLazyQueryHookResult = ReturnType<typeof useSelectWalletScreenLazyQuery>;
+export type SelectWalletScreenQueryResult = Apollo.QueryResult<SelectWalletScreenQuery, SelectWalletScreenQueryVariables>;
+export const TransactionHistoryUpdaterDocument = gql`
+    query TransactionHistoryUpdater($addresses: [String!]!) {
+  portfolios(ownerAddresses: $addresses) {
+    id
+    ownerAddress
+    assetActivities(pageSize: 1, page: 1) {
+      id
+      timestamp
+      transaction {
+        id
+        hash
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useTransactionHistoryUpdaterQuery__
+ *
+ * To run a query within a React component, call `useTransactionHistoryUpdaterQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTransactionHistoryUpdaterQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTransactionHistoryUpdaterQuery({
+ *   variables: {
+ *      addresses: // value for 'addresses'
+ *   },
+ * });
+ */
+export function useTransactionHistoryUpdaterQuery(baseOptions: Apollo.QueryHookOptions<TransactionHistoryUpdaterQuery, TransactionHistoryUpdaterQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TransactionHistoryUpdaterQuery, TransactionHistoryUpdaterQueryVariables>(TransactionHistoryUpdaterDocument, options);
+      }
+export function useTransactionHistoryUpdaterLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TransactionHistoryUpdaterQuery, TransactionHistoryUpdaterQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TransactionHistoryUpdaterQuery, TransactionHistoryUpdaterQueryVariables>(TransactionHistoryUpdaterDocument, options);
+        }
+export type TransactionHistoryUpdaterQueryHookResult = ReturnType<typeof useTransactionHistoryUpdaterQuery>;
+export type TransactionHistoryUpdaterLazyQueryHookResult = ReturnType<typeof useTransactionHistoryUpdaterLazyQuery>;
+export type TransactionHistoryUpdaterQueryResult = Apollo.QueryResult<TransactionHistoryUpdaterQuery, TransactionHistoryUpdaterQueryVariables>;
+export const TokenDocument = gql`
+    query Token($chain: Chain!, $address: String) {
+  token(chain: $chain, address: $address) {
+    id
+    name
+    symbol
+    decimals
+    chain
+    address
+    project {
+      id
+      logoUrl
+      safetyLevel
+      isSpam
+    }
+  }
+}
+    `;
+
+/**
+ * __useTokenQuery__
+ *
+ * To run a query within a React component, call `useTokenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTokenQuery({
+ *   variables: {
+ *      chain: // value for 'chain'
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useTokenQuery(baseOptions: Apollo.QueryHookOptions<TokenQuery, TokenQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TokenQuery, TokenQueryVariables>(TokenDocument, options);
+      }
+export function useTokenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TokenQuery, TokenQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TokenQuery, TokenQueryVariables>(TokenDocument, options);
+        }
+export type TokenQueryHookResult = ReturnType<typeof useTokenQuery>;
+export type TokenLazyQueryHookResult = ReturnType<typeof useTokenLazyQuery>;
+export type TokenQueryResult = Apollo.QueryResult<TokenQuery, TokenQueryVariables>;
+export const TokenDetailsScreenDocument = gql`
+    query TokenDetailsScreen($chain: Chain!, $address: String) {
+  token(chain: $chain, address: $address) {
+    id
+    address
+    chain
+    name
+    symbol
+    market(currency: USD) {
+      id
+      volume(duration: DAY) {
+        id
+        value
+      }
+    }
+    project {
+      id
+      description
+      homepageUrl
+      twitterName
+      safetyLevel
+      logoUrl
+      markets(currencies: [USD]) {
+        id
+        price {
+          id
+          value
+        }
+        marketCap {
+          id
+          value
+        }
+        fullyDilutedMarketCap {
+          id
+          value
+        }
+        priceHigh52W: priceHighLow(duration: YEAR, highLow: HIGH) {
+          id
+          value
+        }
+        priceLow52W: priceHighLow(duration: YEAR, highLow: LOW) {
+          id
+          value
+        }
+      }
+      tokens {
+        id
+        chain
+        address
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useTokenDetailsScreenQuery__
+ *
+ * To run a query within a React component, call `useTokenDetailsScreenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTokenDetailsScreenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTokenDetailsScreenQuery({
+ *   variables: {
+ *      chain: // value for 'chain'
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useTokenDetailsScreenQuery(baseOptions: Apollo.QueryHookOptions<TokenDetailsScreenQuery, TokenDetailsScreenQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TokenDetailsScreenQuery, TokenDetailsScreenQueryVariables>(TokenDetailsScreenDocument, options);
+      }
+export function useTokenDetailsScreenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TokenDetailsScreenQuery, TokenDetailsScreenQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TokenDetailsScreenQuery, TokenDetailsScreenQueryVariables>(TokenDetailsScreenDocument, options);
+        }
+export type TokenDetailsScreenQueryHookResult = ReturnType<typeof useTokenDetailsScreenQuery>;
+export type TokenDetailsScreenLazyQueryHookResult = ReturnType<typeof useTokenDetailsScreenLazyQuery>;
+export type TokenDetailsScreenQueryResult = Apollo.QueryResult<TokenDetailsScreenQuery, TokenDetailsScreenQueryVariables>;
+export const TokenProjectsDocument = gql`
+    query TokenProjects($contracts: [ContractInput!]!) {
+  tokenProjects(contracts: $contracts) {
+    id
+    logoUrl
+    safetyLevel
+    tokens {
+      id
+      chain
+      address
+      name
+      decimals
+      symbol
+    }
+  }
+}
+    `;
+
+/**
+ * __useTokenProjectsQuery__
+ *
+ * To run a query within a React component, call `useTokenProjectsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTokenProjectsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTokenProjectsQuery({
+ *   variables: {
+ *      contracts: // value for 'contracts'
+ *   },
+ * });
+ */
+export function useTokenProjectsQuery(baseOptions: Apollo.QueryHookOptions<TokenProjectsQuery, TokenProjectsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TokenProjectsQuery, TokenProjectsQueryVariables>(TokenProjectsDocument, options);
+      }
+export function useTokenProjectsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TokenProjectsQuery, TokenProjectsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TokenProjectsQuery, TokenProjectsQueryVariables>(TokenProjectsDocument, options);
+        }
+export type TokenProjectsQueryHookResult = ReturnType<typeof useTokenProjectsQuery>;
+export type TokenProjectsLazyQueryHookResult = ReturnType<typeof useTokenProjectsLazyQuery>;
+export type TokenProjectsQueryResult = Apollo.QueryResult<TokenProjectsQuery, TokenProjectsQueryVariables>;
+export const TransactionListDocument = gql`
+    query TransactionList($address: String!) {
+  portfolios(ownerAddresses: [$address]) {
+    id
+    assetActivities(pageSize: 50, page: 1) {
+      id
+      timestamp
+      type
+      transaction {
+        id
+        hash
+        status
+        to
+        from
+      }
+      assetChanges {
+        __typename
+        ... on TokenTransfer {
+          id
+          asset {
+            id
+            name
+            symbol
+            address
+            decimals
+            chain
+            project {
+              id
+              isSpam
+            }
+          }
+          tokenStandard
+          quantity
+          sender
+          recipient
+          direction
+          transactedValue {
+            id
+            currency
+            value
+          }
+        }
+        ... on NftTransfer {
+          id
+          asset {
+            id
+            name
+            nftContract {
+              id
+              chain
+              address
+            }
+            tokenId
+            image {
+              id
+              url
+            }
+            collection {
+              id
+              name
+            }
+          }
+          nftStandard
+          sender
+          recipient
+          direction
+        }
+        ... on TokenApproval {
+          id
+          asset {
+            id
+            name
+            symbol
+            decimals
+            address
+            chain
+          }
+          tokenStandard
+          approvedAddress
+          quantity
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useTransactionListQuery__
+ *
+ * To run a query within a React component, call `useTransactionListQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTransactionListQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTransactionListQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useTransactionListQuery(baseOptions: Apollo.QueryHookOptions<TransactionListQuery, TransactionListQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TransactionListQuery, TransactionListQueryVariables>(TransactionListDocument, options);
+      }
+export function useTransactionListLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TransactionListQuery, TransactionListQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TransactionListQuery, TransactionListQueryVariables>(TransactionListDocument, options);
+        }
+export type TransactionListQueryHookResult = ReturnType<typeof useTransactionListQuery>;
+export type TransactionListLazyQueryHookResult = ReturnType<typeof useTransactionListLazyQuery>;
+export type TransactionListQueryResult = Apollo.QueryResult<TransactionListQuery, TransactionListQueryVariables>;
+export const TopTokensDocument = gql`
+    query TopTokens($chain: Chain, $page: Int = 1, $pageSize: Int = 100, $orderBy: TokenSortableField = POPULARITY) {
+  topTokens(chain: $chain, page: $page, pageSize: $pageSize, orderBy: $orderBy) {
+    id
+    address
+    chain
+    decimals
+    name
+    symbol
+    project {
+      id
+      isSpam
+      logoUrl
+      safetyLevel
+    }
+  }
+}
+    `;
+
+/**
+ * __useTopTokensQuery__
+ *
+ * To run a query within a React component, call `useTopTokensQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTopTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTopTokensQuery({
+ *   variables: {
+ *      chain: // value for 'chain'
+ *      page: // value for 'page'
+ *      pageSize: // value for 'pageSize'
+ *      orderBy: // value for 'orderBy'
+ *   },
+ * });
+ */
+export function useTopTokensQuery(baseOptions?: Apollo.QueryHookOptions<TopTokensQuery, TopTokensQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TopTokensQuery, TopTokensQueryVariables>(TopTokensDocument, options);
+      }
+export function useTopTokensLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TopTokensQuery, TopTokensQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TopTokensQuery, TopTokensQueryVariables>(TopTokensDocument, options);
+        }
+export type TopTokensQueryHookResult = ReturnType<typeof useTopTokensQuery>;
+export type TopTokensLazyQueryHookResult = ReturnType<typeof useTopTokensLazyQuery>;
+export type TopTokensQueryResult = Apollo.QueryResult<TopTokensQuery, TopTokensQueryVariables>;
+export const SearchTokensDocument = gql`
+    query SearchTokens($searchQuery: String!) {
+  searchTokens(searchQuery: $searchQuery) {
+    id
+    chain
+    address
+    decimals
+    name
+    symbol
+    project {
+      id
+      logoUrl
+      safetyLevel
+    }
+  }
+}
+    `;
+
+/**
+ * __useSearchTokensQuery__
+ *
+ * To run a query within a React component, call `useSearchTokensQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchTokensQuery({
+ *   variables: {
+ *      searchQuery: // value for 'searchQuery'
+ *   },
+ * });
+ */
+export function useSearchTokensQuery(baseOptions: Apollo.QueryHookOptions<SearchTokensQuery, SearchTokensQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchTokensQuery, SearchTokensQueryVariables>(SearchTokensDocument, options);
+      }
+export function useSearchTokensLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchTokensQuery, SearchTokensQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchTokensQuery, SearchTokensQueryVariables>(SearchTokensDocument, options);
+        }
+export type SearchTokensQueryHookResult = ReturnType<typeof useSearchTokensQuery>;
+export type SearchTokensLazyQueryHookResult = ReturnType<typeof useSearchTokensLazyQuery>;
+export type SearchTokensQueryResult = Apollo.QueryResult<SearchTokensQuery, SearchTokensQueryVariables>;
+export const ExploreSearchTokensDocument = gql`
+    query ExploreSearchTokens($searchQuery: String!) {
+  searchTokens(searchQuery: $searchQuery) {
+    id
+    chain
+    address
+    decimals
+    name
+    symbol
+    market {
+      volume(duration: YEAR) {
+        id
+        value
+      }
+    }
+    project {
+      id
+      logoUrl
+      safetyLevel
+    }
+  }
+}
+    `;
+
+/**
+ * __useExploreSearchTokensQuery__
+ *
+ * To run a query within a React component, call `useExploreSearchTokensQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExploreSearchTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useExploreSearchTokensQuery({
+ *   variables: {
+ *      searchQuery: // value for 'searchQuery'
+ *   },
+ * });
+ */
+export function useExploreSearchTokensQuery(baseOptions: Apollo.QueryHookOptions<ExploreSearchTokensQuery, ExploreSearchTokensQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ExploreSearchTokensQuery, ExploreSearchTokensQueryVariables>(ExploreSearchTokensDocument, options);
+      }
+export function useExploreSearchTokensLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ExploreSearchTokensQuery, ExploreSearchTokensQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ExploreSearchTokensQuery, ExploreSearchTokensQueryVariables>(ExploreSearchTokensDocument, options);
+        }
+export type ExploreSearchTokensQueryHookResult = ReturnType<typeof useExploreSearchTokensQuery>;
+export type ExploreSearchTokensLazyQueryHookResult = ReturnType<typeof useExploreSearchTokensLazyQuery>;
+export type ExploreSearchTokensQueryResult = Apollo.QueryResult<ExploreSearchTokensQuery, ExploreSearchTokensQueryVariables>;
+export const SpotPricesDocument = gql`
+    query SpotPrices($contracts: [ContractInput!]!) {
+  tokenProjects(contracts: $contracts) {
+    id
+    markets(currencies: [USD]) {
+      id
+      price {
+        id
+        value
+      }
+      pricePercentChange24h {
+        id
+        value
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useSpotPricesQuery__
+ *
+ * To run a query within a React component, call `useSpotPricesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSpotPricesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSpotPricesQuery({
+ *   variables: {
+ *      contracts: // value for 'contracts'
+ *   },
+ * });
+ */
+export function useSpotPricesQuery(baseOptions: Apollo.QueryHookOptions<SpotPricesQuery, SpotPricesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SpotPricesQuery, SpotPricesQueryVariables>(SpotPricesDocument, options);
+      }
+export function useSpotPricesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SpotPricesQuery, SpotPricesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SpotPricesQuery, SpotPricesQueryVariables>(SpotPricesDocument, options);
+        }
+export type SpotPricesQueryHookResult = ReturnType<typeof useSpotPricesQuery>;
+export type SpotPricesLazyQueryHookResult = ReturnType<typeof useSpotPricesLazyQuery>;
+export type SpotPricesQueryResult = Apollo.QueryResult<SpotPricesQuery, SpotPricesQueryVariables>;
+export const ExploreTokensTabDocument = gql`
+    query ExploreTokensTab($topTokensOrderBy: TokenSortableField!) {
+  topTokens(chain: ETHEREUM, page: 1, pageSize: 100, orderBy: $topTokensOrderBy) {
+    ...TopTokenParts
+  }
+  eth: token(address: null, chain: ETHEREUM) {
+    ...TopTokenParts
+  }
+}
+    ${TopTokenPartsFragmentDoc}`;
+
+/**
+ * __useExploreTokensTabQuery__
+ *
+ * To run a query within a React component, call `useExploreTokensTabQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExploreTokensTabQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useExploreTokensTabQuery({
+ *   variables: {
+ *      topTokensOrderBy: // value for 'topTokensOrderBy'
+ *   },
+ * });
+ */
+export function useExploreTokensTabQuery(baseOptions: Apollo.QueryHookOptions<ExploreTokensTabQuery, ExploreTokensTabQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ExploreTokensTabQuery, ExploreTokensTabQueryVariables>(ExploreTokensTabDocument, options);
+      }
+export function useExploreTokensTabLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ExploreTokensTabQuery, ExploreTokensTabQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ExploreTokensTabQuery, ExploreTokensTabQueryVariables>(ExploreTokensTabDocument, options);
+        }
+export type ExploreTokensTabQueryHookResult = ReturnType<typeof useExploreTokensTabQuery>;
+export type ExploreTokensTabLazyQueryHookResult = ReturnType<typeof useExploreTokensTabLazyQuery>;
+export type ExploreTokensTabQueryResult = Apollo.QueryResult<ExploreTokensTabQuery, ExploreTokensTabQueryVariables>;
+export const FavoriteTokenCardDocument = gql`
+    query FavoriteTokenCard($chain: Chain!, $address: String) {
+  token(chain: $chain, address: $address) {
+    id
+    name
+    symbol
+    chain
+    address
+    project {
+      id
+      logoUrl
+      markets(currencies: [USD]) {
+        id
+        price {
+          id
+          value
+        }
+        pricePercentChange24h {
+          id
+          value
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useFavoriteTokenCardQuery__
+ *
+ * To run a query within a React component, call `useFavoriteTokenCardQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFavoriteTokenCardQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFavoriteTokenCardQuery({
+ *   variables: {
+ *      chain: // value for 'chain'
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useFavoriteTokenCardQuery(baseOptions: Apollo.QueryHookOptions<FavoriteTokenCardQuery, FavoriteTokenCardQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FavoriteTokenCardQuery, FavoriteTokenCardQueryVariables>(FavoriteTokenCardDocument, options);
+      }
+export function useFavoriteTokenCardLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FavoriteTokenCardQuery, FavoriteTokenCardQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FavoriteTokenCardQuery, FavoriteTokenCardQueryVariables>(FavoriteTokenCardDocument, options);
+        }
+export type FavoriteTokenCardQueryHookResult = ReturnType<typeof useFavoriteTokenCardQuery>;
+export type FavoriteTokenCardLazyQueryHookResult = ReturnType<typeof useFavoriteTokenCardLazyQuery>;
+export type FavoriteTokenCardQueryResult = Apollo.QueryResult<FavoriteTokenCardQuery, FavoriteTokenCardQueryVariables>;
+export const PortfolioBalanceDocument = gql`
+    query PortfolioBalance($owner: String!) {
+  portfolios(ownerAddresses: [$owner]) {
+    id
+    tokensTotalDenominatedValue {
+      id
+      value
+    }
+    tokensTotalDenominatedValueChange(duration: DAY) {
+      absolute {
+        id
+        value
+      }
+      percentage {
+        id
+        value
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __usePortfolioBalanceQuery__
+ *
+ * To run a query within a React component, call `usePortfolioBalanceQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePortfolioBalanceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePortfolioBalanceQuery({
+ *   variables: {
+ *      owner: // value for 'owner'
+ *   },
+ * });
+ */
+export function usePortfolioBalanceQuery(baseOptions: Apollo.QueryHookOptions<PortfolioBalanceQuery, PortfolioBalanceQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PortfolioBalanceQuery, PortfolioBalanceQueryVariables>(PortfolioBalanceDocument, options);
+      }
+export function usePortfolioBalanceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PortfolioBalanceQuery, PortfolioBalanceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PortfolioBalanceQuery, PortfolioBalanceQueryVariables>(PortfolioBalanceDocument, options);
+        }
+export type PortfolioBalanceQueryHookResult = ReturnType<typeof usePortfolioBalanceQuery>;
+export type PortfolioBalanceLazyQueryHookResult = ReturnType<typeof usePortfolioBalanceLazyQuery>;
+export type PortfolioBalanceQueryResult = Apollo.QueryResult<PortfolioBalanceQuery, PortfolioBalanceQueryVariables>;
