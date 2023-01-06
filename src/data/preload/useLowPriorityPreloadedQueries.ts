@@ -37,3 +37,5 @@ export function useLowPriorityPreloadedQueries(): void {
       loadTokenProjects({ variables: { contracts: baseCurrencyContracts } })
       loadTopTokens()
     })
+  }, [loadTopTokens, loadTokenProjects])
+}

@@ -1,0 +1,165 @@
+query Nfts($ownerAddress: String!) {
+  portfolios(ownerAddresses: [$ownerAddress]) {
+    id
+    nftBalances {
+      id
+      ownedAsset {
+        id
+        collection {
+          id
+          collectionId
+          description
+          image {
+            id
+            url
+          }
+          isVerified
+          name
+          numAssets
+          markets(currencies: [USD]) {
+            id
+            floorPrice {
+              id
+              value
+            }
+            owners
+            volume24h {
+              id
+              value
+            }
+            totalVolume {
+              id
+              value
+            }
+          }
+        }
+        description
+        image {
+          id
+          url
+        }
+        name
+        nftContract {
+          id
+          address
+          chain
+          standard
+        }
+        thumbnail {
+          id
+          url
+        }
+        tokenId
+        creator {
+          id
+          address
+          username
+        }
+      }
+    }
+  }
+}
+
+query NFTItemScreen($contractAddress: String!, $filter: NftAssetsFilterInput) {
+  nftAssets(address: $contractAddress, filter: $filter) {
+    edges {
+      node {
+        id
+        collection {
+          id
+          collectionId
+          description
+          image {
+            id
+            url
+          }
+          isVerified
+          name
+          numAssets
+          markets(currencies: [USD]) {
+            id
+            floorPrice {
+              id
+              value
+            }
+            owners
+            totalVolume {
+              id
+              value
+            }
+          }
+          nftContracts {
+            id
+            address
+          }
+        }
+        description
+        image {
+          id
+          url
+        }
+        name
+        nftContract {
+          id
+          address
+          chain
+          standard
+        }
+        tokenId
+        creator {
+          id
+          address
+          username
+        }
+      }
+    }
+  }
+}
+
+query NftCollectionScreen(
+  $contractAddress: String!
+  $first: Int
+  $after: String
+) {
+  nftCollections(filter: { addresses: [$contractAddress] }) {
+    edges {
+      node {
+        id
+        bannerImage {
+          id
+          url
+        }
+        isVerified
+        numAssets
+        description
+        homepageUrl
+        twitterName
+
+        image {
+          id
+          url
+        }
+        name
+        markets(currencies: [USD]) {
+          id
+          floorPrice {
+            id
+            value
+          }
+          owners
+          volume24h {
+            id
+            value
+          }
+          totalVolume {
+            id
+            value
+          }
+        }
+      }
+    }
+  }
+  nftAssets(address: $contractAddress, first: $first, after: $after) {
+    edges {
+      node {
+        owner
