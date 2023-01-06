@@ -516,4 +516,120 @@ query SearchTokens($searchQuery: String!) {
 }
 
 query ExploreSearchTokens($searchQuery: String!) {
-  searchTokens(searchQuery: $
+  searchTokens(searchQuery: $searchQuery) {
+    id
+    chain
+    address
+    decimals
+    name
+    symbol
+    # Use 1Y volume to determine which token to show when results include the same token on multiple chains
+    market {
+      volume(duration: YEAR) {
+        id
+        value
+      }
+    }
+    project {
+      id
+      logoUrl
+      safetyLevel
+    }
+  }
+}
+
+query SpotPrices($contracts: [ContractInput!]!) {
+  tokenProjects(contracts: $contracts) {
+    id
+    markets(currencies: [USD]) {
+      id
+      price {
+        id
+        value
+      }
+      pricePercentChange24h {
+        id
+        value
+      }
+    }
+  }
+}
+
+fragment TopTokenParts on Token {
+  id
+  name
+  symbol
+  chain
+  address
+  market {
+    id
+    totalValueLocked {
+      id
+      value
+    }
+    volume(duration: DAY) {
+      id
+      value
+    }
+  }
+  project {
+    id
+    logoUrl
+    markets(currencies: [USD]) {
+      id
+      price {
+        id
+        value
+      }
+      pricePercentChange24h {
+        id
+        value
+      }
+      marketCap {
+        id
+        value
+      }
+    }
+  }
+}
+
+query ExploreTokensTab($topTokensOrderBy: TokenSortableField!) {
+  topTokens(
+    chain: ETHEREUM
+    page: 1
+    pageSize: 100
+    orderBy: $topTokensOrderBy
+  ) {
+    ...TopTokenParts
+  }
+  # `topTokens` returns WETH rather than ETH
+  # here we retrieve ETH information to swap out in the UI
+  eth: token(address: null, chain: ETHEREUM) {
+    ...TopTokenParts
+  }
+}
+
+query FavoriteTokenCard($chain: Chain!, $address: String) {
+  token(chain: $chain, address: $address) {
+    id
+    name
+    symbol
+    chain
+    address
+    project {
+      id
+      logoUrl
+      markets(currencies: [USD]) {
+        id
+        price {
+          id
+          value
+        }
+        pricePercentChange24h {
+          id
+          value
+        }
+      }
+    }
+  }
+}
