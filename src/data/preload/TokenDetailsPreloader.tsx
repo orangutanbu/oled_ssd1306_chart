@@ -22,4 +22,51 @@ export const TokenDetailsPreloaders = memo(({ count = 10 }: { count?: number }) 
 
   const [stableData, setStableData] = useState<PortfolioBalance[] | undefined>()
   const { data } = useSortedPortfolioBalances(
-    account?.address 
+    account?.address ?? '',
+    /*shouldPoll=*/ false,
+    /*hideSmallBalances=*/ true,
+    /*hideSpamTokens=*/ true
+  )
+
+  useEffect(() => {
+    if (stableData) {
+      return
+    }
+    // avoids re-redering component when balances get updated in cache
+    setStableData(data?.balances)
+  }, [data?.balances, stableData])
+
+  return (
+    <>
+      {stableData?.slice(0, count).map((b) => (
+        <React.Fragment key={b.currencyInfo.currencyId}>
+          <Delayed waitBeforeShow={Delay.Long}>
+            <TokenDetailsPreloader currencyId={b.currencyInfo.currencyId} />
+          </Delayed>
+        </React.Fragment>
+      ))}
+    </>
+  )
+})
+
+/** Preloads a single currency with a unique useQuery instance */
+const TokenDetailsPreloader = memo(({ currencyId }: { currencyId: CurrencyId }) => {
+  const [loadTokenDetails] = useTokenDetailsScreenLazyQuery()
+  const [loadTokenPriceChartData] = useTokenPriceHistoryLazyQuery()
+
+  useEffect(() => {
+    InteractionManager.runAfterInteractions(() => {
+      loadTokenDetails({
+        variables: currencyIdToContractInput(currencyId),
+        fetchPolicy: 'network-only',
+      })
+      loadTokenPriceChartData({
+        variables: { contract: currencyIdToContractInput(currencyId) },
+        fetchPolicy: 'network-only',
+      })
+    })
+  }, [currencyId, loadTokenDetails, loadTokenPriceChartData])
+
+  // Dummy fragment
+  return null
+})
