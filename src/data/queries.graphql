@@ -340,4 +340,180 @@ query TokenDetailsScreen($chain: Chain!, $address: String) {
       safetyLevel
       logoUrl
       markets(currencies: [USD]) {
-    
+        id
+        price {
+          id
+          value
+        }
+        marketCap {
+          id
+          value
+        }
+        fullyDilutedMarketCap {
+          id
+          value
+        }
+        priceHigh52W: priceHighLow(duration: YEAR, highLow: HIGH) {
+          id
+          value
+        }
+        priceLow52W: priceHighLow(duration: YEAR, highLow: LOW) {
+          id
+          value
+        }
+      }
+      tokens {
+        id
+        chain
+        address
+      }
+    }
+  }
+}
+
+query TokenProjects($contracts: [ContractInput!]!) {
+  tokenProjects(contracts: $contracts) {
+    id
+    logoUrl
+    safetyLevel
+    tokens {
+      id
+      chain
+      address
+      name
+      decimals
+      symbol
+    }
+  }
+}
+
+query TransactionList($address: String!) {
+  portfolios(ownerAddresses: [$address]) {
+    id
+    assetActivities(pageSize: 50, page: 1) {
+      id
+      timestamp
+      type
+      transaction {
+        id
+        hash
+        status
+        to
+        from
+      }
+      assetChanges {
+        __typename
+        ... on TokenTransfer {
+          id
+          asset {
+            id
+            name
+            symbol
+            address
+            decimals
+            chain
+            project {
+              id
+              isSpam
+            }
+          }
+          tokenStandard
+          quantity
+          sender
+          recipient
+          direction
+          transactedValue {
+            id
+            currency
+            value
+          }
+        }
+        ... on NftTransfer {
+          id
+          asset {
+            id
+            name
+            nftContract {
+              id
+              chain
+              address
+            }
+            tokenId
+            image {
+              id
+              url
+            }
+            collection {
+              id
+              name
+            }
+          }
+          nftStandard
+          sender
+          recipient
+          direction
+        }
+        ... on TokenApproval {
+          id
+          asset {
+            id
+            name
+            symbol
+            decimals
+            address
+            chain
+          }
+          tokenStandard
+          approvedAddress
+          quantity
+        }
+      }
+    }
+  }
+}
+
+query TopTokens(
+  $chain: Chain
+  $page: Int = 1
+  $pageSize: Int = 100
+  $orderBy: TokenSortableField = POPULARITY
+) {
+  topTokens(
+    chain: $chain
+    page: $page
+    pageSize: $pageSize
+    orderBy: $orderBy
+  ) {
+    id
+    address
+    chain
+    decimals
+    name
+    symbol
+    project {
+      id
+      isSpam
+      logoUrl
+      safetyLevel
+    }
+  }
+}
+
+query SearchTokens($searchQuery: String!) {
+  searchTokens(searchQuery: $searchQuery) {
+    id
+    chain
+    address
+    decimals
+    name
+    symbol
+    project {
+      id
+      logoUrl
+      safetyLevel
+    }
+  }
+}
+
+query ExploreSearchTokens($searchQuery: String!) {
+  searchTokens(searchQuery: $
