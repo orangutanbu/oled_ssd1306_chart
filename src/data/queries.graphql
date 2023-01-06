@@ -162,4 +162,182 @@ query NftCollectionScreen(
   nftAssets(address: $contractAddress, first: $first, after: $after) {
     edges {
       node {
-        owner
+        ownerAddress
+        id
+        name
+        tokenId
+        nftContract {
+          id
+          address
+        }
+        collection {
+          id
+          collectionId
+          name
+        }
+        image {
+          id
+          url
+          dimensions {
+            id
+            width
+            height
+          }
+        }
+      }
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+      hasPreviousPage
+      startCursor
+    }
+  }
+}
+
+query NftsTab($ownerAddress: String!, $first: Int, $after: String) {
+  nftBalances(ownerAddress: $ownerAddress, first: $first, after: $after) {
+    edges {
+      node {
+        ownedAsset {
+          id
+          collection {
+            id
+            name
+            isVerified
+            markets(currencies: [ETH]) {
+              id
+              floorPrice {
+                value
+              }
+            }
+          }
+          image {
+            id
+            url
+            dimensions {
+              id
+              width
+              height
+            }
+          }
+          name
+          tokenId
+          description
+          nftContract {
+            id
+            address
+          }
+        }
+      }
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+      hasPreviousPage
+      startCursor
+    }
+  }
+}
+
+query PortfolioBalances($ownerAddress: String!) {
+  portfolios(ownerAddresses: [$ownerAddress]) {
+    id
+    tokenBalances {
+      id
+      quantity
+      denominatedValue {
+        id
+        currency
+        value
+      }
+      token {
+        id
+        chain
+        address
+        name
+        symbol
+        decimals
+        project {
+          id
+          logoUrl
+          safetyLevel
+          isSpam
+        }
+      }
+      tokenProjectMarket {
+        relativeChange24: pricePercentChange(duration: DAY) {
+          id
+          value
+        }
+      }
+    }
+  }
+}
+
+query SelectWalletScreen($ownerAddresses: [String!]!) {
+  portfolios(ownerAddresses: $ownerAddresses) {
+    id
+    ownerAddress
+    tokensTotalDenominatedValue {
+      id
+      value
+    }
+  }
+}
+
+query TransactionHistoryUpdater($addresses: [String!]!) {
+  portfolios(ownerAddresses: $addresses) {
+    id
+    ownerAddress
+    assetActivities(pageSize: 1, page: 1) {
+      id
+      timestamp
+      transaction {
+        id
+        hash
+      }
+    }
+  }
+}
+
+query Token($chain: Chain!, $address: String) {
+  token(chain: $chain, address: $address) {
+    id
+    name
+    symbol
+    decimals
+    chain
+    address
+    project {
+      id
+      logoUrl
+      safetyLevel
+      isSpam
+    }
+  }
+}
+
+query TokenDetailsScreen($chain: Chain!, $address: String) {
+  token(chain: $chain, address: $address) {
+    id
+    address
+    chain
+    name
+    symbol
+    market(currency: USD) {
+      id
+      volume(duration: DAY) {
+        id
+        value
+      }
+    }
+    project {
+      id
+      description
+      homepageUrl
+      twitterName
+      safetyLevel
+      logoUrl
+      markets(currencies: [USD]) {
+    
