@@ -60,4 +60,48 @@ export const onChainBalanceApi = createApi({
             }`,
             e
           )
-          return { error: { status
+          return { error: { status: 500, data: e } }
+        }
+      },
+    }),
+  }),
+})
+
+const { useBalanceQuery } = onChainBalanceApi
+
+export function useOnChainCurrencyBalance(
+  currency?: Currency | null,
+  accountAddress?: Address
+): { balance: CurrencyAmount<Currency> | undefined; isLoading: boolean; error: unknown } {
+  const { currentData, isLoading, error } = useBalanceQuery(
+    {
+      currencyAddress: currency ? getCurrencyAddress(currency) : undefined,
+      chainId: currency?.chainId,
+      currencyIsNative: currency?.isNative,
+      accountAddress,
+    },
+    {
+      pollingInterval: getPollingIntervalByBlocktime(currency?.chainId),
+      skip: !currency,
+    }
+  )
+
+  return useMemo(
+    () => ({
+      balance:
+        currency && currentData ? CurrencyAmount.fromRawAmount(currency, currentData) : undefined,
+      isLoading,
+      error,
+    }),
+    [currentData, isLoading, currency, error]
+  )
+}
+
+export function useOnChainNativeCurrencyBalance(
+  chain: ChainId,
+  accountAddress?: Address
+): { balance: CurrencyAmount<NativeCurrencyClass> | undefined; isLoading: boolean } {
+  const currency = NativeCurrency.onChain(chain)
+  const { balance, isLoading } = useOnChainCurrencyBalance(currency, accountAddress)
+  return { balance: balance as CurrencyAmount<NativeCurrencyClass> | undefined, isLoading }
+}
