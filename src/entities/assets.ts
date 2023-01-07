@@ -22,4 +22,4 @@ export enum AssetType {
   ERC721 = 'erc-721',
   ERC1155 = 'erc-1155',
 }
-export type NFTAssetType = AssetType.ERC721 | AssetT
+export type NFTAssetType = AssetType.ERC721 | AssetType.ERC1155
