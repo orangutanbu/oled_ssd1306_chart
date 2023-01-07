@@ -31,4 +31,30 @@ export function useBiometricCheck(): void {
     }
   })
 
-  useAppStat
+  useAppStateTrigger('inactive', 'background', () => {
+    if (requiredForAppAccess) {
+      setIsLockScreenVisible(true)
+    }
+  })
+
+  useAppStateTrigger('inactive', 'active', () => {
+    SplashScreen.hideAsync() // In case of a race condition where splash screen is not hidden, we want to hide when FaceID forces an app state change
+    if (
+      requiredForAppAccess &&
+      authenticationStatus !== BiometricAuthenticationStatus.Authenticating &&
+      authenticationStatus !== BiometricAuthenticationStatus.Rejected
+    ) {
+      setIsLockScreenVisible(false)
+    }
+  })
+
+  useAppStateTrigger('active', 'inactive', () => {
+    SplashScreen.hideAsync() // In case of a race condition where splash screen is not hidden, we want to hide when FaceID forces an app state change
+    if (
+      requiredForAppAccess &&
+      authenticationStatus !== BiometricAuthenticationStatus.Authenticating
+    ) {
+      setIsLockScreenVisible(true)
+    }
+  })
+}
