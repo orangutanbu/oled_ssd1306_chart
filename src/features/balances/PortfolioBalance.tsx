@@ -59,4 +59,11 @@ export function PortfolioBalance({ owner }: PortfolioBalanceProps): JSX.Element 
           arrowSize={theme.iconSizes.icon20}
           change={portfolioChange?.percentage?.value}
           loading={isLoading}
-          nega
+          negativeChangeColor={isWarmLoading ? 'textSecondary' : 'accentCritical'}
+          positiveChangeColor={isWarmLoading ? 'textSecondary' : 'accentSuccess'}
+          variant="bodyLarge"
+        />
+      </Flex>
+    </WarmLoadingShimmer>
+  )
+}
