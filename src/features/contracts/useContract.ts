@@ -33,4 +33,5 @@ export function useContract<T extends Contract = Contract>(
 }
 
 export function useTokenContract(chainId: ChainId, tokenAddress?: Address): Erc20 | null {
-  return useContract<Erc20>(chainId, tokenAddress, ERC20_AB
+  return useContract<Erc20>(chainId, tokenAddress, ERC20_ABI)
+}
