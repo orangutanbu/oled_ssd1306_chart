@@ -11,4 +11,53 @@ const mockedAuthenticateAsync = <jest.MockedFunction<typeof authenticateAsync>>a
 
 const mockedIsEnabled = <jest.MockedFunction<typeof isEnabled>>isEnabled
 
-describe(tryLoc
+describe(tryLocalAuthenticate, () => {
+  beforeEach(() => {
+    mockedIsEnabled.mockReturnValue(true)
+  })
+
+  it('checks hardware compatibility', async () => {
+    mockedHasHardwareAsync.mockResolvedValue(false)
+
+    const status = await tryLocalAuthenticate()
+
+    expect(status).toEqual(BiometricAuthenticationStatus.Unsupported)
+  })
+
+  it('checks enrollement', async () => {
+    mockedHasHardwareAsync.mockResolvedValue(true)
+    mockedIsEnrolledAsync.mockResolvedValue(false)
+
+    const status = await tryLocalAuthenticate()
+
+    expect(status).toEqual(BiometricAuthenticationStatus.MissingEnrollment)
+  })
+
+  it('fails to authenticate when user rejects', async () => {
+    mockedHasHardwareAsync.mockResolvedValue(true)
+    mockedIsEnrolledAsync.mockResolvedValue(true)
+    mockedAuthenticateAsync.mockResolvedValue({ success: false, error: '' })
+
+    const status = await tryLocalAuthenticate()
+
+    expect(status).toEqual(BiometricAuthenticationStatus.Rejected)
+  })
+
+  it('authenticates when user accepts', async () => {
+    mockedHasHardwareAsync.mockResolvedValue(true)
+    mockedIsEnrolledAsync.mockResolvedValue(true)
+    mockedAuthenticateAsync.mockResolvedValue({ success: true })
+
+    const status = await tryLocalAuthenticate()
+
+    expect(status).toEqual(BiometricAuthenticationStatus.Authenticated)
+  })
+
+  it('always return authenticated when disabled', async () => {
+    mockedIsEnabled.mockReturnValue(false)
+
+    const status = await tryLocalAuthenticate()
+
+    expect(status).toEqual(BiometricAuthenticationStatus.Authenticated)
+  })
+})
