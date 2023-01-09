@@ -68,4 +68,92 @@ export default function ProfileHeader({ address }: ProfileHeaderProps): JSX.Elem
   const initialSendState = useMemo(() => {
     return {
       recipient: address,
-      exactAmount
+      exactAmountToken: '',
+      exactAmountUSD: '',
+      exactCurrencyField: CurrencyField.INPUT,
+      [CurrencyField.INPUT]: null,
+      [CurrencyField.OUTPUT]: null,
+    }
+  }, [address])
+
+  const onPressSend = useCallback(() => {
+    dispatch(
+      openModal({
+        name: ModalName.Send,
+        ...{ initialState: initialSendState },
+      })
+    )
+  }, [dispatch, initialSendState])
+
+  const { t } = useTranslation()
+  return (
+    <Flex bg="background0" gap="spacing16" pt="spacing36" px="spacing24">
+      {/* fixed gradient */}
+      <AnimatedBox
+        bottom={0}
+        entering={FadeIn}
+        height={HEADER_GRADIENT_HEIGHT}
+        left={0}
+        position="absolute"
+        right={0}
+        top={0}>
+        <LinearGradient
+          colors={fixedGradientColors}
+          end={{ x: 1, y: 1 }}
+          start={{ x: 0, y: 1 }}
+          style={StyleSheet.absoluteFill}
+        />
+        {hasAvatar && avatarColors?.primary ? <HeaderRadial color={avatarColors.primary} /> : null}
+      </AnimatedBox>
+
+      {/* header row */}
+      <Flex row alignItems="center" justifyContent="space-between" mx="spacing4">
+        <TouchableArea
+          backgroundColor="textOnDimTertiary"
+          borderRadius="roundedFull"
+          opacity={0.8}
+          padding="spacing8">
+          <Flex centered grow height={theme.iconSizes.icon16} width={theme.iconSizes.icon16}>
+            <BackButton color="white" size={theme.iconSizes.icon24} />
+          </Flex>
+        </TouchableArea>
+        <ProfileContextMenu address={address} />
+      </Flex>
+
+      {/* button content */}
+      <Flex row alignItems="flex-start" justifyContent="space-between">
+        <AddressDisplay
+          address={address}
+          captionVariant="subheadSmall"
+          contentAlign="flex-start"
+          direction="column"
+          showCopy={true}
+          showIconBackground={true}
+          size={HEADER_ICON_SIZE}
+          textAlign="flex-start"
+          variant="headlineSmall"
+        />
+        <Box position="absolute" right={0}>
+          <Flex centered row gap="spacing8" mt="spacing12">
+            <TouchableArea
+              hapticFeedback
+              activeOpacity={1}
+              backgroundColor="background0"
+              borderColor="backgroundOutline"
+              borderRadius="rounded20"
+              borderWidth={1}
+              name={ElementName.Favorite}
+              padding="spacing12"
+              onPress={onPressFavorite}>
+              <DynamicHeartIcon isFavorited={isFavorited} size={iconSizes.icon20} />
+            </TouchableArea>
+            <TouchableArea
+              hapticFeedback
+              activeOpacity={1}
+              backgroundColor="background0"
+              borderColor="backgroundOutline"
+              borderRadius="rounded20"
+              borderWidth={1}
+              name={ElementName.Send}
+              padding="spacing12"
+              onPress={onPr
