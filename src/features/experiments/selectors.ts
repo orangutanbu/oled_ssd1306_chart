@@ -19,4 +19,13 @@ export const selectFeatureFlagOverrides = createSelector(
 )
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export 
+export const selectFeatureFlag = (flagName: string) =>
+  createSelector(selectExperimentsState, (experimentState) => {
+    return experimentState.featureFlags[flagName]
+  })
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+export const selectExperiment = (experimentName: string) =>
+  createSelector(selectExperimentsState, (experimentState) => {
+    return experimentState.experiments[experimentName]
+  })
