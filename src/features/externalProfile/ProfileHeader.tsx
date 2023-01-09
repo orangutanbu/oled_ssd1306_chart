@@ -156,4 +156,50 @@ export default function ProfileHeader({ address }: ProfileHeaderProps): JSX.Elem
               borderWidth={1}
               name={ElementName.Send}
               padding="spacing12"
-              onPress={onPr
+              onPress={onPressSend}>
+              <Flex row alignItems="center" gap="spacing8">
+                <SendIcon
+                  color={theme.colors.textSecondary}
+                  height={theme.iconSizes.icon20}
+                  width={theme.iconSizes.icon20}
+                />
+                <Text color="textSecondary" variant="buttonLabelMedium">
+                  {t('Send')}
+                </Text>
+              </Flex>
+            </TouchableArea>
+          </Flex>
+        </Box>
+      </Flex>
+    </Flex>
+  )
+}
+
+interface HeartIconProps {
+  isFavorited: boolean
+  size: number
+}
+
+export const DynamicHeartIcon = ({ isFavorited, size }: HeartIconProps): JSX.Element => {
+  const theme = useAppTheme()
+  const isDarkMode = useColorScheme() === 'dark'
+  const unfilledColor = isDarkMode ? theme.colors.textTertiary : theme.colors.backgroundOutline
+  const color = isFavorited ? theme.colors.accentAction : unfilledColor
+  return <HeartIcon color={color} height={size} width={size} />
+}
+
+function _HeaderRadial({ color }: { color: string }): JSX.Element {
+  return (
+    <Svg height="100%" width="100%">
+      <Defs>
+        <RadialGradient cy="-0.1" id="background" rx="0.8" ry="1.1">
+          <Stop offset="0" stopColor={color} stopOpacity="0.6" />
+          <Stop offset="1" stopColor={color} stopOpacity="0" />
+        </RadialGradient>
+      </Defs>
+      <Rect fill="url(#background)" height="100%" opacity={0.6} width="100%" x="0" y="0" />
+    </Svg>
+  )
+}
+
+export const HeaderRadial = memo(_HeaderRadial)
