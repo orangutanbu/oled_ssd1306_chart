@@ -30,4 +30,24 @@ export function useToggleFavoriteCallback(id: CurrencyId): () => void {
       })
       dispatch(addFavoriteToken({ currencyId: id }))
     }
-  }, [dispatch, id, i
+  }, [dispatch, id, isFavoriteToken, token])
+}
+
+export function useToggleWatchedWalletCallback(address: Address): () => void {
+  const dispatch = useAppDispatch()
+  const isFavoriteWallet = useAppSelector(selectWatchedAddressSet).has(address)
+  const displayName = useDisplayName(address)
+
+  return useCallback(() => {
+    if (isFavoriteWallet) {
+      dispatch(removeWatchedAddress({ address }))
+    } else {
+      sendAnalyticsEvent(MobileEventName.FavoriteItem, {
+        address,
+        type: 'wallet',
+        name: displayName?.name,
+      })
+      dispatch(addWatchedAddress({ address }))
+    }
+  }, [address, dispatch, isFavoriteWallet, displayName])
+}
