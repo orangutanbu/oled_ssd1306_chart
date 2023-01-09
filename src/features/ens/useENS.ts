@@ -22,4 +22,20 @@ export function useENS(
   const validAddress = getValidAddress(debouncedNameOrAddress, false, false)
   const maybeName = validAddress ? null : debouncedNameOrAddress // if it's a valid address then it's not a name
 
-  const { data: name, isLoading: nameLoading } = useENSName
+  const { data: name, isLoading: nameLoading } = useENSName(validAddress ?? undefined, chainId)
+  const { data: address, isLoading: addressLoading } = useAddressFromEns(
+    autocompleteDomain ? getCompletedENSName(maybeName) : maybeName,
+    chainId
+  )
+
+  return {
+    loading: nameLoading || addressLoading,
+    address: validAddress ?? address,
+
+    // if nameOrAddress is a name and there's a valid address resolution, it must be a valid ENS
+    name: name ?? (address && nameOrAddress) ?? null,
+  }
+}
+
+const getCompletedENSName = (name: string | null): string | null =>
+  name?.concat(name ? (!name?.endsWith('.eth') ? '.eth' : '') : '') ?? null
