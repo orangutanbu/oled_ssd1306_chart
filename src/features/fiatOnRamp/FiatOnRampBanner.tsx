@@ -28,4 +28,30 @@ export function FiatOnRampBanner(props: BoxProps): JSX.Element {
       style={styles.container}
       onPress={onPress}
       {...props}
-      ha
+      hapticFeedback>
+      <Box flex={1} position="absolute" right={0} top={0}>
+        <FiatOnRampBackground color={theme.colors.white} />
+      </Box>
+      <Flex gap="spacing4">
+        <Flex row justifyContent="space-between">
+          <Text color="textOnBrightPrimary" variant="buttonLabelMedium">
+            {t('Buy crypto')}
+          </Text>
+          <Chevron
+            color={theme.colors.textOnBrightPrimary}
+            direction="e"
+            width={theme.iconSizes.icon20}
+          />
+        </Flex>
+
+        <Text color="textOnBrightPrimary" opacity={0.72} variant="subheadSmall">
+          {t('Get tokens at the best prices in web3 with Uniswap Wallet.')}
+        </Text>
+      </Flex>
+    </TouchableArea>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: { backgroundColor: '#FB36D0' },
+})
