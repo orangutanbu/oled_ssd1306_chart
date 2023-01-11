@@ -84,4 +84,51 @@ export type MoonpayTransactionResponseItem = MoonpayQuote & {
   // For bank transfer transactions, the information about our bank account to which the customer should make the transfer.
   bankDepositInformation: object
   // For bank transfer transactions, the reference code the customer should cite when making the transfer.
-  bankTransferReferen
+  bankTransferReference: string
+  // The identifier of the cryptocurrency the customer wants to purchase.
+  currencyId: string
+  // The identifier of the fiat currency the customer wants to use for the transaction.
+  baseCurrencyId: string
+  // The identifier of the customer the transaction is associated with.
+  customerId: string
+  // For token or card transactions, the identifier of the payment card used for this transaction.
+  cardId: string
+  // For bank transfer transactions, the identifier of the bank account used for this transaction.
+  bankAccountId: string
+  // An identifier associated with the customer, provided by you.
+  externalCustomerId: string
+  // The transaction's payment method. Possible values are credit_debit_card, sepa_bank_transfer, sepa_open_banking_payment, gbp_bank_transfer, gbp_open_banking_payment, ach_bank_transfer, pix_instant_payment and mobile_wallet
+  paymentMethod: string
+  // An identifier associated with the transaction, provided by you.
+  externalTransactionId: string
+  // The customer's country. Returned as an ISO 3166-1 alpha-3 code.
+  country: string
+  // The customer's state, if the customer is from the USA. Returned as a two-letter code.
+  state: string
+  // An array of four objects, each representing one of the four stages of the purchase process. The attributes of each stage are described below.
+  stages: Array<{
+    stage:
+      | 'stage_one_ordering'
+      | 'stage_two_verification'
+      | 'stage_three_processing'
+      | 'stage_four_delivery'
+    status: 'not_started' | 'in_progress' | 'success' | 'failed'
+    failureReason:
+      | 'card_not_supported'
+      | 'daily_purchase_limit_exceeded'
+      | 'payment_authorization_declined'
+      | 'timeout_3d_secure'
+      | 'timeout_bank_transfer'
+      | 'timeout_kyc_verification'
+      | 'timeout_card_verification'
+      | 'rejected_kyc'
+      | 'rejected_card'
+      | 'rejected_other'
+      | 'cancelled'
+      | 'refund'
+      | 'failed_testnet_withdrawal'
+      | 'error'
+    // Sometimes| the customer is required to take an action or actions to further the purchase process| usually by submitting information at a provided URL. For each action| we pass an object with a type and a url.
+    actions: 'complete_bank_transfer' | 'retry_kyc' | 'verify_card_by_code' | 'verify_card_by_file'
+  }>
+}
