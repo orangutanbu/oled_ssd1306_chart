@@ -84,3 +84,132 @@ export function GenericImportForm({
   }
 
   return (
+    <Trace section={SectionName.ImportAccountForm}>
+      <Flex gap="spacing16" onTouchEnd={handleFocus}>
+        <Flex
+          centered
+          backgroundColor="background1"
+          borderColor={
+            showSuccess
+              ? 'accentSuccess'
+              : errorMessage && (liveCheck || !focused) && value
+              ? 'accentCritical'
+              : 'background2'
+          }
+          borderRadius="rounded20"
+          borderWidth={1}
+          flexShrink={1}
+          gap="none"
+          minHeight={minHeight}
+          px={px}
+          py={py}
+          width="100%">
+          {/* TODO: [MOB-3890] make Box press re-focus TextInput. Fine for now since TexInput has autoFocus */}
+          <Box
+            alignItems="flex-end"
+            flexDirection="row"
+            justifyContent={inputAlignment}
+            width="100%">
+            <TextInput
+              ref={textInputRef}
+              autoFocus
+              autoCapitalize="none"
+              autoCorrect={Boolean(autoCorrect)}
+              backgroundColor="none"
+              blurOnSubmit={blurOnSubmit ?? false}
+              fontSize={INPUT_FONT_SIZE}
+              justifyContent="center"
+              lineHeight={INPUT_FONT_SIZE}
+              maxFontSizeMultiplier={INPUT_MAX_FONT_SIZE_MULTIPLIER}
+              multiline={true}
+              numberOfLines={4}
+              px="none"
+              py="none"
+              returnKeyType="done"
+              scrollEnabled={false}
+              selectionColor={theme.colors.textPrimary}
+              spellCheck={false}
+              testID="import_account_form/input"
+              textAlign={inputAlignment === 'center' || !value ? 'left' : 'center'}
+              value={value}
+              width={value ? 'auto' : (layout?.width || 0) + theme.spacing.spacing8}
+              onBlur={handleBlur}
+              onChangeText={onChange}
+              onFocus={handleFocus}
+              onSubmitEditing={handleSubmit}
+            />
+            {inputSuffix && value && !value.includes(inputSuffix) ? (
+              <View pointerEvents="none">
+                <TextInput
+                  backgroundColor="none"
+                  color="textSecondary"
+                  editable={false}
+                  fontSize={INPUT_FONT_SIZE}
+                  justifyContent="center"
+                  lineHeight={INPUT_FONT_SIZE}
+                  maxFontSizeMultiplier={INPUT_MAX_FONT_SIZE_MULTIPLIER}
+                  multiline={true}
+                  px="none"
+                  py="none"
+                  scrollEnabled={false}
+                  value={inputSuffix}
+                />
+              </View>
+            ) : null}
+          </Box>
+          {!value && (
+            <Flex
+              centered
+              grow
+              row
+              gap="spacing8"
+              position="absolute"
+              pt="spacing4"
+              onLayout={(event: LayoutChangeEvent): void => setLayout(event.nativeEvent.layout)}>
+              <Text
+                adjustsFontSizeToFit
+                color="textSecondary"
+                maxFontSizeMultiplier={INPUT_MAX_FONT_SIZE_MULTIPLIER}
+                numberOfLines={1}
+                style={styles.placeholderLabelStyle}
+                variant="bodyLarge">
+                {t('Type or')}
+              </Text>
+              <PasteButton
+                afterClipboardReceived={afterPasteButtonPress}
+                beforePress={beforePasteButtonPress}
+                onPress={onChange}
+              />
+              {placeholderLabel && (
+                <Text
+                  adjustsFontSizeToFit
+                  color="textSecondary"
+                  numberOfLines={1}
+                  style={styles.placeholderLabelStyle}
+                  variant="bodyLarge">
+                  {placeholderLabel}
+                </Text>
+              )}
+            </Flex>
+          )}
+        </Flex>
+        <Flex>
+          {errorMessage && value && (liveCheck || !focused) && (
+            <Flex centered row gap="spacing12">
+              <AlertTriangle color={theme.colors.accentCritical} />
+              <Text color="accentCritical" variant="bodyLarge">
+                {errorMessage}
+              </Text>
+            </Flex>
+          )}
+        </Flex>
+      </Flex>
+    </Trace>
+  )
+}
+
+const styles = StyleSheet.create({
+  placeholderLabelStyle: {
+    flexShrink: 1,
+  },
+})

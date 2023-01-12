@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GenericImportForm renders a placeholder when there is no value 1`] = `
+<View
+  onTouchEnd={[Function]}
+  style={
+    Array [
+      Object {
+        "alignItems": "stretch",
+        "display": "flex",
+        "flexDirection": "column",
+        "justifyContent": "flex-start",
+      },
+    ]
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "center",
+          "backgroundColor": "#FFFFFF",
+          "borderColor": "#F5F6FC",
+          "borderRadius": 20,
+          "borderWidth": 1,
+          "display": "flex",
+          "flexDirection": "column",
+          "flexShrink": 1,
+          "justifyContent": "center",
+          "minHeight": 120,
+          "paddingHorizontal": 36,
+          "paddingVer
