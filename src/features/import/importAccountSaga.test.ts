@@ -89,4 +89,36 @@ describe(importAccount, () => {
     const params: ImportAddressAccountParams = {
       address: NATIVE_ADDRESS,
       name: 'READONLY',
-      type: Imp
+      type: ImportAccountType.Address,
+    }
+
+    const dispatched: PayloadAction[] = []
+
+    runSaga(
+      {
+        dispatch: (action: PayloadAction) => {
+          // collect dispatched actions to later assert
+          dispatched.push(action)
+        },
+        context: {
+          accounts: signerManager,
+        },
+      },
+      importAccount,
+      params
+    )
+
+    // assert on dispatched actions
+    expect(dispatched).toEqual([
+      addAccount({
+        type: AccountType.Readonly,
+        address: NATIVE_ADDRESS,
+        name: 'READONLY',
+        pending: true,
+        timeImportedMs: expect.any(Number),
+      }),
+      activateAccount(NATIVE_ADDRESS),
+      unlockWallet(),
+    ])
+  })
+})
