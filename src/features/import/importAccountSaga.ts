@@ -187,4 +187,8 @@ function* onAccountImport(
 }
 
 export const {
-  name: importAc
+  name: importAccountSagaName,
+  wrappedSaga: importAccountSaga,
+  reducer: importAccountReducer,
+  actions: importAccountActions,
+} = createMonitoredSaga<ImportAccountParams>(importAccount, 'importAccount')
