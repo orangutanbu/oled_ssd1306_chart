@@ -20,4 +20,38 @@ export default function BalanceUpdate({
   transactionStatus,
 }: BalanceUpdateProps): JSX.Element | null {
   const _currencyId = currency ? currencyId(currency) : null
-  const { data: spotPrice, loa
+  const { data: spotPrice, loading } = useSpotPrice(_currencyId)
+  return useMemo(() => {
+    if (!amountRaw || !currency || loading) {
+      return null
+    }
+    const balanceUpdate = createBalanceUpdate({
+      transactionType,
+      transactionStatus,
+      currency,
+      currencyAmountRaw: amountRaw,
+      spotPrice,
+    })
+    if (!balanceUpdate) {
+      return null
+    }
+    return (
+      <>
+        <Text
+          adjustsFontSizeToFit
+          color="accentSuccess"
+          numberOfLines={1}
+          variant="buttonLabelSmall">
+          {balanceUpdate.assetValueChange}
+        </Text>
+        <Text
+          adjustsFontSizeToFit
+          color="textSecondary"
+          numberOfLines={1}
+          variant="buttonLabelMicro">
+          {balanceUpdate.usdValueChange}
+        </Text>
+      </>
+    )
+  }, [amountRaw, currency, spotPrice, transactionStatus, transactionType, loading])
+}
