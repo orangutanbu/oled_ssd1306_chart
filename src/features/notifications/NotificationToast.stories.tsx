@@ -64,4 +64,14 @@ WallectConnectNotification.parameters = {
   chromatic: { delay: 5000 },
 }
 
-export const DefaultNotif
+export const DefaultNotification = Template.bind({})
+DefaultNotification.args = {
+  notification: {
+    type: AppNotificationType.Default,
+    address: '0x000000',
+    title: 'Hello world!',
+  },
+}
+DefaultNotification.parameters = {
+  chromatic: { delay: 5000 },
+}
