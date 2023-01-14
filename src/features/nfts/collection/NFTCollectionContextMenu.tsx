@@ -86,4 +86,24 @@ export function NFTCollectionContextMenu({
   // Only display menu if valid options from data response, otherwise return empty
   // element for spacing purposes
   if (!homepageUrl && !twitterURL)
-    return <Box style={{ p
+    return <Box style={{ padding: ICON_PADDING }} width={ICON_SIZE} />
+
+  return (
+    <ContextMenu
+      actions={menuActions}
+      dropdownMenuMode={true}
+      onPress={(e: NativeSyntheticEvent<ContextMenuOnPressNativeEvent>): void => {
+        menuActions[e.nativeEvent.index]?.action()
+      }}>
+      <TouchableArea
+        hapticFeedback
+        backgroundColor={showButtonOutline ? 'textOnDimTertiary' : 'none'}
+        borderRadius="roundedFull"
+        style={{ padding: ICON_PADDING }}>
+        <Flex centered grow height={ICON_SIZE} width={ICON_SIZE}>
+          <TripleDot color={iconColor} size={3.5} />
+        </Flex>
+      </TouchableArea>
+    </ContextMenu>
+  )
+}
