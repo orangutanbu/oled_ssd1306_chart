@@ -225,4 +225,46 @@ describe(pushTransactionNotification, () => {
     const finalizedReceiveNftAction = createFinalizedTxAction(receiveNftTypeInfo)
     const { chainId, from, hash } = finalizedReceiveNftAction.payload
 
-    return expectS
+    return expectSaga(pushTransactionNotification, finalizedReceiveNftAction)
+      .put(
+        pushNotification({
+          txStatus: TransactionStatus.Success,
+          address: from,
+          chainId,
+          txHash: hash,
+          type: AppNotificationType.Transaction,
+          txType: TransactionType.Receive,
+          assetType: AssetType.ERC1155,
+          tokenAddress: receiveNftTypeInfo.tokenAddress,
+          tokenId: '420',
+          sender: receiveNftTypeInfo.sender,
+          txId,
+        })
+      )
+      .silentRun()
+  })
+
+  it('Handles an unknown tranasction', () => {
+    const unknownTxTypeInfo: UnknownTransactionInfo = {
+      type: TransactionType.Unknown,
+      tokenAddress: '0xUniswapToken',
+    }
+    const finalizedUnknownAction = createFinalizedTxAction(unknownTxTypeInfo)
+    const { chainId, from, hash } = finalizedUnknownAction.payload
+
+    return expectSaga(pushTransactionNotification, finalizedUnknownAction)
+      .put(
+        pushNotification({
+          txStatus: TransactionStatus.Success,
+          address: from,
+          chainId,
+          txHash: hash,
+          type: AppNotificationType.Transaction,
+          txType: TransactionType.Unknown,
+          tokenAddress: unknownTxTypeInfo.tokenAddress,
+          txId,
+        })
+      )
+      .silentRun()
+  })
+})
