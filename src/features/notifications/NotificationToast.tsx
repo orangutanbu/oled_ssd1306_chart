@@ -76,4 +76,109 @@ export function NotificationToast({
     }
   }, [address, bannerOffset, dispatch, notifications, showOffset])
 
-  // If there is another notification in the queue then hide the current one immedia
+  // If there is another notification in the queue then hide the current one immediately
+  const delay = hasQueuedNotification ? 0 : hideDelay ?? DEFAULT_HIDE_DELAY
+  const cancelDismiss = useTimeout(dismissLatest, delay)
+
+  const onFling = ({ nativeEvent }: FlingGestureHandlerGestureEvent): void => {
+    if (nativeEvent.state === State.ACTIVE) {
+      cancelDismiss?.()
+      dismissLatest()
+    }
+  }
+
+  const onNotificationPress = (): void => {
+    cancelDismiss?.()
+    if (onPress) {
+      dispatch(popNotification({ address }))
+      onPress()
+    } else {
+      dismissLatest()
+    }
+  }
+
+  const onActionButtonPress = (): void => {
+    cancelDismiss?.()
+    dismissLatest()
+    actionButton?.onPress()
+  }
+
+  return (
+    <FlingGestureHandler direction={Directions.UP} onHandlerStateChange={onFling}>
+      <AnimatedBox
+        borderColor={useSmallDisplay ? 'none' : 'background3'}
+        borderRadius="rounded16"
+        borderWidth={1}
+        left={0}
+        marginHorizontal="spacing16"
+        pointerEvents="box-none"
+        position="absolute"
+        right={0}
+        style={animatedStyle}
+        zIndex="modal">
+        {useSmallDisplay ? (
+          <NotificationContentSmall
+            icon={icon}
+            title={title}
+            onPress={onNotificationPress}
+            onPressIn={onPressIn}
+          />
+        ) : (
+          <NotificationContent
+            actionButton={
+              actionButton ? { title: actionButton.title, onPress: onActionButtonPress } : undefined
+            }
+            balanceUpdate={balanceUpdate}
+            icon={icon}
+            title={title}
+            onPress={onNotificationPress}
+            onPressIn={onPressIn}
+          />
+        )}
+      </AnimatedBox>
+    </FlingGestureHandler>
+  )
+}
+
+export function NotificationContent({
+  title,
+  icon,
+  balanceUpdate,
+  actionButton,
+  onPress,
+  onPressIn,
+}: NotificationContentProps): JSX.Element {
+  const endAdornment = balanceUpdate || actionButton
+  return (
+    <TouchableArea
+      alignItems="center"
+      bg="background1"
+      borderRadius="rounded16"
+      flex={1}
+      flexDirection="row"
+      minHeight={NOTIFICATION_HEIGHT}
+      px="spacing16"
+      py="spacing16"
+      onPress={onPress}
+      onPressIn={onPressIn}>
+      <Flex row alignItems="center" gap="spacing8" justifyContent="space-between" width="100%">
+        <Flex
+          row
+          shrink
+          alignItems="center"
+          flexBasis={endAdornment ? '75%' : '100%'}
+          gap="spacing8"
+          justifyContent="flex-start">
+          {icon}
+          <Flex row shrink alignItems="center">
+            <Text numberOfLines={2} variant="bodySmall">
+              {title}
+            </Text>
+          </Flex>
+        </Flex>
+        {endAdornment ? (
+          <Flex shrink alignItems="flex-end" flexBasis="25%" gap="spacing4">
+            {balanceUpdate ? (
+              balanceUpdate
+            ) : actionButton ? (
+              <TouchableArea p="spacing8" onPress=
