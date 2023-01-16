@@ -139,4 +139,90 @@ describe(pushTransactionNotification, () => {
       .put(
         pushNotification({
           txStatus: TransactionStatus.Success,
-        
+          address: from,
+          chainId,
+          txHash: hash,
+          type: AppNotificationType.Transaction,
+          txType: TransactionType.Send,
+          assetType: AssetType.Currency,
+          tokenAddress: sendCurrencyTypeInfo.tokenAddress,
+          currencyAmountRaw: '1000',
+          recipient: sendCurrencyTypeInfo.recipient,
+          txId,
+        })
+      )
+      .silentRun()
+  })
+
+  it('Handles sending NFTs', () => {
+    const sendNftTypeInfo: SendTokenTransactionInfo = {
+      type: TransactionType.Send,
+      assetType: AssetType.ERC721,
+      recipient: '0x123abc456def',
+      tokenAddress: '0xUniswapToken',
+      tokenId: '420',
+    }
+    const finalizedSendNftAction = createFinalizedTxAction(sendNftTypeInfo)
+    const { chainId, from, hash } = finalizedSendNftAction.payload
+
+    return expectSaga(pushTransactionNotification, finalizedSendNftAction)
+      .put(
+        pushNotification({
+          txStatus: TransactionStatus.Success,
+          address: from,
+          chainId,
+          txHash: hash,
+          type: AppNotificationType.Transaction,
+          txType: TransactionType.Send,
+          assetType: AssetType.ERC721,
+          tokenAddress: sendNftTypeInfo.tokenAddress,
+          tokenId: '420',
+          recipient: sendNftTypeInfo.recipient,
+          txId,
+        })
+      )
+      .silentRun()
+  })
+
+  it('Handles receiving currency', () => {
+    const receiveCurrencyTypeInfo: ReceiveTokenTransactionInfo = {
+      type: TransactionType.Receive,
+      assetType: AssetType.Currency,
+      currencyAmountRaw: '1000',
+      sender: '0x000123abc456def',
+      tokenAddress: '0xUniswapToken',
+    }
+    const finalizedReceiveCurrencyAction = createFinalizedTxAction(receiveCurrencyTypeInfo)
+    const { chainId, from, hash } = finalizedReceiveCurrencyAction.payload
+
+    return expectSaga(pushTransactionNotification, finalizedReceiveCurrencyAction)
+      .put(
+        pushNotification({
+          txStatus: TransactionStatus.Success,
+          address: from,
+          chainId,
+          txHash: hash,
+          type: AppNotificationType.Transaction,
+          txType: TransactionType.Receive,
+          assetType: AssetType.Currency,
+          tokenAddress: receiveCurrencyTypeInfo.tokenAddress,
+          currencyAmountRaw: '1000',
+          sender: receiveCurrencyTypeInfo.sender,
+          txId,
+        })
+      )
+      .silentRun()
+  })
+
+  it('Handles receiving NFTs', () => {
+    const receiveNftTypeInfo: ReceiveTokenTransactionInfo = {
+      type: TransactionType.Receive,
+      assetType: AssetType.ERC1155,
+      sender: '0x000123abc456def',
+      tokenAddress: '0xUniswapToken',
+      tokenId: '420',
+    }
+    const finalizedReceiveNftAction = createFinalizedTxAction(receiveNftTypeInfo)
+    const { chainId, from, hash } = finalizedReceiveNftAction.payload
+
+    return expectS
