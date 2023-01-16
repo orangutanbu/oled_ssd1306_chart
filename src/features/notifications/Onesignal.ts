@@ -33,4 +33,29 @@ export const initOneSignal = (): void => {
       `Notification opened: ${event.notification}`
     )
 
-    // This emits a url even
+    // This emits a url event when coldStart = false. Don't call openURI because that will
+    // send the user to Safari to open the universal link. When coldStart = true, OneSignal
+    // handles the url event and navigates correctly.
+    if (event.notification.launchURL) {
+      Linking.emit('url', { url: event.notification.launchURL })
+    }
+  })
+}
+
+export const promptPushPermission = (
+  successCallback?: () => void,
+  failureCallback?: () => void
+): void => {
+  OneSignal.promptForPushNotificationsWithUserResponse((response) => {
+    logger.debug(
+      'Onesignal',
+      'promptForPushNotificationsWithUserResponse',
+      `Prompt response: ${response}`
+    )
+    if (response) {
+      successCallback?.()
+    } else {
+      failureCallback?.()
+    }
+  })
+}
