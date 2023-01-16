@@ -181,4 +181,40 @@ export function NotificationContent({
             {balanceUpdate ? (
               balanceUpdate
             ) : actionButton ? (
-              <TouchableArea p="spacing8" onPress=
+              <TouchableArea p="spacing8" onPress={actionButton.onPress}>
+                <Text color="accentActive">{actionButton.title}</Text>
+              </TouchableArea>
+            ) : null}
+          </Flex>
+        ) : null}
+      </Flex>
+    </TouchableArea>
+  )
+}
+
+export function NotificationContentSmall({
+  title,
+  icon,
+  onPress,
+  onPressIn,
+}: NotificationContentProps): JSX.Element {
+  return (
+    <Flex row flexShrink={1} justifyContent="center" pointerEvents="box-none">
+      <TouchableArea
+        bg="background1"
+        borderColor="background3"
+        borderRadius="roundedFull"
+        borderWidth={1}
+        p="spacing12"
+        onPress={onPress}
+        onPressIn={onPressIn}>
+        <Flex row alignItems="center" gap="spacing8" justifyContent="flex-start" pr="spacing4">
+          {icon}
+          <Text adjustsFontSizeToFit numberOfLines={1} variant="bodyLarge">
+            {title}
+          </Text>
+        </Flex>
+      </TouchableArea>
+    </Flex>
+  )
+}
