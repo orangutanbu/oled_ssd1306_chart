@@ -69,4 +69,70 @@ export interface WrapTxNotification extends TransactionNotificationBase {
 }
 
 interface TransferCurrencyTxNotificationBase extends TransactionNotificationBase {
-  txType: TransactionType.Send | TransactionType.Receiv
+  txType: TransactionType.Send | TransactionType.Receive
+  assetType: AssetType.Currency
+  tokenAddress: string
+  currencyAmountRaw: string
+}
+
+export interface SendCurrencyTxNotification extends TransferCurrencyTxNotificationBase {
+  txType: TransactionType.Send
+  recipient: Address
+}
+
+export interface ReceiveCurrencyTxNotification extends TransferCurrencyTxNotificationBase {
+  txType: TransactionType.Receive
+  sender: Address
+}
+
+interface TransferNFTNotificationBase extends TransactionNotificationBase {
+  txType: TransactionType.Send | TransactionType.Receive
+  assetType: AssetType.ERC1155 | AssetType.ERC721
+  tokenAddress: string
+  tokenId: string
+}
+
+export interface SendNFTNotification extends TransferNFTNotificationBase {
+  txType: TransactionType.Send
+  recipient: Address
+}
+
+export interface ReceiveNFTNotification extends TransferNFTNotificationBase {
+  txType: TransactionType.Receive
+  sender: Address
+}
+
+export interface UnknownTxNotification extends TransactionNotificationBase {
+  txType: TransactionType.Unknown
+}
+
+export type TransferCurrencyTxNotification =
+  | SendCurrencyTxNotification
+  | ReceiveCurrencyTxNotification
+
+export type TransferNFTTxNotification = SendNFTNotification | ReceiveNFTNotification
+
+export type TransactionNotification =
+  | ApproveTxNotification
+  | SwapTxNotification
+  | WrapTxNotification
+  | TransferCurrencyTxNotification
+  | TransferNFTTxNotification
+  | UnknownTxNotification
+
+export interface CopyNotification extends AppNotificationBase {
+  type: AppNotificationType.Copied
+}
+
+export interface SwapNetworkNotification extends AppNotificationBase {
+  type: AppNotificationType.SwapNetwork
+  chainId: ChainId
+}
+
+export type AppNotification =
+  | AppNotificationDefault
+  | AppErrorNotification
+  | CopyNotification
+  | WalletConnectNotification
+  | TransactionNotification
+  | SwapNetworkNotification
