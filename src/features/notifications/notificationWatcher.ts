@@ -126,4 +126,34 @@ export function* pushTransactionNotification(
     )
   } else if (typeInfo.type === TransactionType.Unknown) {
     yield* put(
- 
+      pushNotification({
+        ...baseNotificationData,
+        type: AppNotificationType.Transaction,
+        txType: TransactionType.Unknown,
+        tokenAddress: typeInfo?.tokenAddress,
+      })
+    )
+  }
+}
+
+// If an approve tx is submitted with a swap tx (i.e, swap tx is added within 3 seconds of an approve tx),
+// then suppress the approve notification
+function* suppressApproveNotification(
+  address: Address,
+  chainId: ChainId,
+  approveAddedTime: number
+): Generator<SelectEffect, boolean, unknown> {
+  const transactions = (yield* appSelect(selectTransactions))?.[address]?.[chainId]
+  const transactionDetails = Object.values(transactions ?? {})
+  const foundSwapTx = transactionDetails.find((tx) => {
+    const { type } = tx.typeInfo
+    if (type !== TransactionType.Swap) {
+      return false
+    }
+
+    const swapAddedTime = tx.addedTime
+    return swapAddedTime - approveAddedTime < 3000
+  })
+
+  return !!foundSwapTx
+}
