@@ -34,4 +34,87 @@ export enum MobileEventName {
  * `elementName`, but a different `section`.
  */
 export const enum SectionName {
-  CurrencyInputPanel
+  CurrencyInputPanel = 'currency-input-panel',
+  CurrencyOutputPanel = 'currency-output-panel',
+  ExploreFavoriteTokensSection = 'explore-favorite-tokens-section',
+  ExploreSearch = 'explore-search',
+  ExploreTopTokensSection = 'explore-top-tokens-section',
+  HomeActivityTab = 'home-activity-tab',
+  HomeNFTsTab = 'home-nfts-tab',
+  HomeTokensTab = 'home-tokens-tab',
+  ImportAccountForm = 'import-account-form',
+  ProfileActivityTab = 'profile-activity-tab',
+  ProfileNftsTab = 'profile-nfts-tab',
+  ProfileTokensTab = 'profile-tokens-tab',
+  Sidebar = 'sidebar',
+  SwapForm = 'swap-form',
+  SwapPending = 'swap-pending',
+  SwapReview = 'swap-review',
+  TransferForm = 'transfer-form',
+  TransferPending = 'transfer-pending',
+  TransferReview = 'transfer-review',
+  // alphabetize additional values.
+}
+
+/** Known modals for telemetry purposes. */
+export const enum ModalName {
+  AccountEdit = 'account-edit-modal',
+  AccountSwitcher = 'account-switcher-modal',
+  AddWallet = 'add-wallet-modal',
+  BlockedAddress = 'blocked-address',
+  Experiments = 'experiments',
+  Explore = 'explore-modal',
+  FaceIDWarning = 'face-id-warning',
+  FiatOnRamp = 'fiat-on-ramp',
+  ForceUpgradeModal = 'force-upgrade-modal',
+  ICloudBackupInfo = 'icloud-backup-info-modal',
+  NetworkSelector = 'network-selector-modal',
+  NftCollection = 'nft-collection',
+  RecoveryWarning = 'recovery-warning',
+  RemoveWallet = 'remove-wallet-modal',
+  RemoveSeedPhraseWarningModal = 'remove-seed-phrase-warning-modal',
+  ReimportUninstall = 'reimport-uninstall-modal',
+  ScreenshotWarning = 'screenshot-warning',
+  Send = 'send-modal',
+  SendWarning = 'send-warning-modal',
+  Swap = 'swap-modal',
+  SwapWarning = 'swap-warning-modal',
+  GasEstimateWarning = 'gas-estimate-warning-modal',
+  TokenWarningModal = 'token-warning-modal',
+  TooltipContent = 'tooltip-content',
+  TransactionActions = 'transaction-actions',
+  ViewSeedPhraseWarning = 'view-seed-phrase-warning',
+  WalletConnectScan = 'wallet-connect-scan-modal',
+  WCSignRequest = 'wc-sign-request-modal',
+  WCSwitchChainRequest = 'wc-switch-chain-request-modal',
+  WCViewOnlyWarning = 'wc-view-only-warning-modal',
+  // alphabetize additional values.
+}
+
+/**
+ * Known element names for telemetry purposes.
+ * Use to identify low-level components given a TraceContext
+ */
+
+export const enum ElementName {
+  AccountCard = 'account-card',
+  AddManualBackup = 'add-manual-backup',
+  AddViewOnlyWallet = 'add-view-only-wallet',
+  AddiCloudBackup = 'add-icloud-backup',
+  Back = 'back',
+  Buy = 'buy',
+  Cancel = 'cancel',
+  Confirm = 'confirm',
+  Continue = 'continue',
+  Copy = 'copy',
+  CreateAccount = 'create-account',
+  Disconnect = 'disconnect',
+  Edit = 'edit',
+  Enable = 'enable',
+  EtherscanView = 'etherscan-view',
+  Favorite = 'favorite',
+  FiatOnRampWidgetButton = 'fiat-on-ramp-widget-button',
+  GetHelp = 'get-help',
+  GetStarted = 'get-started',
+  ImportAccount = 'import',
+  
