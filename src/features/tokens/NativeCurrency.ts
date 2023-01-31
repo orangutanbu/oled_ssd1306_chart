@@ -31,4 +31,42 @@ export class NativeCurrency implements NativeCurrencyClass {
   }
 
   public get wrapped(): Token {
-    const wrapped = WRAPPED_NATIVE_CURRENCY[this.chainId as C
+    const wrapped = WRAPPED_NATIVE_CURRENCY[this.chainId as ChainId]
+    if (!wrapped) throw new Error('Unsupported chain ID')
+
+    return wrapped
+  }
+
+  private static _cachedNativeCurrency: { [chainId: number]: NativeCurrency } = {}
+
+  public static onChain(chainId: number): NativeCurrency {
+    return (
+      this._cachedNativeCurrency[chainId] ??
+      (this._cachedNativeCurrency[chainId] = isPolygonChain(chainId)
+        ? new MaticNativeCurrency(chainId)
+        : new NativeCurrency(chainId))
+    )
+  }
+}
+
+class MaticNativeCurrency extends NativeCurrency {
+  address = NATIVE_ADDRESS_ALT
+
+  equals(other: Currency): boolean {
+    return other.isNative && other.chainId === this.chainId
+  }
+
+  get wrapped(): Token {
+    if (!isPolygonChain(this.chainId)) throw new Error('Not matic')
+
+    const wrapped = WRAPPED_NATIVE_CURRENCY[this.chainId]
+    if (!wrapped) throw new Error('Wrapped currency info not found')
+
+    return wrapped
+  }
+
+  public constructor(chainId: number) {
+    if (!isPolygonChain(chainId)) throw new Error('Not matic')
+    super(chainId)
+  }
+}
