@@ -14,4 +14,18 @@ export function useCurrencyInfo(_currencyId?: string): NullUndefined<CurrencyInf
   })
 
   return useMemo(() => {
-    if (!data?.token || !_c
+    if (!data?.token || !_currencyId) return
+
+    return gqlTokenToCurrencyInfo(data.token)
+  }, [data, _currencyId])
+}
+
+export function useNativeCurrencyInfo(chainId: ChainId): NullUndefined<CurrencyInfo> {
+  const nativeCurrencyId = buildNativeCurrencyId(chainId)
+  return useCurrencyInfo(nativeCurrencyId)
+}
+
+export function useWrappedNativeCurrencyInfo(chainId: ChainId): NullUndefined<CurrencyInfo> {
+  const wrappedCurrencyId = currencyId(WRAPPED_NATIVE_CURRENCY[chainId])
+  return useCurrencyInfo(wrappedCurrencyId)
+}
