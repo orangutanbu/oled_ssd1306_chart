@@ -71,4 +71,53 @@ export function captureException(context: string, error: unknown, extraTags?: Lo
  *                  More info here: https://docs.sentry.io/platforms/react-native/enriching-events/tags/
  */
 export function captureMessage(
-  level: Se
+  level: SeverityLevel,
+  context: string,
+  message: string,
+  extraTags?: LogTags
+): void {
+  Sentry.captureMessage(message, { level, tags: { ...(extraTags || {}), mobileContext: context } })
+}
+
+//#endregion
+
+//#region ------------------------------ Amplitude ------------------------------
+
+/**
+ * Sends an event to Amplitude.
+ */
+export function sendAnalyticsEvent<EventName extends keyof EventProperties>(
+  ...args: undefined extends EventProperties[EventName]
+    ? [EventName] | [EventName, EventProperties[EventName]]
+    : [EventName, EventProperties[EventName]]
+): void {
+  const [eventName, eventProperties] = args
+  if (__DEV__) {
+    logger.debug(
+      'telemetry',
+      'sendAnalyticsEvent',
+      `[analytics(${eventName})]: ${JSON.stringify(eventProperties)}`
+    )
+  }
+
+  track(eventName, eventProperties)
+}
+
+export function flushAnalyticsEvents(): void {
+  if (__DEV__) {
+    logger.debug('telemetry', 'flushAnalyticsEvents', 'flushing analytics events')
+  }
+  flush()
+}
+
+// didn't want to set it to Amplitude's type to keep it loose from their implementation
+type ValidPropertyValue = number | string | boolean | Array<string | number>
+
+export function setUserProperty(property: UserPropertyName, value: ValidPropertyValue): void {
+  if (__DEV__) {
+    logger.debug('telemetry', 'setUserProperty', `property: ${property}, value: ${value}`)
+  }
+  identify(new Identify().set(property, value))
+}
+
+//#endregion
