@@ -117,4 +117,92 @@ export const enum ElementName {
   GetHelp = 'get-help',
   GetStarted = 'get-started',
   ImportAccount = 'import',
-  
+  Manage = 'manage',
+  ManageConnections = 'manage-connections',
+  MoonpayExplorerView = 'moonpay-explorer-view',
+  NetworkButton = 'network-button',
+  Next = 'next',
+  Notifications = 'notifications',
+  OK = 'ok',
+  OnboardingCreateWallet = 'onboarding-create-wallet',
+  OnboardingImportBackup = 'onboarding-import-backup',
+  OnboardingImportSeedPhrase = 'onboarding-import-seed-phrase',
+  OnboardingImportWallet = 'onboarding-import-wallet',
+  OnboardingImportWatchedAccount = 'onboarding-import-watched-account',
+  OpenSettingsButton = 'open-settings-button',
+  QRCodeModalToggle = 'qr-code-modal-toggle',
+  Receive = 'receive',
+  Remove = 'remove',
+  RestoreFromICloud = 'restore-from-icloud',
+  ReviewSwap = 'review-swap',
+  ReviewTransfer = 'review-transfer',
+  SearchEtherscanItem = 'search-etherscan-item',
+  SearchTokenItem = 'search-token-item',
+  SearchWalletItem = 'search-wallet-item',
+  SelectColor = 'select-color',
+  SelectRecipient = 'select-recipient',
+  Send = 'send',
+  Settings = 'settings',
+  Skip = 'skip',
+  Submit = 'submit',
+  Swap = 'swap',
+  TimeFrame1H = 'time-frame-1H',
+  TimeFrame1D = 'time-frame-1D',
+  TimeFrame1W = 'time-frame-1W',
+  TimeFrame1M = 'time-frame-1M',
+  TimeFrame1Y = 'time-frame-1Y',
+  TokenLinkEtherscan = 'token-link-etherscan',
+  TokenLinkTwitter = 'token-link-twitter',
+  TokenLinkWebsite = 'token-link-website',
+  TokenSelectorToggle = 'token-selector-toggle',
+  TokenWarningAccept = 'token-warning-accept',
+  Unwrap = 'unwrap',
+  WCDappSwitchAccount = 'wc-dapp-switch-account',
+  WCDappSwitchNetwork = 'wc-dapp-switch-network',
+  WCOpenDapp = 'wc-open-dapp',
+  WalletCard = 'wallet-card',
+  WalletConnectScan = 'wallet-connect-scan',
+  WalletSettings = 'WalletSettings',
+  Wrap = 'wrap',
+  // alphabetize additional values.
+}
+
+export const enum MarkNames {}
+
+export enum UserPropertyName {
+  ActiveWalletAddress = 'active_wallet_address',
+  ActiveWalletType = 'active_wallet_type',
+  AppOpenAuthMethod = 'app_open_auth_method',
+  AppVersion = 'app_version',
+  DarkMode = 'is_dark_mode',
+  IsCloudBackedUp = 'is_cloud_backed_up',
+  IsHideSmallBalancesEnabled = 'is_hide_small_balances_enabled',
+  IsHideSpamTokensEnabled = 'is_hide_spam_tokens_enabled',
+  IsPushEnabled = 'is_push_enabled',
+  TransactionAuthMethod = 'transaction_auth_method',
+  WalletSignerAccounts = `wallet_signer_accounts`,
+  WalletSignerCount = 'wallet_signer_count',
+  WalletViewOnlyCount = 'wallet_view_only_count',
+  // alphabetize additional values.
+}
+
+// could add PIN in the future
+export enum AuthMethod {
+  FaceId = 'FaceId',
+  None = 'None',
+  TouchId = 'TouchId',
+  // alphabetize additional values.
+}
+
+/**
+ * Known components' events that trigger callbacks.
+ *
+ * e.g OnFocus, OnLongPress, OnSubmit, etc.
+ *
+ * @example
+ *  <TraceEvent events={[ReactNativeEvent.onPress]} element={name}>
+ */
+export enum ReactNativeEvent {
+  OnPress = 'onPress',
+  // alphabetize additional values.
+}
