@@ -37,4 +37,86 @@ export type EventProperties = {
   [MobileEventName.ExploreFilterSelected]: {
     filter_type: string
   }
-  [MobileEventName
+  [MobileEventName.ExploreSearchResultClicked]: {
+    query: string
+    type: 'collection' | 'token' | 'address'
+    suggestion_count: number
+    position: number
+    name: string
+    address: string
+    chain?: number
+  }
+  [MobileEventName.ExploreSearchCancel]: {
+    query: string
+  }
+  [MobileEventName.ExploreTokenItemSelected]: {
+    address: string
+    name?: string
+    position: number
+    chain: number
+  }
+  [MobileEventName.FavoriteItem]: {
+    address: string
+    name?: string
+    chain?: number
+    type: 'token' | 'wallet'
+  }
+  [MobileEventName.FiatOnRampQuickActionButtonPressed]: BaseEventProperty
+  [MobileEventName.FiatOnRampBannerPressed]: BaseEventProperty
+  [MobileEventName.FiatOnRampWidgetOpened]: BaseEventProperty & { externalTransactionId: string }
+  [MobileEventName.OnboardingCompleted]: {
+    // TODO(MOB-3547) Enforce ImportType in all OnboardingScreens
+    wallet_type?: ImportType
+    accounts_imported_count: number
+  } & BaseEventProperty
+  [MobileEventName.PerformanceReport]: RenderPassReport
+  [MobileEventName.PerformanceGraphql]: {
+    dataSize: number
+    duration: number
+    operationName: string
+    operationType?: string
+  }
+  [MobileEventName.SwapSubmitted]: {
+    transaction_hash: string
+  } & SwapTradeBaseProperties
+  [MobileEventName.TokenDetailsOtherChainButtonPressed]: BaseEventProperty
+  [MobileEventName.WalletAdded]: {
+    wallet_type?: ImportType
+    accounts_imported_count: number
+  } & BaseEventProperty
+  [MobileEventName.WalletConnectSheetCompleted]: {
+    request_type: WCEventType
+    eth_method?: EthMethod
+    dapp_url: string
+    dapp_name: string
+    wc_version: '1' | '2'
+    chain_id?: number
+    outcome: WCRequestOutcome
+  }
+  [MoonpayEventName.MOONPAY_GEOCHECK_COMPLETED]: {
+    success: boolean
+    networkError: boolean
+  } & BaseEventProperty
+  [SharedEventName.APP_LOADED]: BaseEventProperty
+  [SharedEventName.ELEMENT_CLICKED]: BaseEventProperty
+  [SharedEventName.PAGE_VIEWED]: BaseEventProperty
+  [SwapEventName.SWAP_QUOTE_RECEIVED]: {
+    quote_latency_milliseconds?: number
+  } & SwapTradeBaseProperties
+  [SwapEventName.SWAP_SUBMITTED_BUTTON_CLICKED]: {
+    estimated_network_fee_wei?: string
+    gas_limit?: string
+    transaction_deadline_seconds?: number
+    token_in_amount_usd?: number
+    token_out_amount_usd?: number
+    is_auto_slippage?: boolean
+    swap_quote_block_number?: string
+  } & SwapTradeBaseProperties
+}
+
+export type TelemetryEventProps = {
+  // Left this one as name as it's being used all over the app already
+  name?: TraceEventProps['elementName']
+} & Partial<Pick<TraceEventProps, 'eventName' | 'events' | 'properties'>>
+
+export type TelemetryTraceProps = Omit<TraceProps, 'logImpression' | 'startMark' | 'endMark'>
