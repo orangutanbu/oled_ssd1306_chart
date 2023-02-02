@@ -173,4 +173,55 @@ function TransactionSummaryLayout({
             // only display `View on Moonpay` when an explorer url was provided by Moonpay
             transaction.typeInfo.explorerUrl
               ? (): Promise<void> | undefined =>
-       
+                  // avoids type casting
+                  transaction.typeInfo.type === TransactionType.FiatPurchase
+                    ? openMoonpayTransactionLink(transaction.typeInfo)
+                    : undefined
+              : undefined
+          }
+        />
+      )}
+
+      {showCancelModal && (
+        <BottomSheetModal
+          hideHandlebar={false}
+          name={ModalName.TransactionActions}
+          onClose={(): void => setShowCancelModal(false)}>
+          {transaction && (
+            <CancelConfirmationView
+              transactionDetails={transaction}
+              onBack={(): void => {
+                setShowActionsModal(true)
+                setShowCancelModal(false)
+              }}
+              onCancel={handleCancel}
+            />
+          )}
+        </BottomSheetModal>
+      )}
+    </>
+  )
+}
+
+export default TransactionSummaryLayout
+
+export function AssetUpdateLayout({
+  title,
+  caption,
+}: {
+  title: string | undefined
+  caption?: string | undefined
+}): JSX.Element {
+  return (
+    <Flex shrink alignItems="flex-end" gap="none">
+      <Text numberOfLines={1} variant="bodyLarge">
+        {title}
+      </Text>
+      {caption && (
+        <Text color="textSecondary" numberOfLines={1} variant="bodySmall">
+          {caption}
+        </Text>
+      )}
+    </Flex>
+  )
+}
