@@ -13,16 +13,16 @@ import TransactionSummaryLayout, {
 } from 'src/features/transactions/SummaryCards/TransactionSummaryLayout'
 import { BaseTransactionSummaryProps } from 'src/features/transactions/SummaryCards/TransactionSummaryRouter'
 import { getTransactionTitle } from 'src/features/transactions/SummaryCards/utils'
-import { ReceiveTokenTransactionInfo } from 'src/features/transactions/types'
+import { SendTokenTransactionInfo } from 'src/features/transactions/types'
 import { shortenAddress } from 'src/utils/addresses'
 import { buildCurrencyId } from 'src/utils/currencyId'
 
-export default function ReceiveSummaryItem({
+export default function SendSummaryItem({
   transaction,
   readonly,
   ...rest
 }: BaseTransactionSummaryProps & {
-  transaction: { typeInfo: ReceiveTokenTransactionInfo }
+  transaction: { typeInfo: SendTokenTransactionInfo }
 }): JSX.Element {
   const { t } = useTranslation()
   const currencyInfo = useCurrencyInfo(
@@ -60,27 +60,25 @@ export default function ReceiveSummaryItem({
     transaction.typeInfo.type,
   ])
 
-  const title = getTransactionTitle(transaction.status, t('Receive'), t('Received'), t)
+  const title = getTransactionTitle(transaction.status, t('Send'), t('Sent'), t)
 
   // Search for matching ENS
-  const { name: ensName } = useENS(ChainId.Mainnet, transaction.typeInfo.sender, true)
-  const senderName = ensName ?? shortenAddress(transaction.typeInfo.sender)
+  const { name: ensName } = useENS(ChainId.Mainnet, transaction.typeInfo.recipient, true)
+  const recipientName = ensName ?? shortenAddress(transaction.typeInfo.recipient)
 
-  const endAdornment = useMemo(() => {
-    if (
-      transaction.typeInfo.assetType === AssetType.Currency &&
-      currencyInfo &&
-      transaction.typeInfo.currencyAmountRaw
-    ) {
-      return (
-        <BalanceUpdate
-          amountRaw={transaction.typeInfo.currencyAmountRaw}
-          currency={currencyInfo.currency}
-          transactedUSDValue={transaction.typeInfo.transactedUSDValue}
-          transactionStatus={transaction.status}
-          transactionType={transaction.typeInfo.type}
-        />
-      )
+  const endAdornement = useMemo(() => {
+    if (transaction.typeInfo.assetType === AssetType.Currency) {
+      if (currencyInfo && transaction.typeInfo.currencyAmountRaw) {
+        return (
+          <BalanceUpdate
+            amountRaw={transaction.typeInfo.currencyAmountRaw}
+            currency={currencyInfo.currency}
+            transactedUSDValue={transaction.typeInfo.transactedUSDValue}
+            transactionStatus={transaction.status}
+            transactionType={transaction.typeInfo.type}
+          />
+        )
+      }
     }
     if (
       transaction.typeInfo.assetType === AssetType.ERC1155 ||
@@ -106,8 +104,8 @@ export default function ReceiveSummaryItem({
 
   return (
     <TransactionSummaryLayout
-      caption={senderName}
-      endAdornment={endAdornment}
+      caption={recipientName}
+      endAdornment={endAdornement}
       icon={icon}
       readonly={readonly}
       title={title}
