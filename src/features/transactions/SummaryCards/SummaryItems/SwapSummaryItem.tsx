@@ -62,4 +62,65 @@ export default function SwapSummaryItem({
     const { currency: outputCurrency } = outputCurrencyInfo
     if (status !== TransactionStatus.Success) {
       const currencyAmount = getFormattedCurrencyAmount(inputCurrency, inputAmountRaw)
-      const otherCurrencyAmount = ge
+      const otherCurrencyAmount = getFormattedCurrencyAmount(outputCurrency, outputAmountRaw)
+      return `${currencyAmount}${inputCurrency.symbol} → ${otherCurrencyAmount}${outputCurrency.symbol}`
+    }
+    return inputCurrency.symbol + '→' + outputCurrency.symbol
+  }, [inputAmountRaw, inputCurrencyInfo, outputAmountRaw, outputCurrencyInfo, status])
+
+  const title = getTransactionTitle(transaction.status, t('Swap'), t('Swapped'), t)
+
+  // For retrying failed, locally submitted swaps
+  const swapFormState = useCreateSwapFormState(
+    transaction.from,
+    transaction.chainId,
+    transaction.id
+  )
+
+  const onRetry = useCallback(() => {
+    dispatch(openModal({ name: ModalName.Swap, initialState: swapFormState }))
+  }, [dispatch, swapFormState])
+
+  const endAdornment = useMemo(() => {
+    if (status === TransactionStatus.Failed) {
+      if (swapFormState) {
+        return (
+          <Text color="accentAction" variant="buttonLabelMedium" onPress={onRetry}>
+            {t('Retry')}
+          </Text>
+        )
+      } else return undefined
+    }
+    if (outputCurrencyInfo) {
+      return (
+        <BalanceUpdate
+          amountRaw={outputAmountRaw}
+          currency={outputCurrencyInfo.currency}
+          transactedUSDValue={transaction.typeInfo.transactedUSDValue}
+          transactionStatus={transaction.status}
+          transactionType={transaction.typeInfo.type}
+        />
+      )
+    }
+  }, [onRetry, outputAmountRaw, outputCurrencyInfo, status, swapFormState, t, transaction])
+
+  return (
+    <TransactionSummaryLayout
+      caption={caption}
+      endAdornment={endAdornment}
+      icon={
+        <SwapLogoOrLogoWithTxStatus
+          inputCurrencyInfo={inputCurrencyInfo}
+          outputCurrencyInfo={outputCurrencyInfo}
+          showCancelIcon={showCancelIcon}
+          size={TXN_HISTORY_ICON_SIZE}
+          txStatus={status}
+        />
+      }
+      readonly={readonly}
+      title={title}
+      transaction={transaction}
+      {...rest}
+    />
+  )
+}
