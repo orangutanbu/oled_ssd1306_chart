@@ -42,4 +42,22 @@ export default function BalanceUpdate({
       transactedUSDValue,
     })
   }, [
-   
+    amountRaw,
+    currency,
+    nftTradeType,
+    spotPrice,
+    transactedUSDValue,
+    transactionStatus,
+    transactionType,
+    loading,
+  ])
+
+  if (loading) return null
+
+  return (
+    <AssetUpdateLayout
+      caption={balanceUpdate?.usdValueChange}
+      title={balanceUpdate?.assetValueChange}
+    />
+  )
+}
