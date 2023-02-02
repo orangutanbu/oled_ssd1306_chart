@@ -100,4 +100,77 @@ function TransactionSummaryLayout({
 
   return (
     <>
-      <TouchableArea o
+      <TouchableArea overflow="hidden" onPress={onPress} {...rest} mb="spacing24">
+        {showAlertBanner && <AlertBanner status={status} />}
+        <Flex
+          grow
+          row
+          alignItems="flex-start"
+          bg={showBackground ? 'background2' : bg ?? 'background0'}
+          borderRadius="rounded16"
+          borderTopLeftRadius={showAlertBanner ? 'none' : 'rounded16'}
+          borderTopRightRadius={showAlertBanner ? 'none' : 'rounded16'}
+          justifyContent="space-between"
+          px={showBackground ? 'spacing12' : 'none'}
+          py={showBackground ? 'spacing12' : 'none'}>
+          <Flex
+            grow
+            row
+            alignItems="center"
+            gap="spacing12"
+            height="100%"
+            justifyContent="flex-start">
+            {icon && (
+              <Flex centered height={TXN_HISTORY_ICON_SIZE} width={TXN_HISTORY_ICON_SIZE}>
+                {icon}
+              </Flex>
+            )}
+            <Flex grow gap="none">
+              <Flex row alignItems="center" gap="spacing4">
+                <Text numberOfLines={1} variant="bodyLarge">
+                  {title}
+                </Text>
+                {chainId !== ChainId.Mainnet && <InlineNetworkPill chainId={chainId} />}
+              </Flex>
+              {caption && (
+                <Text color="textSecondary" numberOfLines={1} variant="subheadSmall">
+                  {caption}
+                </Text>
+              )}
+            </Flex>
+          </Flex>
+          {inProgress ? (
+            <Flex alignItems="flex-end" gap="spacing2">
+              <SpinningLoader disabled={queued} size={LOADING_SPINNER_SIZE} />
+              {queued ? (
+                <Text color="textSecondary" variant="subheadSmall">
+                  {t('Queued')}
+                </Text>
+              ) : inProgress ? (
+                <Text color="textSecondary" variant="subheadSmall">
+                  {t('Pending')}
+                </Text>
+              ) : null}
+            </Flex>
+          ) : (
+            endAdornment
+          )}
+        </Flex>
+      </TouchableArea>
+      {showActionsModal && (
+        <TransactionActionsModal
+          msTimestampAdded={addedTime}
+          showCancelButton={isCancelable}
+          transactionDetails={transaction}
+          onCancel={(): void => {
+            setShowActionsModal(false)
+            setShowCancelModal(true)
+          }}
+          onClose={(): void => setShowActionsModal(false)}
+          onExplore={(): Promise<void> => openTransactionLink(hash, chainId)}
+          onViewMoonpay={
+            transaction.typeInfo.type === TransactionType.FiatPurchase &&
+            // only display `View on Moonpay` when an explorer url was provided by Moonpay
+            transaction.typeInfo.explorerUrl
+              ? (): Promise<void> | undefined =>
+       
