@@ -79,4 +79,91 @@ export function useCreateSwapFormState(
 
   const outputCurrencyId =
     transaction?.typeInfo.type === TransactionType.Swap
-      ? trans
+      ? transaction.typeInfo.outputCurrencyId
+      : undefined
+
+  const inputCurrencyInfo = useCurrencyInfo(inputCurrencyId)
+  const outputCurrencyInfo = useCurrencyInfo(outputCurrencyId)
+
+  return useMemo(() => {
+    if (!chainId || !txId || !transaction) {
+      return undefined
+    }
+
+    return createSwapFromStateFromDetails({
+      transactionDetails: transaction,
+      inputCurrency: inputCurrencyInfo?.currency,
+      outputCurrency: outputCurrencyInfo?.currency,
+    })
+  }, [chainId, inputCurrencyInfo, outputCurrencyInfo, transaction, txId])
+}
+
+export function useCreateWrapFormState(
+  address: Address | undefined,
+  chainId: ChainId | undefined,
+  txId: string | undefined,
+  inputCurrency: NullUndefined<Currency>,
+  outputCurrency: NullUndefined<Currency>
+): TransactionState | undefined {
+  const transaction = useSelectTransaction(address, chainId, txId)
+
+  return useMemo(() => {
+    if (!chainId || !txId || !transaction) {
+      return undefined
+    }
+
+    return createWrapFormStateFromDetails({
+      transactionDetails: transaction,
+      inputCurrency,
+      outputCurrency,
+    })
+  }, [chainId, inputCurrency, outputCurrency, transaction, txId])
+}
+
+/**
+ * Merge local and remote transactions. If duplicated hash found use data from local store.
+ */
+// TODO(MOB-3968): Add more specific type definition here
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+export function useMergeLocalAndRemoteTransactions(
+  address: string,
+  remoteTransactions: TransactionDetails[]
+) {
+  const localTransactions = useSelectAddressTransactions(address)
+
+  // Merge local and remote txns into array of single type.
+  const combinedTransactionList = useMemo(() => {
+    if (!address) return EMPTY_ARRAY
+    const localHashes: Set<string> = new Set()
+    localTransactions?.map((t: { hash: string }) => {
+      localHashes.add(t.hash)
+    })
+    const formattedRemote = remoteTransactions.reduce((accum: TransactionDetails[], txn) => {
+      if (!localHashes.has(txn.hash)) accum.push(txn) // dedupe
+      return accum
+    }, [])
+    return (localTransactions ?? [])
+      .concat(formattedRemote)
+      .sort((a: TransactionDetails, b: TransactionDetails) => (a.addedTime > b.addedTime ? -1 : 1))
+  }, [address, localTransactions, remoteTransactions])
+
+  return combinedTransactionList
+}
+
+export function useLowestPendingNonce(): BigNumberish | undefined {
+  const activeAccountAddress = useActiveAccountAddressWithThrow()
+  const pending = usePendingTransactions(activeAccountAddress)
+
+  return useMemo(() => {
+    let min: BigNumberish | undefined
+    if (!pending) return
+    pending.map((txn: TransactionDetails) => {
+      const currentNonce = txn.options?.request?.nonce
+      min = min ? (currentNonce ? (min < currentNonce ? min : currentNonce) : min) : currentNonce
+    })
+    return min
+  }, [pending])
+}
+
+/**
+ * Gets all tr
