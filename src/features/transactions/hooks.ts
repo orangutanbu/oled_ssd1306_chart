@@ -166,4 +166,88 @@ export function useLowestPendingNonce(): BigNumberish | undefined {
 }
 
 /**
- * Gets all tr
+ * Gets all transactions from a given sender and to a given recipient
+ * @param sender Get all transactions sent by this sender
+ * @param recipient Then filter so that we only keep txns to this recipient
+ */
+export function useAllTransactionsBetweenAddresses(
+  sender: Address,
+  recipient: string | undefined | null
+): TransactionDetails[] {
+  // TODO(MOB-3968): Add more specific type definition here
+  const txnsToSearch = useSelectAddressTransactions(sender)
+  return useMemo(() => {
+    if (!sender || !recipient || !txnsToSearch) return EMPTY_ARRAY
+    const commonTxs = txnsToSearch.filter(
+      (tx: TransactionDetails) =>
+        tx.typeInfo.type === TransactionType.Send && tx.typeInfo.recipient === recipient
+    )
+    return commonTxs.length ? commonTxs : EMPTY_ARRAY
+  }, [recipient, sender, txnsToSearch])
+}
+
+const MIN_INPUT_DECIMALPAD_GAP = theme.spacing.spacing12
+
+export function useShouldShowNativeKeyboard(): {
+  onInputPanelLayout: (event: LayoutChangeEvent) => void
+  onDecimalPadLayout: (event: LayoutChangeEvent) => void
+  isLayoutPending: boolean
+  showNativeKeyboard: boolean
+} {
+  const [containerHeight, setContainerHeight] = useState<number>()
+  const [decimalPadY, setDecimalPadY] = useState<number>()
+
+  const onInputPanelLayout = (event: LayoutChangeEvent): void => {
+    if (containerHeight === undefined) {
+      setContainerHeight(event.nativeEvent.layout.height)
+    }
+  }
+
+  const onDecimalPadLayout = (event: LayoutChangeEvent): void => {
+    if (decimalPadY === undefined) {
+      setDecimalPadY(event.nativeEvent.layout.y)
+    }
+  }
+
+  const isLayoutPending = containerHeight === undefined || decimalPadY === undefined
+
+  // If decimal pad renders below the input panel, we need to show the native keyboard
+  const showNativeKeyboard = isLayoutPending
+    ? false
+    : containerHeight + MIN_INPUT_DECIMALPAD_GAP > decimalPadY
+
+  return {
+    onInputPanelLayout,
+    onDecimalPadLayout,
+    isLayoutPending,
+    showNativeKeyboard,
+  }
+}
+
+export function useDynamicFontSizing(
+  maxCharWidthAtMaxFontSize: number,
+  maxFontSize: number,
+  minFontSize: number
+): {
+  onLayout: (event: LayoutChangeEvent) => void
+  fontSize: number
+  onSetFontSize: (amount: string) => void
+} {
+  const [fontSize, setFontSize] = useState(maxFontSize)
+  const [textInputElementWidth, setTextInputElementWidth] = useState<number>(0)
+
+  const onLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      if (textInputElementWidth) return
+
+      const width = event.nativeEvent.layout.width
+      setTextInputElementWidth(width)
+    },
+    [setTextInputElementWidth, textInputElementWidth]
+  )
+
+  const onSetFontSize = useCallback(
+    (amount: string) => {
+      const stringWidth = getStringWidth(amount, maxCharWidthAtMaxFontSize, fontSize, maxFontSize)
+      const scaledSize = fontSize * (textInputElementWidth / stringWidth)
+      const scaledSizeWithMin = Math.max(scal
