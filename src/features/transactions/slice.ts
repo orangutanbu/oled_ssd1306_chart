@@ -62,4 +62,71 @@ const slice = createSlice({
       >
     ) => {
       assert(
-        state?.[addres
+        state?.[address]?.[chainId]?.[id],
+        `cancelTransaction: Attempted to cancel a tx that doesnt exist with id ${id}`
+      )
+      state[address]![chainId]![id]!.status = TransactionStatus.Cancelling
+      state[address]![chainId]![id]!.cancelRequest = cancelRequest
+    },
+    replaceTransaction: (
+      state,
+      {
+        payload: { chainId, id, address },
+      }: PayloadAction<
+        TransactionId & {
+          newTxParams: providers.TransactionRequest
+        } & { address: string }
+      >
+    ) => {
+      assert(
+        state?.[address]?.[chainId]?.[id],
+        `replaceTransaction: Attempted to replace a tx that doesnt exist with id ${id}`
+      )
+      state[address]![chainId]![id]!.status = TransactionStatus.Replacing
+    },
+    resetTransactions: () => initialTransactionsState,
+    // fiat onramp transactions re-use this slice to store (off-chain) pending txs
+    // this action removes the transaction from store
+    upsertFiatOnRampTransaction: (
+      state,
+      { payload: transaction }: PayloadAction<TransactionDetails>
+    ) => {
+      const {
+        chainId,
+        id,
+        from,
+        status,
+        typeInfo: { type },
+      } = transaction
+
+      assert(type === TransactionType.FiatPurchase, `only fiat purchases can be upserted`)
+
+      switch (status) {
+        case TransactionStatus.Success:
+        case TransactionStatus.Unknown:
+          // treat canceled as tx never sent to Moonpay
+          // on success, tx should be reflected on chain
+          // in both cases, safe to stop tracking this tx
+          delete state[from]?.[chainId]?.[id]
+          break
+        case TransactionStatus.Failed:
+        case TransactionStatus.Pending:
+          state[from] ??= {}
+          state[from]![chainId] ??= {}
+          state[from]![chainId]![id] = transaction
+          break
+      }
+    },
+  },
+})
+
+export const {
+  addTransaction,
+  cancelTransaction,
+  finalizeTransaction,
+  replaceTransaction,
+  resetTransactions,
+  upsertFiatOnRampTransaction,
+  updateTransaction,
+} = slice.actions
+export const { reducer: transactionReducer, actions: transactionActions } = slice
