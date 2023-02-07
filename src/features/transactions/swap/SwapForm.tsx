@@ -343,4 +343,78 @@ function _SwapForm({
                   alignSelf="stretch"
                   backgroundColor="background2"
                   borderBottomLeftRadius="rounded16"
-                  borderBottomRightRadius
+                  borderBottomRightRadius="rounded16"
+                  flexGrow={1}
+                  mt="spacing2"
+                  px="spacing16"
+                  py="spacing12"
+                />
+              )}
+              {showRate && !isBlocked ? (
+                <TouchableArea onPress={(): void => setShowInverseRate(!showInverseRate)}>
+                  <Flex
+                    row
+                    alignItems="center"
+                    alignSelf="stretch"
+                    backgroundColor="background2"
+                    borderBottomLeftRadius="rounded16"
+                    borderBottomRightRadius="rounded16"
+                    borderTopColor="background0"
+                    borderTopWidth={1}
+                    flexGrow={1}
+                    gap="spacing8"
+                    px="spacing12"
+                    py="spacing12">
+                    {swapDataRefreshing ? (
+                      <SpinningLoader size={theme.iconSizes.icon20} />
+                    ) : (
+                      <InfoCircle
+                        color={theme.colors.textPrimary}
+                        height={theme.iconSizes.icon20}
+                        width={theme.iconSizes.icon20}
+                      />
+                    )}
+                    <Flex row gap="none">
+                      <Text
+                        color={swapDataRefreshing ? 'textTertiary' : undefined}
+                        variant="subheadSmall">
+                        {trade.trade
+                          ? getRateToDisplay(trade.trade, showInverseRate)
+                          : t('Fetching price...')}
+                      </Text>
+                      <Text
+                        color={swapDataRefreshing ? 'textTertiary' : 'textSecondary'}
+                        variant="subheadSmall">
+                        {rateUnitPrice &&
+                          ` (${formatPrice(rateUnitPrice, NumberType.FiatTokenPrice)})`}
+                      </Text>
+                    </Flex>
+                  </Flex>
+                </TouchableArea>
+              ) : null}
+            </Box>
+          </Trace>
+        </AnimatedFlex>
+        <AnimatedFlex
+          bottom={0}
+          exiting={FadeOutDown}
+          gap="spacing8"
+          left={0}
+          opacity={isLayoutPending ? 0 : 1}
+          position="absolute"
+          right={0}
+          onLayout={onDecimalPadLayout}>
+          {!showNativeKeyboard && (
+            <DecimalPad
+              resetSelection={resetSelection}
+              selection={focusOnCurrencyField ? selection[focusOnCurrencyField] : undefined}
+              setValue={setValue}
+              value={
+                focusOnCurrencyField === exactCurrencyField ? exactValue : formattedDerivedValue
+              }
+            />
+          )}
+          <Button
+            disabled={actionButtonDisabled}
+            label={getReviewActionName(t, wrapType)}
+           
