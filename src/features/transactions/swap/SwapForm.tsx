@@ -283,4 +283,64 @@ function _SwapForm({
                 <CurrencyInputPanel
                   isOutput
                   currencyAmount={currencyAmounts[CurrencyField.OUTPUT]}
-                  curr
+                  currencyBalance={currencyBalances[CurrencyField.OUTPUT]}
+                  currencyInfo={currencies[CurrencyField.OUTPUT]}
+                  dimTextColor={exactCurrencyField === CurrencyField.INPUT && swapDataRefreshing}
+                  focus={focusOnCurrencyField === CurrencyField.OUTPUT}
+                  isOnScreen={!showingSelectorScreen}
+                  showNonZeroBalancesOnly={false}
+                  showSoftInputOnFocus={showNativeKeyboard}
+                  usdValue={outputCurrencyUSDValue}
+                  value={
+                    exactCurrencyField === CurrencyField.OUTPUT ? exactValue : formattedDerivedValue
+                  }
+                  warnings={warnings}
+                  onPressIn={onFocusOutput}
+                  onSelectionChange={showNativeKeyboard ? undefined : onOutputSelectionChange}
+                  onSetExactAmount={onSetExactAmountOutput}
+                  onShowTokenSelector={onShowTokenSelectorOutput}
+                />
+              </Flex>
+              {swapWarning && !isBlocked ? (
+                <TouchableArea mt="spacing1" onPress={onSwapWarningClick}>
+                  <Flex
+                    row
+                    alignItems="center"
+                    alignSelf="stretch"
+                    backgroundColor="background2"
+                    borderBottomLeftRadius="rounded16"
+                    borderBottomRightRadius="rounded16"
+                    flexGrow={1}
+                    gap="spacing8"
+                    px="spacing16"
+                    py="spacing12">
+                    <SwapWarningIcon
+                      color={theme.colors[swapWarningColor.text]}
+                      height={theme.iconSizes.icon16}
+                      strokeWidth={1.5}
+                      width={theme.iconSizes.icon16}
+                    />
+                    <Flex row gap="none">
+                      <Text color={swapWarningColor.text} variant="subheadSmall">
+                        {trade.trade && isPriceImpactWarning(swapWarning)
+                          ? getRateToDisplay(trade.trade, showInverseRate)
+                          : swapWarning.title}
+                      </Text>
+                      {isPriceImpactWarning(swapWarning) && (
+                        <Text color="textSecondary" variant="bodySmall">
+                          {rateUnitPrice &&
+                            ` (${formatPrice(rateUnitPrice, NumberType.FiatTokenPrice)})`}
+                        </Text>
+                      )}
+                    </Flex>
+                  </Flex>
+                </TouchableArea>
+              ) : null}
+              {isBlocked && (
+                <BlockedAddressWarning
+                  row
+                  alignItems="center"
+                  alignSelf="stretch"
+                  backgroundColor="background2"
+                  borderBottomLeftRadius="rounded16"
+                  borderBottomRightRadius
