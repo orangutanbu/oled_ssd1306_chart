@@ -128,4 +128,93 @@ function _SwapForm({
       if (focusOnCurrencyField === CurrencyField.INPUT) {
         setInputSelection({ start, end: end ?? start })
       } else if (focusOnCurrencyField === CurrencyField.OUTPUT) {
-        se
+        setOutputSelection({ start, end: end ?? start })
+      }
+    },
+    [focusOnCurrencyField]
+  )
+
+  const [showInverseRate, setShowInverseRate] = useState(false)
+  const price = trade.trade?.executionPrice
+  const rateUnitPrice = useUSDCPrice(showInverseRate ? price?.quoteCurrency : price?.baseCurrency)
+  const showRate = !swapWarning && (trade.trade || swapDataRefreshing)
+
+  const derivedCurrencyField =
+    exactCurrencyField === CurrencyField.INPUT ? CurrencyField.OUTPUT : CurrencyField.INPUT
+  const formattedDerivedValue = formatCurrencyAmount(
+    currencyAmounts[derivedCurrencyField],
+    NumberType.SwapTradeAmount,
+    ''
+  )
+
+  const { showNativeKeyboard, onDecimalPadLayout, isLayoutPending, onInputPanelLayout } =
+    useShouldShowNativeKeyboard()
+
+  const SWAP_DIRECTION_BUTTON_SIZE = theme.iconSizes.icon20
+  const SWAP_DIRECTION_BUTTON_INNER_PADDING = theme.spacing.spacing8 + theme.spacing.spacing2
+  const SWAP_DIRECTION_BUTTON_BORDER_WIDTH = theme.spacing.spacing4
+
+  useSwapAnalytics(derivedSwapInfo)
+  const SwapWarningIcon = swapWarning?.icon ?? AlertTriangleIcon
+
+  const setValue = useCallback(
+    (value: string): void => {
+      if (!focusOnCurrencyField) return
+      onSetExactAmount(focusOnCurrencyField, value)
+    },
+
+    [focusOnCurrencyField, onSetExactAmount]
+  )
+
+  const onInputSelectionChange = useCallback((start, end) => setInputSelection({ start, end }), [])
+  const onOutputSelectionChange = useCallback(
+    (start, end) => setOutputSelection({ start, end }),
+    []
+  )
+
+  const onSetExactAmountInput = useCallback(
+    (value): void => onSetExactAmount(CurrencyField.INPUT, value),
+    [onSetExactAmount]
+  )
+
+  const onSetExactAmountOutput = useCallback(
+    (value): void => onSetExactAmount(CurrencyField.OUTPUT, value),
+    [onSetExactAmount]
+  )
+
+  const onShowTokenSelectorInput = useCallback(
+    (): void => onShowTokenSelector(CurrencyField.INPUT),
+    [onShowTokenSelector]
+  )
+
+  const onShowTokenSelectorOutput = useCallback(
+    (): void => onShowTokenSelector(CurrencyField.OUTPUT),
+    [onShowTokenSelector]
+  )
+
+  return (
+    <>
+      {showWarningModal && swapWarning?.title && (
+        <WarningModal
+          caption={swapWarning.message}
+          confirmText={t('Close')}
+          icon={
+            <SwapWarningIcon
+              color={theme.colors[swapWarningColor.text]}
+              height={theme.iconSizes.icon24}
+              width={theme.iconSizes.icon24}
+            />
+          }
+          modalName={ModalName.SwapWarning}
+          severity={swapWarning.severity}
+          title={swapWarning.title}
+          onClose={(): void => setShowWarningModal(false)}
+          onConfirm={(): void => setShowWarningModal(false)}
+        />
+      )}
+      <Flex grow gap="spacing8" justifyContent="space-between">
+        <AnimatedFlex
+          entering={FadeIn}
+          exiting={FadeOut}
+          gap="spacing2"
+          onLayout={onInputPanelLayout
