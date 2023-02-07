@@ -217,4 +217,70 @@ function _SwapForm({
           entering={FadeIn}
           exiting={FadeOut}
           gap="spacing2"
-          onLayout={onInputPanelLayout
+          onLayout={onInputPanelLayout}>
+          <Trace section={SectionName.CurrencyInputPanel}>
+            <Flex backgroundColor="background2" borderRadius="rounded20">
+              <CurrencyInputPanel
+                currencyAmount={currencyAmounts[CurrencyField.INPUT]}
+                currencyBalance={currencyBalances[CurrencyField.INPUT]}
+                currencyInfo={currencies[CurrencyField.INPUT]}
+                dimTextColor={exactCurrencyField === CurrencyField.OUTPUT && swapDataRefreshing}
+                focus={focusOnCurrencyField === CurrencyField.INPUT}
+                isOnScreen={!showingSelectorScreen}
+                showSoftInputOnFocus={showNativeKeyboard}
+                usdValue={inputCurrencyUSDValue}
+                value={
+                  exactCurrencyField === CurrencyField.INPUT ? exactValue : formattedDerivedValue
+                }
+                warnings={warnings}
+                onPressIn={onFocusInput}
+                onSelectionChange={showNativeKeyboard ? undefined : onInputSelectionChange}
+                onSetExactAmount={onSetExactAmountInput}
+                onSetMax={onSetMax}
+                onShowTokenSelector={onShowTokenSelectorInput}
+              />
+            </Flex>
+          </Trace>
+
+          <Box zIndex="popover">
+            <Box alignItems="center" height={0} style={StyleSheet.absoluteFill}>
+              <Box
+                alignItems="center"
+                bottom={
+                  -(
+                    // (icon size + (top + bottom padding) + (top + bottom border)) / 2
+                    // to center the swap direction button vertically
+                    (
+                      SWAP_DIRECTION_BUTTON_SIZE +
+                      SWAP_DIRECTION_BUTTON_INNER_PADDING * 2 +
+                      SWAP_DIRECTION_BUTTON_BORDER_WIDTH * 2
+                    )
+                  ) / 2
+                }
+                position="absolute">
+                <SwapArrowButton
+                  bg="background2"
+                  size={SWAP_DIRECTION_BUTTON_SIZE}
+                  onPress={onSwitchCurrencies}
+                />
+              </Box>
+            </Box>
+          </Box>
+
+          <Trace section={SectionName.CurrencyOutputPanel}>
+            <Box>
+              <Flex
+                backgroundColor="background2"
+                borderBottomLeftRadius={swapWarning || showRate || isBlocked ? 'none' : 'rounded20'}
+                borderBottomRightRadius={
+                  swapWarning || showRate || isBlocked ? 'none' : 'rounded20'
+                }
+                borderTopLeftRadius="rounded20"
+                borderTopRightRadius="rounded20"
+                gap="none"
+                overflow="hidden"
+                position="relative">
+                <CurrencyInputPanel
+                  isOutput
+                  currencyAmount={currencyAmounts[CurrencyField.OUTPUT]}
+                  curr
