@@ -35,3 +35,97 @@ import {
   getReviewActionName,
   isWrapAction,
 } from 'src/features/transactions/swap/utils'
+import { CurrencyField } from 'src/features/transactions/transactionState/transactionState'
+import { createTransactionId } from 'src/features/transactions/utils'
+import { BlockedAddressWarning } from 'src/features/trm/BlockedAddressWarning'
+import { useIsBlockedActiveAddress } from 'src/features/trm/hooks'
+import { formatCurrencyAmount, formatPrice, NumberType } from 'src/utils/format'
+
+interface SwapFormProps {
+  dispatch: Dispatch<AnyAction>
+  onNext: () => void
+  derivedSwapInfo: DerivedSwapInfo
+  warnings: Warning[]
+  exactValue: string
+  showingSelectorScreen: boolean
+}
+
+function _SwapForm({
+  dispatch,
+  onNext,
+  derivedSwapInfo,
+  warnings,
+  exactValue,
+  showingSelectorScreen,
+}: SwapFormProps): JSX.Element {
+  const { t } = useTranslation()
+  const theme = useAppTheme()
+
+  const {
+    chainId,
+    currencies,
+    currencyAmounts,
+    currencyBalances,
+    exactCurrencyField,
+    focusOnCurrencyField,
+    trade,
+    wrapType,
+  } = derivedSwapInfo
+
+  const {
+    onFocusInput,
+    onFocusOutput,
+    onSwitchCurrencies,
+    onSetExactAmount,
+    onSetMax,
+    onCreateTxId,
+    onShowTokenSelector,
+  } = useSwapActionHandlers(dispatch)
+
+  const inputCurrencyUSDValue = useUSDCValue(currencyAmounts[CurrencyField.INPUT])
+  const outputCurrencyUSDValue = useUSDCValue(currencyAmounts[CurrencyField.OUTPUT])
+
+  useShowSwapNetworkNotification(chainId)
+
+  const { isBlocked, isBlockedLoading } = useIsBlockedActiveAddress()
+
+  const [showWarningModal, setShowWarningModal] = useState(false)
+
+  const swapDataRefreshing = !isWrapAction(wrapType) && (trade.isFetching || trade.loading)
+
+  const noValidSwap = !isWrapAction(wrapType) && !trade.trade
+  const blockingWarning = warnings.some((warning) => warning.action === WarningAction.DisableReview)
+
+  const actionButtonDisabled =
+    noValidSwap || blockingWarning || swapDataRefreshing || isBlocked || isBlockedLoading
+
+  const swapWarning = warnings.find((warning) => warning.severity >= WarningSeverity.Low)
+  const swapWarningColor = getAlertColor(swapWarning?.severity)
+
+  const onSwapWarningClick = (): void => {
+    Keyboard.dismiss()
+    setShowWarningModal(true)
+  }
+
+  const onReview = useCallback((): void => {
+    const txId = createTransactionId()
+    onCreateTxId(txId)
+    onNext()
+  }, [onCreateTxId, onNext])
+
+  const [inputSelection, setInputSelection] = useState<TextInputProps['selection']>()
+  const [outputSelection, setOutputSelection] = useState<TextInputProps['selection']>()
+
+  const selection = useMemo(
+    () => ({
+      [CurrencyField.INPUT]: inputSelection,
+      [CurrencyField.OUTPUT]: outputSelection,
+    }),
+    [inputSelection, outputSelection]
+  )
+  const resetSelection = useCallback(
+    (start: number, end?: number) => {
+      if (focusOnCurrencyField === CurrencyField.INPUT) {
+        setInputSelection({ start, end: end ?? start })
+      } else if (focusOnCurrencyField === CurrencyField.OUTPUT) {
+        se
