@@ -27,4 +27,21 @@ export function SwapArrowButton(props: SwapArrowButtonProps): JSX.Element {
         alignSelf="center"
         bg={bg}
         borderColor="background1"
-        borderRad
+        borderRadius="rounded16"
+        borderWidth={4}
+        disabled={disabled}
+        justifyContent="center"
+        // border width applies inside the element so add more padding to account for it
+        name={name}
+        p="spacing8"
+        onPress={onPress}
+        {...rest}>
+        {/* hack to add 2px more padding without adjusting design system values */}
+        <Box alignItems="center" justifyContent="center" p="spacing2">
+          <Arrow color={theme.colors.textSecondary} direction="s" size={size} />
+        </Box>
+      </TouchableArea>
+    ),
+    [bg, disabled, name, onPress, rest, theme.colors.textSecondary, size]
+  )
+}
