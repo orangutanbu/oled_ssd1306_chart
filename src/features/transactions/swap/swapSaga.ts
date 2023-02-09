@@ -57,4 +57,17 @@ export function* approveAndSwap(params: SwapParams) {
       chainId,
       account,
       options: { request },
-      typeInfo: swapTypeInfo
+      typeInfo: swapTypeInfo,
+      trade,
+    })
+  } catch (e) {
+    logger.error('swapSaga', 'approveAndSwap', 'Failed:', e)
+  }
+}
+
+export const {
+  name: swapSagaName,
+  wrappedSaga: swapSaga,
+  reducer: swapReducer,
+  actions: swapActions,
+} = createMonitoredSaga<SwapParams>(approveAndSwap, 'swap')
