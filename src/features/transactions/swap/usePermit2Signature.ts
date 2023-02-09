@@ -79,4 +79,44 @@ async function getPermit2PermitSignature(
   const signature = await signTypedData(
     domain,
     types,
-    // required to makes va
+    // required to makes values less specific than `Record<string, unknown>`
+    // alternative would be to modify the sdk to use type aliases over interfaces
+    { ...values },
+    account,
+    signerManager
+  )
+  return {
+    signature,
+    permitMessage,
+    nonce,
+    expiry: BigNumber.from(permitMessage.sigDeadline).toNumber(),
+  }
+}
+
+export function usePermit2Signature(
+  currencyInAmount: NullUndefined<CurrencyAmount<Currency>>,
+  skip: boolean
+): {
+  isLoading: boolean
+  data: PermitSignatureInfo | undefined
+} {
+  const signerManager = useWalletSigners()
+  const account = useActiveAccountWithThrow()
+  const currencyIn = currencyInAmount?.currency
+  const provider = useProvider(currencyIn?.chainId ?? ChainId.Mainnet)
+
+  const permitSignatureFetcher = useCallback(() => {
+    if (!provider || !currencyIn || currencyIn.isNative || skip) return
+
+    return getPermit2PermitSignature(
+      provider,
+      signerManager,
+      account,
+      currencyIn.address,
+      currencyIn.chainId,
+      currencyInAmount.quotient.toString()
+    )
+  }, [account, currencyIn, currencyInAmount?.quotient, provider, signerManager, skip])
+
+  return useAsyncData(permitSignatureFetcher)
+}
