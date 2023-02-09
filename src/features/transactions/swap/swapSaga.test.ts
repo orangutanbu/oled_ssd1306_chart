@@ -83,4 +83,32 @@ describe(approveAndSwap, () => {
           undefined,
         ],
       ])
-      .silen
+      .silentRun()
+  })
+
+  it('sends a swap tx with incremented nonce if an approve tx is sent first', async () => {
+    await expectSaga(approveAndSwap, swapParams)
+      .provide([
+        [call(getProvider, mockSwapTxRequest.chainId), mockProvider],
+        [
+          call(sendTransaction, {
+            chainId: mockSwapTxRequest.chainId,
+            account: swapParams.account,
+            options: { request: mockApproveTxRequest },
+            typeInfo: transactionTypeInfo,
+          }),
+          undefined,
+        ],
+        [
+          call(sendTransaction, {
+            chainId: mockTrade.inputAmount.currency.chainId,
+            account: swapParams.account,
+            options: { request: { ...mockSwapTxRequest, nonce: nonce + 1 } },
+            typeInfo: transactionTypeInfo,
+          }),
+          undefined,
+        ],
+      ])
+      .silentRun()
+  })
+})
