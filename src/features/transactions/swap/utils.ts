@@ -102,4 +102,69 @@ export const getRateToDisplay = (trade: Trade, showInverseRate: boolean): string
 export const formatAsHexString = (input?: BigNumberish): string | undefined =>
   input !== undefined ? BigNumber.from(input).toHexString() : input
 
-export const getActionName = (t: TFunction, wrapType
+export const getActionName = (t: TFunction, wrapType: WrapType): string => {
+  switch (wrapType) {
+    case WrapType.Unwrap:
+      return t('Unwrap')
+    case WrapType.Wrap:
+      return t('Wrap')
+    default:
+      return t('Swap')
+  }
+}
+
+export const getReviewActionName = (t: TFunction, wrapType: WrapType): string => {
+  switch (wrapType) {
+    case WrapType.Unwrap:
+      return t('Review unwrap')
+    case WrapType.Wrap:
+      return t('Review wrap')
+    default:
+      return t('Review swap')
+  }
+}
+
+export function sumGasFees(gasFee1?: string | undefined, gasFee2?: string): string | undefined {
+  if (!gasFee1 || !gasFee2) return gasFee1 || gasFee2
+
+  return BigNumber.from(gasFee1).add(gasFee2).toString()
+}
+
+export const clearStaleTrades = (
+  trade: Trade,
+  currencyIn: NullUndefined<Currency>,
+  currencyOut: NullUndefined<Currency>
+): Trade | null => {
+  const currencyInAddress = currencyIn?.wrapped.address
+  const currencyOutAddress = currencyOut?.wrapped.address
+
+  const inputsMatch =
+    !!currencyInAddress &&
+    areAddressesEqual(currencyInAddress, trade?.inputAmount.currency.wrapped.address)
+  const outputsMatch =
+    !!currencyOutAddress &&
+    areAddressesEqual(currencyOutAddress, trade?.outputAmount.currency.wrapped.address)
+
+  // if the addresses entered by the user don't match what is being returned by the quote endpoint
+  // then set `trade` to null
+  return inputsMatch && outputsMatch ? trade : null
+}
+
+export const prepareSwapFormState = ({
+  inputCurrencyId,
+}: {
+  inputCurrencyId?: CurrencyId
+}): TransactionState | undefined => {
+  return inputCurrencyId
+    ? {
+        exactCurrencyField: CurrencyField.INPUT,
+        exactAmountToken: '',
+        [CurrencyField.INPUT]: {
+          address: currencyIdToAddress(inputCurrencyId),
+          chainId: currencyIdToChain(inputCurrencyId) ?? ChainId.Mainnet,
+          type: AssetType.Currency,
+        },
+        [CurrencyField.OUTPUT]: null,
+      }
+    : undefined
+}
