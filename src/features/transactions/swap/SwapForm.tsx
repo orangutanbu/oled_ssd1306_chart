@@ -417,4 +417,14 @@ function _SwapForm({
           <Button
             disabled={actionButtonDisabled}
             label={getReviewActionName(t, wrapType)}
-           
+            name={ElementName.ReviewSwap}
+            size={ButtonSize.Large}
+            onPress={onReview}
+          />
+        </AnimatedFlex>
+      </Flex>
+    </>
+  )
+}
+
+export const SwapForm = memo(_SwapForm)
