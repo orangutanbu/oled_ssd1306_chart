@@ -159,4 +159,55 @@ const getTextFromSwapStatus = (
 
     const outputAmount = getFormattedCurrencyAmount(
       outputCurrency?.currency,
-      outputCurrencyAm
+      outputCurrencyAmountRaw,
+      typeInfo.tradeType === TradeType.EXACT_INPUT
+    )
+
+    return {
+      title: t('Swap successful!'),
+      description: t(
+        'You swapped {{ inputAmount }}{{ inputCurrency }} for {{ outputAmount }}{{ outputCurrency }}.',
+        {
+          inputAmount,
+          inputCurrency: inputCurrency?.currency.symbol,
+          outputAmount,
+          outputCurrency: outputCurrency?.currency.symbol,
+        }
+      ),
+    }
+  }
+
+  if (status === TransactionStatus.Failed) {
+    return {
+      title: t('Swap failed'),
+      description: t('Keep in mind that the network fee is still charged for failed swaps.'),
+    }
+  }
+
+  throw new Error('swap transaction status is in an unhandled state')
+}
+
+export function SwapStatus({ derivedSwapInfo, onNext, onTryAgain }: SwapStatusProps): JSX.Element {
+  const { t } = useTranslation()
+  const { txId, currencies } = derivedSwapInfo
+  const chainId =
+    toSupportedChainId(currencies[CurrencyField.INPUT]?.currency.chainId) ?? ChainId.Mainnet
+  const activeAddress = useActiveAccountAddressWithThrow()
+  const transaction = useSelectTransaction(activeAddress, chainId, txId)
+
+  const { title, description } = useMemo(() => {
+    return getTextFromTxStatus(t, derivedSwapInfo, transaction)
+  }, [t, transaction, derivedSwapInfo])
+
+  return (
+    <TransactionPending
+      chainId={chainId}
+      description={description}
+      title={title}
+      transaction={transaction}
+      transactionType="swap"
+      onNext={onNext}
+      onTryAgain={onTryAgain}
+    />
+  )
+}
