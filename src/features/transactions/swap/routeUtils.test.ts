@@ -308,3 +308,73 @@ describe('#useRoute', () => {
       expect(result?.[0]?.routev3?.input).toStrictEqual(USDC)
       expect(result?.[0]?.routev3?.output).toStrictEqual(ETH)
       expect(result?.[0]?.routev3?.tokenPath).toStrictEqual([USDC, WETH])
+      expect(result?.[0]?.outputAmount.toSignificant()).toBe('1')
+    })
+
+    it('outputs native ETH as input currency for v2 routes', () => {
+      const WETH = ETH.wrapped
+
+      const result = computeRoutes(true, false, {
+        route: [
+          [
+            {
+              type: PoolType.V2Pool,
+              address: '0x1f8F72aA9304c8B593d555F12eF6589cC3A579A2',
+              amountIn: (1e18).toString(),
+              amountOut: amount`5`,
+              tokenIn: WETH,
+              tokenOut: USDC,
+              reserve0: {
+                token: WETH,
+                quotient: amount`100`,
+              },
+              reserve1: {
+                token: USDC,
+                quotient: amount`200`,
+              },
+            },
+          ],
+        ],
+      })
+
+      expect(result).toBeDefined()
+      expect(result?.length).toBe(1)
+      expect(result?.[0]?.routev2?.input).toStrictEqual(ETH)
+      expect(result?.[0]?.routev2?.output).toStrictEqual(USDC)
+      expect(result?.[0]?.routev2?.path).toStrictEqual([WETH, USDC])
+      expect(result?.[0]?.outputAmount.toSignificant()).toBe('5')
+    })
+
+    it('outputs native ETH as output currency for v2 routes', () => {
+      const WETH = new Token(1, ETH.wrapped.address, 18, 'WETH')
+      const result = computeRoutes(false, true, {
+        route: [
+          [
+            {
+              type: PoolType.V2Pool,
+              address: '0x1f8F72aA9304c8B593d555F12eF6589cC3A579A2',
+              amountIn: amount`5`,
+              amountOut: (1e18).toString(),
+              tokenIn: USDC,
+              tokenOut: WETH,
+              reserve0: {
+                token: WETH,
+                quotient: amount`100`,
+              },
+              reserve1: {
+                token: USDC,
+                quotient: amount`200`,
+              },
+            },
+          ],
+        ],
+      })
+
+      expect(result?.length).toBe(1)
+      expect(result?.[0]?.routev2?.input).toStrictEqual(USDC)
+      expect(result?.[0]?.routev2?.output).toStrictEqual(ETH)
+      expect(result?.[0]?.routev2?.path).toStrictEqual([USDC, WETH])
+      expect(result?.[0]?.outputAmount.toSignificant()).toBe('1')
+    })
+  })
+})
