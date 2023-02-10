@@ -76,4 +76,5 @@ export const {
   name: tokenWrapSagaName,
   wrappedSaga: tokenWrapSaga,
   reducer: tokenWrapReducer,
-  actions
+  actions: tokenWrapActions,
+} = createMonitoredSaga<Params>(wrap, 'wrap')
