@@ -185,4 +185,34 @@ describe(watchFiatOnRampTransaction, () => {
       expectSaga(watchFiatOnRampTransaction, tx)
         .provide([
           {
-            call(effect): TransactionDetails
+            call(effect): TransactionDetails | undefined {
+              if (effect.fn === fetchFiatOnRampTransaction) {
+                switch (fetchCalledCount++) {
+                  case 0:
+                  case 1:
+                    // return same tx twice, but upsert should only be called once
+                    return tx
+                  case 2:
+                    return confirmedTx
+                }
+              }
+            },
+          },
+          [call(sleep, PollingInterval.Normal), Promise.resolve(() => undefined)],
+        ])
+        .call(sleep, PollingInterval.Normal)
+        // only called once
+        .put(transactionActions.upsertFiatOnRampTransaction(confirmedTx))
+        .silentRun()
+    )
+  })
+
+  it('updates a transactions on success network request', () => {
+    const confirmedTx = { ...fiatOnRampTxDetailsPending, status: TransactionStatus.Success }
+    return expectSaga(watchFiatOnRampTransaction, fiatOnRampTxDetailsPending)
+      .provide([[call(fetchFiatOnRampTransaction, fiatOnRampTxDetailsPending), confirmedTx]])
+      .put(transactionActions.upsertFiatOnRampTransaction(confirmedTx))
+      .not.call.fn(sleep)
+      .run()
+  })
+})
