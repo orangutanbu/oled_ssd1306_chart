@@ -79,4 +79,78 @@ const slice = createSlice({
     switchCurrencySides: (state) => {
       state.exactCurrencyField =
         state.exactCurrencyField === CurrencyField.INPUT
-          ?
+          ? CurrencyField.OUTPUT
+          : CurrencyField.INPUT
+      state.focusOnCurrencyField = state.exactCurrencyField
+      ;[state[CurrencyField.INPUT], state[CurrencyField.OUTPUT]] = [
+        state[CurrencyField.OUTPUT],
+        state[CurrencyField.INPUT],
+      ]
+    },
+    /** Processes a new typed value for the given `field` */
+    updateExactAmountToken: (
+      state,
+      action: PayloadAction<{
+        field?: CurrencyField
+        amount: string
+      }>
+    ) => {
+      const { field, amount } = action.payload
+      if (field) {
+        state.exactCurrencyField = field
+      }
+      state.exactAmountToken = amount
+    },
+    /** Processes a new typed value for the given `field` */
+    updateExactAmountUSD: (
+      state,
+      action: PayloadAction<{
+        field?: CurrencyField
+        amount: string
+      }>
+    ) => {
+      const { field, amount } = action.payload
+      if (field) {
+        state.exactCurrencyField = field
+      }
+      state.exactAmountUSD = amount
+    },
+    /** Changes the recipient */
+    selectRecipient: (state, action: PayloadAction<{ recipient: Address }>) => {
+      const { recipient } = action.payload
+      state.recipient = recipient
+    },
+    clearRecipient: (state) => {
+      state.recipient = undefined
+    },
+    onFocus: (state, action: PayloadAction<CurrencyField | null>) => {
+      state.focusOnCurrencyField = action.payload
+    },
+    toggleUSDInput: (state, action: PayloadAction<boolean>) => {
+      state.isUSDInput = action.payload
+    },
+    setTxId: (state, action: PayloadAction<string>) => {
+      state.txId = action.payload
+    },
+    showTokenSelector: (state, action: PayloadAction<CurrencyField | undefined>) => {
+      state.selectingCurrencyField = action.payload
+    },
+    toggleShowRecipientSelector: (state) => {
+      state.showRecipientSelector = !state.showRecipientSelector
+    },
+  },
+})
+
+export const {
+  selectCurrency,
+  switchCurrencySides,
+  updateExactAmountToken,
+  updateExactAmountUSD,
+  selectRecipient,
+  clearRecipient,
+  toggleUSDInput,
+  setTxId,
+  showTokenSelector,
+  toggleShowRecipientSelector,
+} = slice.actions
+export const { reducer: transactionStateReducer, actions: transactionStateActions } = slice
