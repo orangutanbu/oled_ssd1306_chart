@@ -89,4 +89,100 @@ describe(watchFlashbotsTransaction, () => {
       .provide([
         [call(getProvider, chainId, true), provider],
         [call(waitForReceipt, hash, provider), txReceipt],
-        [call(getFlashb
+        [call(getFlashbotsTxConfirmation, hash, chainId), TransactionStatus.Failed],
+      ])
+      .put(
+        finalizeTransaction({
+          ...finalizedTxAction.payload,
+          status: TransactionStatus.Failed,
+          receipt: undefined,
+        })
+      )
+      .silentRun()
+  })
+})
+
+describe(watchTransaction, () => {
+  let dateNowSpy: jest.SpyInstance
+  beforeAll(() => {
+    dateNowSpy = jest.spyOn(Date, 'now').mockImplementation(() => 1400000000000)
+  })
+  afterAll(() => {
+    dateNowSpy?.mockRestore()
+  })
+
+  const { chainId, id, from } = txDetailsPending
+  const oldTx: TransactionDetails = {
+    ...txDetailsPending,
+    addedTime: 1300000000000,
+  }
+
+  it('Finalizes successful transaction', () => {
+    const receiptProvider = {
+      waitForTransaction: jest.fn(() => txReceipt),
+      getTransactionCount: jest.fn(() => txRequest.nonce),
+    }
+    return expectSaga(watchTransaction, txDetailsPending)
+      .provide([[call(getProvider, chainId), receiptProvider]])
+      .put(finalizeTransaction(finalizedTxAction.payload))
+      .silentRun()
+  })
+
+  it('Cancels transaction', () => {
+    const receiptProvider = {
+      waitForTransaction: jest.fn(async () => {
+        await sleep(1000)
+        return null
+      }),
+      getTransactionCount: jest.fn(() => txRequest.nonce),
+    }
+    const cancelRequest = { to: from, from, value: '0x0' }
+    return expectSaga(watchTransaction, txDetailsPending)
+      .provide([
+        [call(getProvider, chainId), receiptProvider],
+        [call(attemptCancelTransaction, txDetailsPending), true],
+      ])
+      .dispatch(cancelTransaction({ chainId, id, address: from, cancelRequest }))
+      .call(attemptCancelTransaction, txDetailsPending)
+      .silentRun()
+  })
+
+  it('Finalizes timed out transaction', () => {
+    return expectSaga(watchTransaction, oldTx)
+      .provide([[call(getProvider, chainId), mockProvider]])
+      .put(
+        finalizeTransaction({
+          ...finalizedTxAction.payload,
+          status: TransactionStatus.Failed,
+          addedTime: oldTx.addedTime,
+          receipt: undefined,
+        })
+      )
+      .silentRun()
+  })
+})
+
+describe(watchFiatOnRampTransaction, () => {
+  it('removes transactions on 404 when stale', () => {
+    const staleTx = { ...fiatOnRampTxDetailsPending, status: TransactionStatus.Unknown }
+    return (
+      expectSaga(watchFiatOnRampTransaction, fiatOnRampTxDetailsPending)
+        .provide([[call(fetchFiatOnRampTransaction, fiatOnRampTxDetailsPending), staleTx]])
+        .put(transactionActions.upsertFiatOnRampTransaction(staleTx))
+        // watcher should stop tracking
+        .not.call.fn(sleep)
+        .silentRun()
+    )
+  })
+
+  it('keeps a transactions on 404 when not yet stale', () => {
+    const tx = { ...fiatOnRampTxDetailsPending, addedTime: Date.now() }
+    const confirmedTx = { ...tx, status: TransactionStatus.Success }
+
+    let fetchCalledCount = 0
+
+    return (
+      expectSaga(watchFiatOnRampTransaction, tx)
+        .provide([
+          {
+            call(effect): TransactionDetails
