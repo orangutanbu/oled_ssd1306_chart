@@ -44,4 +44,19 @@ export function useTransactionGasWarning(
   const balanceInsufficient = currencyAmountIn && currencyBalanceIn?.lessThan(currencyAmountIn)
 
   return useMemo(() => {
-    // if balan
+    // if balance is already insufficient, dont need to show warning about network fee
+    if (gasFee === undefined || balanceInsufficient || !nativeCurrencyBalance || hasGasFunds) return
+
+    return {
+      type: WarningLabel.InsufficientGasFunds,
+      severity: WarningSeverity.Medium,
+      action: WarningAction.DisableSubmit,
+      title: t('Not enough {{ nativeCurrency }} to pay network fee', {
+        nativeCurrency: nativeCurrencyBalance.currency.symbol,
+      }),
+      message: t('Network fees are paid in the native token. Buy more {{ nativeCurrency }}.', {
+        nativeCurrency: nativeCurrencyBalance.currency.symbol,
+      }),
+    }
+  }, [gasFee, hasGasFunds, nativeCurrencyBalance, balanceInsufficient, t])
+}
