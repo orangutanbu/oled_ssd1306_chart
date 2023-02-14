@@ -27,4 +27,5 @@ export function useWalletConnect(address: NullUndefined<string>): WalletConnect 
   const modalState = useAppSelector(selectModalState(ModalName.WalletConnectScan))
   const pendingSession = useAppSelector(selectPendingSession)
 
-  return { sessions, pendingRequests, modalS
+  return { sessions, pendingRequests, modalState, pendingSession }
+}
