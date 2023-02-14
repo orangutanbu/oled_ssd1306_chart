@@ -199,4 +199,40 @@ export interface NFTMintTransactionInfo extends BaseTransactionInfo {
   purchaseCurrencyAmountRaw?: string
 }
 
-export int
+export interface NFTTradeTransactionInfo extends BaseTransactionInfo {
+  type: TransactionType.NFTTrade
+  nftSummaryInfo: NFTSummaryInfo
+  purchaseCurrencyId: string
+  purchaseCurrencyAmountRaw: string
+  tradeType: NFTTradeType
+}
+
+export interface NFTApproveTransactionInfo extends BaseTransactionInfo {
+  type: TransactionType.NFTApprove
+  nftSummaryInfo: NFTSummaryInfo
+  spender: string
+}
+
+export interface WCConfirmInfo extends BaseTransactionInfo {
+  type: TransactionType.WCConfirm
+  dapp: DappInfo
+}
+
+export interface UnknownTransactionInfo extends BaseTransactionInfo {
+  type: TransactionType.Unknown
+  tokenAddress?: string
+}
+
+export type TransactionTypeInfo =
+  | ApproveTransactionInfo
+  | FiatPurchaseTransactionInfo
+  | ExactOutputSwapTransactionInfo
+  | ExactInputSwapTransactionInfo
+  | WrapTransactionInfo
+  | SendTokenTransactionInfo
+  | ReceiveTokenTransactionInfo
+  | NFTTradeTransactionInfo
+  | NFTApproveTransactionInfo
+  | NFTMintTransactionInfo
+  | WCConfirmInfo
+  | UnknownTransactionInfo
