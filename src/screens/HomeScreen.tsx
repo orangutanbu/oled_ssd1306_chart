@@ -297,3 +297,218 @@ export function HomeScreen(props?: AppStackScreenProp<Screens.Home>): JSX.Elemen
       const style = { width: 'auto' }
       return (
         <>
+          <Animated.View style={headerContainerStyle} onLayout={handleHeaderLayout}>
+            {contentHeader}
+          </Animated.View>
+          <Animated.View style={[TAB_STYLES.header, tabBarStyle]}>
+            <Box bg="background0" paddingLeft="spacing12">
+              <TabBar
+                {...sceneProps}
+                indicatorStyle={TAB_STYLES.activeTabIndicator}
+                navigationState={{ index: tabIndex, routes }}
+                renderLabel={renderTabLabel}
+                style={[
+                  TAB_STYLES.tabBar,
+                  {
+                    backgroundColor: theme.colors.background0,
+                    borderBottomColor: theme.colors.backgroundOutline,
+                  },
+                ]}
+                tabStyle={style}
+                onTabPress={(): void => {
+                  impactAsync()
+                }}
+              />
+            </Box>
+          </Animated.View>
+        </>
+      )
+    },
+    [
+      contentHeader,
+      handleHeaderLayout,
+      headerContainerStyle,
+      routes,
+      tabBarStyle,
+      tabIndex,
+      theme.colors.background0,
+      theme.colors.backgroundOutline,
+    ]
+  )
+
+  const renderTab = useCallback(
+    ({ route }) => {
+      switch (route?.key) {
+        case SectionName.HomeTokensTab:
+          return (
+            <TokensTab
+              ref={tokensTabScrollRef}
+              containerProps={sharedProps}
+              owner={activeAccount?.address}
+              scrollHandler={tokensTabScrollHandler}
+            />
+          )
+        case SectionName.HomeNFTsTab:
+          return (
+            <Delayed waitBeforeShow={Delay.Normal}>
+              <NftsTab
+                ref={nftsTabScrollRef}
+                containerProps={sharedProps}
+                owner={activeAccount?.address}
+                scrollHandler={nftsTabScrollHandler}
+              />
+            </Delayed>
+          )
+        case SectionName.HomeActivityTab:
+          return (
+            <Delayed waitBeforeShow={Delay.Normal}>
+              <ActivityTab
+                ref={activityTabScrollRef}
+                containerProps={sharedProps}
+                owner={activeAccount?.address}
+                scrollHandler={activityTabScrollHandler}
+              />
+            </Delayed>
+          )
+      }
+      return null
+    },
+    [
+      activeAccount?.address,
+      activityTabScrollHandler,
+      activityTabScrollRef,
+      nftsTabScrollHandler,
+      nftsTabScrollRef,
+      sharedProps,
+      tokensTabScrollHandler,
+      tokensTabScrollRef,
+    ]
+  )
+
+  // Hides lock screen on next js render cycle, ensuring this component is loaded when the screen is hidden
+  useTimeout(SplashScreen.hideAsync, 1)
+
+  return (
+    <Screen edges={['left', 'right']}>
+      <View style={TAB_STYLES.container}>
+        <TraceTabView
+          initialLayout={{
+            height: dimensions.fullHeight,
+            width: dimensions.fullWidth,
+          }}
+          navigationState={{ index: tabIndex, routes }}
+          renderScene={renderTab}
+          renderTabBar={renderTabBar}
+          screenName={Screens.Home}
+          onIndexChange={setTabIndex}
+        />
+      </View>
+      <NavBar />
+      <AnimatedBox
+        height={insets.top}
+        position="absolute"
+        style={statusBarStyle}
+        top={0}
+        width="100%"
+        zIndex="sticky"
+      />
+    </Screen>
+  )
+}
+
+function QuickActions(): JSX.Element {
+  const dispatch = useAppDispatch()
+  const activeAccount = useActiveAccountWithThrow()
+  const { t } = useTranslation()
+
+  const onPressBuy = (): void => {
+    dispatch(openModal({ name: ModalName.FiatOnRamp }))
+  }
+  const onPressReceive = (): void => {
+    dispatch(
+      openModal({ name: ModalName.WalletConnectScan, initialState: ScannerModalState.WalletQr })
+    )
+  }
+  const onPressSend = (): void => {
+    dispatch(openModal({ name: ModalName.Send }))
+  }
+
+  // hide fiat onramp banner when active account isn't a signer account.
+  const fiatOnRampShown =
+    useFiatOnRampEnabled() && activeAccount.type === AccountType.SignerMnemonic
+
+  return (
+    <Flex centered row gap="spacing8">
+      {fiatOnRampShown ? (
+        <ActionButton
+          Icon={BuyIcon}
+          eventName={MobileEventName.FiatOnRampQuickActionButtonPressed}
+          flex={3}
+          label={t('Buy')}
+          name={ElementName.Buy}
+          onPress={onPressBuy}
+        />
+      ) : null}
+      <ActionButton
+        Icon={SendIcon}
+        flex={3}
+        label={t('Send')}
+        name={ElementName.Send}
+        onPress={onPressSend}
+      />
+      <ActionButton
+        Icon={ReceiveArrow}
+        flex={fiatOnRampShown ? 4 : 3} // we need to make more room for Receive button if there are 3 buttons
+        label={t('Receive')}
+        name={ElementName.Receive}
+        onPress={onPressReceive}
+      />
+    </Flex>
+  )
+}
+
+function ActionButton({
+  eventName,
+  name,
+  label,
+  Icon,
+  onPress,
+  flex,
+}: {
+  eventName?: MobileEventName
+  name: ElementName
+  label: string
+  Icon: React.FC<SvgProps>
+  onPress: () => void
+  flex: number
+}): JSX.Element {
+  const theme = useAppTheme()
+  return (
+    <TouchableArea
+      hapticFeedback
+      backgroundColor="backgroundActionButton"
+      borderRadius="roundedFull"
+      eventName={eventName}
+      flex={flex}
+      name={name}
+      px="spacing12"
+      py="spacing16"
+      shadowColor="white"
+      shadowOffset={SHADOW_OFFSET_SMALL}
+      shadowOpacity={0.1}
+      shadowRadius={6}
+      onPress={onPress}>
+      <Flex centered row gap="spacing4">
+        <Icon
+          color={theme.colors.magentaVibrant}
+          height={theme.iconSizes.icon20}
+          strokeWidth={2}
+          width={theme.iconSizes.icon20}
+        />
+        <Text color="accentAction" marginLeft="spacing8" variant="buttonLabelMedium">
+          {label}
+        </Text>
+      </Flex>
+    </TouchableArea>
+  )
+}
