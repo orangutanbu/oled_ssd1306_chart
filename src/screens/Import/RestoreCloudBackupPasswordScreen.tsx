@@ -44,4 +44,100 @@ function calculateLockoutEndTime(attemptCount: number): number | undefined {
     return Date.now() + ONE_MINUTE_MS * 5
   }
   if (attemptCount < 10) {
-    return und
+    return undefined
+  }
+  if (attemptCount === 10) {
+    return Date.now() + ONE_MINUTE_MS * 15
+  }
+  if (attemptCount < 12) {
+    return undefined
+  }
+  if (attemptCount % 2 === 0) {
+    return Date.now() + ONE_HOUR_MS
+  }
+  return undefined
+}
+
+function getLockoutTimeMessage(remainingLockoutTime: number): string {
+  const minutes = Math.ceil(remainingLockoutTime / ONE_MINUTE_MS)
+  if (minutes >= 60) {
+    return '1 hour'
+  }
+
+  return minutes === 1 ? '1 minute' : `${minutes} minutes`
+}
+
+export function RestoreCloudBackupPasswordScreen({
+  navigation,
+  route: { params },
+}: Props): JSX.Element {
+  const { t } = useTranslation()
+  const inputRef = useRef<TextInput>(null)
+  const dispatch = useAppDispatch()
+
+  const passwordAttemptCount = useAppSelector(selectPasswordAttempts)
+  const lockoutEndTime = useAppSelector(selectLockoutEndTime)
+
+  const [enteredPassword, setEnteredPassword] = useState('')
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
+
+  const remainingLockoutTime = lockoutEndTime ? Math.max(0, lockoutEndTime - Date.now()) : 0
+  const isLockedOut = remainingLockoutTime > 0
+
+  useFocusEffect(
+    useCallback(() => {
+      if (isLockedOut) {
+        setErrorMessage(
+          t('Too many attempts. Try again in {{time}}.', {
+            time: getLockoutTimeMessage(remainingLockoutTime),
+          })
+        )
+
+        const timer = setTimeout(() => {
+          setErrorMessage(undefined)
+          dispatch(resetLockoutEndTime())
+          inputRef.current?.focus()
+        }, remainingLockoutTime)
+
+        return () => clearTimeout(timer)
+      }
+    }, [isLockedOut, t, dispatch, remainingLockoutTime])
+  )
+
+  useAddBackButton(navigation)
+
+  const onPasswordSubmit = (): void => {
+    if (isLockedOut || enteredPassword.length === 0) return
+
+    // Atttempt to restore backup with encrypted mnemonic using password
+    async function checkCorrectPassword(): Promise<void> {
+      try {
+        await restoreMnemonicFromICloud(params.mnemonicId, enteredPassword)
+        dispatch(
+          importAccountActions.trigger({
+            type: ImportAccountType.RestoreBackup,
+            mnemonicId: params.mnemonicId,
+            indexes: Array.from(Array(IMPORT_WALLET_AMOUNT).keys()),
+          })
+        )
+        dispatch(resetPasswordAttempts())
+        navigation.navigate({ name: OnboardingScreens.SelectWallet, params, merge: true })
+      } catch (error) {
+        dispatch(incrementPasswordAttempts())
+        const updatedLockoutEndTime = calculateLockoutEndTime(passwordAttemptCount + 1)
+        if (updatedLockoutEndTime) {
+          dispatch(setLockoutEndTime({ lockoutEndTime: updatedLockoutEndTime }))
+        } else {
+          setErrorMessage(t('Invalid password. Please try again.'))
+          inputRef.current?.focus()
+        }
+      }
+    }
+
+    checkCorrectPassword()
+    setEnteredPassword('')
+    Keyboard.dismiss()
+  }
+
+  const onContinuePress = (): void => {
+  
