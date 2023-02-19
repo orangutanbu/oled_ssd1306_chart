@@ -1,0 +1,26 @@
+
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SeedPhraseInputScreen seed phrase initial screen rendering 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "backgroundColor": "#FFFFFF",
+        "display": "flex",
+        "flex": 1,
+      },
+      Object {
+        "paddingLeft": undefined,
+        "paddingRight": undefined,
+      },
+    ]
+  }
+>
+  <View
+    onLayout={[Function]}
+    style={
+      Array [
+        Array [
+          Object {
+            "flex": 1,
