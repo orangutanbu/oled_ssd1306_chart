@@ -1,0 +1,48 @@
+import { NetworkStatus } from '@apollo/client'
+import { useScrollToTop } from '@react-navigation/native'
+import { ImpactFeedbackStyle } from 'expo-haptics'
+import React, { ReactElement, useCallback, useMemo, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
+import { ListRenderItemInfo } from 'react-native'
+import { useAnimatedScrollHandler, useSharedValue, withTiming } from 'react-native-reanimated'
+import { AppStackScreenProp, useAppStackNavigation } from 'src/app/navigation/types'
+import { TouchableArea } from 'src/components/buttons/TouchableArea'
+import { NFTViewer } from 'src/components/images/NFTViewer'
+import { Box, Flex } from 'src/components/layout'
+import { AnimatedFlashList } from 'src/components/layout/AnimatedFlashList'
+import { BaseCard } from 'src/components/layout/BaseCard'
+import { Screen } from 'src/components/layout/Screen'
+import { ScrollHeader } from 'src/components/layout/screens/ScrollHeader'
+import { Loader } from 'src/components/loading'
+import { Trace } from 'src/components/telemetry/Trace'
+import { Text } from 'src/components/Text'
+import { EMPTY_ARRAY } from 'src/constants/misc'
+import { isError } from 'src/data/utils'
+import {
+  NftCollectionScreenQuery,
+  useNftCollectionScreenQuery,
+} from 'src/data/__generated__/types-and-hooks'
+import { NFTCollectionContextMenu } from 'src/features/nfts/collection/NFTCollectionContextMenu'
+import {
+  NFTCollectionHeader,
+  NFT_BANNER_HEIGHT,
+} from 'src/features/nfts/collection/NFTCollectionHeader'
+import { NFTItem } from 'src/features/nfts/types'
+import { getNFTAssetKey } from 'src/features/nfts/utils'
+import { ExploreModalAwareView } from 'src/screens/ModalAwareView'
+import { Screens } from 'src/screens/Screens'
+import { dimensions } from 'src/styles/sizing'
+import { theme } from 'src/styles/theme'
+
+const PREFETCH_ITEMS_THRESHOLD = 0.5
+const ASSET_FETCH_PAGE_SIZE = 30
+const ESTIMATED_ITEM_SIZE = 104 // heuristic provided by FlashList
+
+const LOADING_ITEM = 'loading'
+const LOADING_BUFFER_AMOUNT = 9
+const LOADING_ITEMS_ARRAY = Array(LOADING_BUFFER_AMOUNT).fill(LOADING_ITEM)
+
+const keyExtractor = (item: NFTItem | string, index: number): string =>
+  typeof item === 'string'
+    ? `${LOADING_ITEM}-${index}`
+    : getNFTAssetKey(item.contractAddress
