@@ -86,4 +86,42 @@ export function SeedPhraseInputScreen({ navigation, route: { params } }: Props):
       (error === MnemonicValidationError.InvalidWord && !userFinishedTypingWord(text)) ||
       error === MnemonicValidationError.NotEnoughWords
 
-  
+    if (!error || suppressError) {
+      setErrorMessage(undefined)
+    } else {
+      setErrorMessage(translateMnemonicErrorMessage(error, invalidWord, t))
+    }
+
+    setValue(text)
+  }
+
+  return (
+    <SafeKeyboardOnboardingScreen
+      subtitle={t('Your recovery phrase will only be stored locally on your device.')}
+      title={t('Enter your recovery phrase')}>
+      <Flex>
+        <GenericImportForm
+          autoCorrect
+          blurOnSubmit
+          liveCheck
+          afterPasteButtonPress={(): void => setPastePermissionModalOpen(false)}
+          beforePasteButtonPress={(): void => setPastePermissionModalOpen(true)}
+          errorMessage={errorMessage}
+          placeholderLabel={t('recovery phrase')}
+          showSuccess={showSuccess}
+          value={value}
+          onBlur={onBlur}
+          onChange={onChange}
+        />
+      </Flex>
+      <Box pb="spacing4">
+        <Button
+          disabled={!!errorMessage}
+          label={t('Continue')}
+          name={ElementName.Next}
+          onPress={onSubmit}
+        />
+      </Box>
+    </SafeKeyboardOnboardingScreen>
+  )
+}
