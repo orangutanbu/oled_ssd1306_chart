@@ -1,0 +1,10 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import React, { useCallback, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useAppDispatch } from 'src/app/hooks'
+import { OnboardingStackParamList } from 'src/app/navigation/types'
+import { Button } from 'src/components/buttons/Button'
+import { Box, Flex } from 'src/components/layout'
+import { useLockScreenOnBlur } from 'src/features/authentication/lockScreenContext'
+import { GenericImportForm } from 'src/features/import/GenericImportForm'
+import { importAccountActions, IMPORT_WALLET_AMOUNT } from 'src/feat

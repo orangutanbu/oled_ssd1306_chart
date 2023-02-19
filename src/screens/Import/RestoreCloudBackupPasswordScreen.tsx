@@ -140,4 +140,36 @@ export function RestoreCloudBackupPasswordScreen({
   }
 
   const onContinuePress = (): void => {
-  
+    onPasswordSubmit()
+  }
+
+  return (
+    <OnboardingScreen
+      subtitle={t('This password is required to recover your recovery phrase backup from iCloud.')}
+      title={t('Enter your iCloud backup password')}>
+      <Flex>
+        <PasswordInput
+          ref={inputRef}
+          autoFocus={!isLockedOut}
+          editable={!isLockedOut}
+          placeholder={t('Enter password')}
+          value={enteredPassword}
+          onChangeText={(newValue: string): void => {
+            if (!isLockedOut) {
+              setErrorMessage(undefined)
+            }
+            setEnteredPassword(newValue)
+          }}
+          onSubmitEditing={onPasswordSubmit}
+        />
+        {errorMessage && <PasswordError errorText={errorMessage} />}
+      </Flex>
+      <Button
+        disabled={!enteredPassword || isLockedOut}
+        label={t('Continue')}
+        name={ElementName.Submit}
+        onPress={onContinuePress}
+      />
+    </OnboardingScreen>
+  )
+}
