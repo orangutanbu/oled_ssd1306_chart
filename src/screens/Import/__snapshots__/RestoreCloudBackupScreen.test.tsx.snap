@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RestoreCloudBackupScreen renders correctly 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "backgroundColor": "#FFFFFF",
+        "display": "flex",
+        "flex": 1,
+      },
+      Object {
+        "paddingTop": 200,
+      },
+    ]
+  }
+>
+  <View
+    onLayout={[Function]}
+    style={
+      Array [
+        Array [
+          Object {
+            "flex": 1,
+            "justifyContent": "flex-end",
+          },
+          Object {
+            "marginBottom": undefined,
+          },
+        ],
+        Object {
+          "paddingBottom": 0,
+        },
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "stretch",
+            "display": "flex",
+            "flexDirection": "column",
+            "flexGrow": 1,
+            "justifyContent": "flex-start",
+            "paddingBottom": 16,
+            "paddingHorizontal": 16,
+          },
+        ]
+      
