@@ -220,4 +220,51 @@ export function NFTCollectionScreen({
         properties={traceProperties}
         screen={Screens.NFTCollection}>
         <Screen edges={EMPTY_ARRAY}>
-          <S
+          <ScrollHeader
+            fullScreen
+            centerElement={
+              collectionData?.name ? (
+                <Text variant="bodyLarge">{collectionData.name}</Text>
+              ) : undefined
+            }
+            listRef={listRef}
+            rightElement={
+              <NFTCollectionContextMenu
+                collectionAddress={collectionAddress}
+                data={collectionData}
+              />
+            }
+            scrollY={scrollY}
+            showHeaderScrollYDistance={NFT_BANNER_HEIGHT}
+          />
+          <AnimatedFlashList
+            ref={listRef}
+            ListEmptyComponent={
+              gridDataLoading ? null : <BaseCard.EmptyState description={t('No NFTs found')} />
+            }
+            ListHeaderComponent={
+              <NFTCollectionHeader
+                collectionAddress={collectionAddress}
+                data={collectionData}
+                loading={headerDataLoading}
+              />
+            }
+            data={gridDataWithLoadingElements}
+            estimatedItemSize={ESTIMATED_ITEM_SIZE}
+            estimatedListSize={{
+              width: dimensions.fullWidth,
+              height: dimensions.fullHeight,
+            }}
+            keyExtractor={keyExtractor}
+            numColumns={3}
+            renderItem={renderItem}
+            showsVerticalScrollIndicator={false}
+            onEndReached={onListEndReached}
+            onEndReachedThreshold={PREFETCH_ITEMS_THRESHOLD}
+            onScroll={scrollHandler}
+          />
+        </Screen>
+      </Trace>
+    </ExploreModalAwareView>
+  )
+}
