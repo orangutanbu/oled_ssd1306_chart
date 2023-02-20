@@ -70,4 +70,29 @@ export function NotificationsSetupScreen({ navigation, route: { params } }: Prop
     ) {
       navigation.navigate({ name: OnboardingScreens.Outro, params, merge: true })
     } else {
-      navigation.navigate({ name: OnboardingScreens.Security, params, m
+      navigation.navigate({ name: OnboardingScreens.Security, params, merge: true })
+    }
+  }
+
+  return (
+    <OnboardingScreen
+      subtitle={t('Get notified when your transfers, swaps, and approvals complete.')}
+      title={t('Turn on push notifications')}>
+      <Flex centered grow>
+        <OnboardingNotificationIcon />
+      </Flex>
+      <Button
+        emphasis={ButtonEmphasis.Tertiary}
+        label={t('Maybe later')}
+        name={ElementName.Skip}
+        onPress={onPressNext}
+      />
+
+      <Button
+        label={t('Turn on notifications')}
+        name={ElementName.Enable}
+        onPress={onPressEnableNotifications}
+      />
+    </OnboardingScreen>
+  )
+}
