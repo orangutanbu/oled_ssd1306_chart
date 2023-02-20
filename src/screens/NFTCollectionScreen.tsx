@@ -45,4 +45,88 @@ const LOADING_ITEMS_ARRAY = Array(LOADING_BUFFER_AMOUNT).fill(LOADING_ITEM)
 const keyExtractor = (item: NFTItem | string, index: number): string =>
   typeof item === 'string'
     ? `${LOADING_ITEM}-${index}`
-    : getNFTAssetKey(item.contractAddress
+    : getNFTAssetKey(item.contractAddress ?? '', item.tokenId ?? '')
+
+function gqlNFTAssetToNFTItem(data: NftCollectionScreenQuery | undefined): NFTItem[] {
+  const items = data?.nftAssets?.edges?.flatMap((item) => item.node)
+  if (!items) return EMPTY_ARRAY
+
+  return items.map((item): NFTItem => {
+    return {
+      name: item?.name ?? undefined,
+      contractAddress: item?.nftContract?.address ?? undefined,
+      tokenId: item?.tokenId ?? undefined,
+      imageUrl: item?.image?.url ?? undefined,
+      collectionName: item?.collection?.name ?? undefined,
+      ownerAddress: item.ownerAddress ?? undefined,
+      imageDimensions:
+        item?.image?.dimensions?.height && item?.image?.dimensions?.width
+          ? { width: item.image.dimensions.width, height: item.image.dimensions.height }
+          : undefined,
+    }
+  })
+}
+
+export function NFTCollectionScreen({
+  route: {
+    params: { collectionAddress },
+  },
+}: AppStackScreenProp<Screens.NFTCollection>): ReactElement {
+  const { t } = useTranslation()
+  const navigation = useAppStackNavigation()
+
+  // Collection overview data and paginated grid items
+  const { data, networkStatus, fetchMore, refetch } = useNftCollectionScreenQuery({
+    variables: { contractAddress: collectionAddress, first: ASSET_FETCH_PAGE_SIZE },
+    notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'cache-and-network',
+  })
+
+  // Parse response for overview data and collection grid data
+  const collectionData = data?.nftCollections?.edges?.[0]?.node
+  const collectionItems = useMemo(() => {
+    return gqlNFTAssetToNFTItem(data)
+  }, [data])
+
+  // Fill in grid with loading boxes if we have incomplete data and are loading more
+  const extraLoadingItemAmount =
+    networkStatus === NetworkStatus.fetchMore || networkStatus === NetworkStatus.loading
+      ? LOADING_BUFFER_AMOUNT + (3 - (collectionItems.length % 3))
+      : undefined
+
+  const onListEndReached = useCallback(() => {
+    if (!data?.nftAssets?.pageInfo?.hasNextPage) return
+    fetchMore({
+      variables: {
+        first: ASSET_FETCH_PAGE_SIZE,
+        after: data?.nftAssets?.pageInfo?.endCursor,
+      },
+    })
+  }, [data?.nftAssets?.pageInfo?.endCursor, data?.nftAssets?.pageInfo?.hasNextPage, fetchMore])
+
+  // Scroll behavior for fixed scroll header
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const listRef = useRef<any>(null)
+  useScrollToTop(listRef)
+  const scrollY = useSharedValue(0)
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollY.value = event.contentOffset.y
+    },
+    onEndDrag: (event) => {
+      scrollY.value = withTiming(event.contentOffset.y > 0 ? NFT_BANNER_HEIGHT : 0)
+    },
+  })
+
+  const onPressItem = (asset: NFTItem): void => {
+    navigation.push(Screens.NFTItem, {
+      owner: asset.ownerAddress ?? '',
+      address: asset.contractAddress ?? '',
+      tokenId: asset.tokenId ?? '',
+      collectionName: asset.collectionName ?? '',
+    })
+  }
+
+  /**
+   * @TODO: @ianlapham We can remove these styles when FLashList supports
+   * co
