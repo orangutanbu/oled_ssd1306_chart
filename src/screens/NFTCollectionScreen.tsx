@@ -129,4 +129,95 @@ export function NFTCollectionScreen({
 
   /**
    * @TODO: @ianlapham We can remove these styles when FLashList supports
-   * co
+   * columnWrapperStyle prop (from FlatList). Until then, do this to preserve full width header,
+   * but padded list.
+   */
+  const renderItem = ({ item, index }: ListRenderItemInfo<string | NFTItem>): JSX.Element => {
+    const first = index % 3 === 0
+    const last = index % 3 === 2
+    const middle = !first && !last
+    const containerStyle = {
+      marginLeft: middle ? theme.spacing.spacing8 : first ? theme.spacing.spacing16 : 0,
+      marginRight: middle ? theme.spacing.spacing8 : last ? theme.spacing.spacing16 : 0,
+      marginBottom: theme.spacing.spacing8,
+    }
+
+    return (
+      <Box
+        aspectRatio={1}
+        backgroundColor="backgroundOutline"
+        borderRadius="rounded16"
+        flex={1}
+        overflow="hidden"
+        style={containerStyle}>
+        {typeof item === 'string' ? (
+          <Loader.Box height="100%" width="100%" />
+        ) : (
+          <TouchableArea
+            hapticFeedback
+            activeOpacity={1}
+            alignItems="center"
+            flex={1}
+            hapticStyle={ImpactFeedbackStyle.Light}
+            onPress={(): void => onPressItem(item)}>
+            <NFTViewer
+              autoplay
+              squareGridView
+              imageDimensions={item.imageDimensions}
+              limitGIFSize={ESTIMATED_ITEM_SIZE}
+              placeholderContent={item.name || item.collectionName}
+              uri={item.imageUrl}
+            />
+          </TouchableArea>
+        )}
+      </Box>
+    )
+  }
+
+  // Only show loading UI if no data and first request, otherwise render cached data
+  const headerDataLoading = networkStatus === NetworkStatus.loading && !collectionData
+  const gridDataLoading = networkStatus === NetworkStatus.loading && !collectionItems
+
+  const gridDataWithLoadingElements = useMemo(() => {
+    if (gridDataLoading) {
+      return LOADING_ITEMS_ARRAY
+    }
+    if (extraLoadingItemAmount) {
+      return [...collectionItems, ...Array(extraLoadingItemAmount).fill(LOADING_ITEM)]
+    }
+    return collectionItems
+  }, [collectionItems, extraLoadingItemAmount, gridDataLoading])
+
+  const traceProperties = useMemo(
+    () =>
+      collectionData?.name
+        ? { collectionAddress, collectionName: collectionData?.name }
+        : undefined,
+    [collectionAddress, collectionData?.name]
+  )
+
+  if (isError(networkStatus, !!data)) {
+    return (
+      <Screen edges={[]}>
+        <Flex grow>
+          <NFTCollectionHeader data={undefined} loading={true} />
+          <BaseCard.ErrorState
+            description={t('Something went wrong.')}
+            retryButtonLabel={t('Retry')}
+            title={t('Couldn’t load NFT collection')}
+            onRetry={refetch}
+          />
+        </Flex>
+      </Screen>
+    )
+  }
+
+  return (
+    <ExploreModalAwareView>
+      <Trace
+        directFromPage
+        logImpression={!!traceProperties}
+        properties={traceProperties}
+        screen={Screens.NFTCollection}>
+        <Screen edges={EMPTY_ARRAY}>
+          <S
