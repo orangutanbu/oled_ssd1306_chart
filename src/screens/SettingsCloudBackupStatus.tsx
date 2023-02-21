@@ -119,4 +119,27 @@ export function SettingsCloudBackupStatus({
           closeText={t('Cancel')}
           confirmText={t('Delete')}
           modalName={ModalName.ViewSeedPhraseWarning}
-          title={t('Are you s
+          title={t('Are you sure?')}
+          onClose={(): void => {
+            setShowBackupDeleteWarning(false)
+          }}
+          onConfirm={onConfirmDeleteBackup}>
+          {associatedAccounts.length > 1 && (
+            <Flex>
+              <Text textAlign="left" variant="subheadSmall">
+                {t(
+                  'Because these wallets share a recovery phrase, it will also delete the backups for:'
+                )}
+              </Text>
+              <Flex>
+                {associatedAccounts.map((account) => (
+                  <AddressDisplay address={account.address} size={36} variant="subheadLarge" />
+                ))}
+              </Flex>
+            </Flex>
+          )}
+        </WarningModal>
+      )}
+    </Screen>
+  )
+}
