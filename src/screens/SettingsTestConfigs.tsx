@@ -41,4 +41,12 @@ export function SettingsTestConfigs(): JSX.Element {
                   ) : (
                     <Text variant="bodySmall">Remote only</Text>
                   )}
-    
+                </Flex>
+              )
+            })}
+          </ScrollView>
+        </Flex>
+      </ScrollView>
+    </SheetScreen>
+  )
+}
