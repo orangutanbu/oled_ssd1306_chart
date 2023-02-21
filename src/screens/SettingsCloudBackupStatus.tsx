@@ -39,4 +39,84 @@ export function SettingsCloudBackupStatus({
     (a) => a.type === AccountType.SignerMnemonic && a.mnemonicId === mnemonicId
   )
 
-  const [showBackupDeleteWarning, setShowBackupDeleteWarning] = useSt
+  const [showBackupDeleteWarning, setShowBackupDeleteWarning] = useState(false)
+  const onConfirmDeleteBackup = (): void => {
+    if (requiredForTransactions) {
+      biometricTrigger()
+    } else {
+      deleteBackup()
+    }
+  }
+
+  const deleteBackup = async (): Promise<void> => {
+    try {
+      await deleteICloudMnemonicBackup(mnemonicId)
+      dispatch(
+        editAccountActions.trigger({
+          type: EditAccountAction.RemoveBackupMethod,
+          address,
+          backupMethod: BackupType.Cloud,
+        })
+      )
+      setShowBackupDeleteWarning(false)
+      navigation.navigate(Screens.SettingsWallet, { address })
+    } catch (error) {
+      setShowBackupDeleteWarning(false)
+      const err = error as Error
+      logger.error('SettingsCloudBackStatus', 'deleteBackup', `${error}`)
+      Alert.alert(t('iCloud error'), err.message, [
+        {
+          text: t('OK'),
+          style: 'default',
+        },
+      ])
+    }
+  }
+
+  const { requiredForTransactions } = useBiometricAppSettings()
+  const { trigger: biometricTrigger } = useBiometricPrompt(deleteBackup)
+
+  return (
+    <Screen mx="spacing16" my="spacing16">
+      <BackHeader alignment="center" mb="spacing16">
+        <Text variant="bodyLarge">{t('iCloud backup')}</Text>
+      </BackHeader>
+
+      <Flex grow alignItems="stretch" justifyContent="space-evenly" mt="spacing16">
+        <Flex grow gap="spacing24" justifyContent="flex-start">
+          <Text color="textSecondary" variant="bodySmall">
+            {t(
+              'By having your recovery phrase backed up to iCloud, you can recover your wallet just by being logged into your iCloud on any device.'
+            )}
+          </Text>
+          <Flex row justifyContent="space-between">
+            <Text variant="bodyLarge">{t('Recovery phrase')}</Text>
+            <Flex row alignItems="center" gap="spacing12" justifyContent="space-around">
+              <Text color="textSecondary" variant="buttonLabelMicro">
+                {t('Backed up')}
+              </Text>
+
+              {/* @TODO: [MOB-3919] Add non-backed up state once we have more options on this page  */}
+              <Checkmark color={theme.colors.accentSuccess} height={24} width={24} />
+            </Flex>
+          </Flex>
+        </Flex>
+        <Button
+          emphasis={ButtonEmphasis.Detrimental}
+          label={t('Delete iCloud backup')}
+          name={ElementName.Remove}
+          onPress={(): void => {
+            setShowBackupDeleteWarning(true)
+          }}
+        />
+      </Flex>
+
+      {showBackupDeleteWarning && (
+        <WarningModal
+          caption={t(
+            'If you delete your iCloud backup, you’ll only be able to recover your wallet with a manual backup of your recovery phrase. Uniswap Labs can’t recover your assets if you lose your recovery phrase.'
+          )}
+          closeText={t('Cancel')}
+          confirmText={t('Delete')}
+          modalName={ModalName.ViewSeedPhraseWarning}
+          title={t('Are you s
