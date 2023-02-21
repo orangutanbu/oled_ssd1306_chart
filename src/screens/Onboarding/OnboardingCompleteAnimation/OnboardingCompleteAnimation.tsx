@@ -312,4 +312,33 @@ const styles = StyleSheet.create({
     top: 0,
   },
   qrCodeContainer: {
- 
+    alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  qrGlow: {
+    borderRadius: 18,
+    bottom: 0,
+    left: 0,
+    overflow: 'hidden',
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    zIndex: -1,
+    // to make the glow appear behind the QR code
+  },
+  textContainer: {
+    alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    marginHorizontal: 28,
+  },
+  video: {
+    bottom: 4,
+    left: 4,
+    position: 'absolute',
+    right: 4,
+    top: 4,
+  },
+})
