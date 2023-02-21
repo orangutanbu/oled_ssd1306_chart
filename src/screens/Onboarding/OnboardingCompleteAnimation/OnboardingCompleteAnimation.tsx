@@ -227,4 +227,89 @@ export function OnboardingCompleteAnimation({
                     <View style={styles.video}>
                       <Video
                         ref={video}
-                      
+                        resizeMode={ResizeMode.CONTAIN}
+                        shouldPlay={false}
+                        source={etchingVideoSource}
+                        style={styles.video}
+                        useNativeControls={false}
+                      />
+                    </View>
+                  </Animated.View>
+                  <Animated.View entering={videoFadeOut} style={[styles.glow]}>
+                    <Canvas style={flex.fill}>
+                      <Group
+                        transform={[
+                          { translateX: QR_CONTAINER_SIZE / 2 - 40 },
+                          { translateY: QR_CONTAINER_SIZE / 2 - 40 },
+                        ]}>
+                        <Oval
+                          color={uniconColors.gradientStart}
+                          height={80}
+                          opacity={preglowBlurOpacity}
+                          width={80}
+                        />
+                        <Blur blur={preglowBlurSize as unknown as SkiaValue} />
+                      </Group>
+                    </Canvas>
+                  </Animated.View>
+                  <Animated.View entering={flashWipeAnimation} style={styles.glow}>
+                    <Flex
+                      borderRadius="rounded20"
+                      height="100%"
+                      style={{ backgroundColor: uniconColors.glow }}
+                      width="100%"
+                    />
+                  </Animated.View>
+                </Animated.View>
+              </Animated.View>
+            </Animated.View>
+          </Flex>
+          <Animated.View entering={textSlideUpAtEnd} style={[styles.textContainer]}>
+            <Text
+              maxFontSizeMultiplier={finalTitleMaxFontSizeMultiplier}
+              pb="spacing12"
+              variant="headlineSmall">
+              {t("You're ready to go!")}
+            </Text>
+            <Text
+              color="textSecondary"
+              maxFontSizeMultiplier={finalBodyMaxFontSizeMultiplier}
+              textAlign="center"
+              variant={subheadSize}>
+              {isNewWallet
+                ? t(
+                    "You've created, nicknamed, and backed up your wallet. Now, you can explore the world of crypto."
+                  )
+                : t(
+                    'Check out your tokens and NFTs, follow crypto wallets, and stay up to date on the go.'
+                  )}
+            </Text>
+          </Animated.View>
+        </Flex>
+        <Animated.View entering={letsGoButtonFadeIn}>
+          <Button label={t('Let’s go')} name={ElementName.Next} onPress={onPressNext} />
+        </Animated.View>
+      </Flex>
+    </>
+  )
+}
+
+const styles = StyleSheet.create({
+  behindQrBlur: {
+    bottom: -50,
+    left: -50,
+    position: 'absolute',
+    right: -50,
+    top: -50,
+    zIndex: -1,
+  },
+  glow: {
+    bottom: 0,
+    left: 0,
+    overflow: 'hidden',
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
+  qrCodeContainer: {
+ 
