@@ -157,4 +157,74 @@ export function OnboardingCompleteAnimation({
     sm: theme.textVariants.headlineSmall.maxFontSizeMultiplier,
   })
 
-  const finalBodyMaxFontSiz
+  const finalBodyMaxFontSizeMultiplier = useResponsiveProp({
+    xs: 1.1,
+    sm: theme.textVariants.bodyLarge.maxFontSizeMultiplier,
+  })
+
+  const subheadSize = useResponsiveProp({
+    xs: 'bodySmall',
+    sm: 'bodyLarge',
+  })
+
+  return (
+    <>
+      <Animated.View entering={realQrTopGlowFadeIn} style={[styles.qrGlow]}>
+        <GradientBackground>
+          <UniconThemedGradient
+            borderRadius="rounded16"
+            gradientEndColor={uniconColors.glow}
+            gradientStartColor={theme.colors.background0}
+            opacity={isDarkMode ? 0.3 : 0.2}
+          />
+        </GradientBackground>
+      </Animated.View>
+      <Flex grow justifyContent="space-between" px="spacing16" py="spacing24">
+        <Flex centered grow gap="spacing36" mb="spacing12" mt="spacing12">
+          <Flex centered gap="spacing12" pt="spacing48">
+            <Animated.View entering={qrSlideUpAndFadeIn}>
+              <Animated.View entering={qrSlideUpAtEnd}>
+                <Animated.View entering={flashWipeAnimation} style={styles.behindQrBlur}>
+                  <Canvas style={flex.fill}>
+                    <Group transform={[{ translateX: 50 }, { translateY: 50 }]}>
+                      <RoundedRect
+                        color={uniconColors.glow}
+                        height={QR_CONTAINER_SIZE}
+                        opacity={1}
+                        r={10}
+                        width={QR_CONTAINER_SIZE}
+                        x={0}
+                        y={0}
+                      />
+                      <Blur blur={25 as unknown as SkiaValue} />
+                    </Group>
+                  </Canvas>
+                </Animated.View>
+                <Animated.View entering={qrScaleIn}>
+                  <Box
+                    bg="background0"
+                    borderColor="backgroundOutline"
+                    borderRadius="rounded20"
+                    borderWidth={2}
+                    height={QR_CONTAINER_SIZE}
+                    overflow="hidden"
+                    width={QR_CONTAINER_SIZE}>
+                    <Animated.View entering={realQrFadeIn} style={[styles.qrCodeContainer]}>
+                      <QRCodeDisplay
+                        hideOutline
+                        address={activeAddress}
+                        backgroundColor="background0"
+                        containerBackgroundColor="background0"
+                        logoSize={UNICON_SIZE}
+                        overlayOpacityPercent={10}
+                        safeAreaColor="background0"
+                        safeAreaSize={UNICON_SIZE + UNICON_SIZE / 2}
+                        size={QR_CODE_SIZE}
+                      />
+                    </Animated.View>
+                  </Box>
+                  <Animated.View entering={videoFadeOut} style={[styles.video]}>
+                    <View style={styles.video}>
+                      <Video
+                        ref={video}
+                      
