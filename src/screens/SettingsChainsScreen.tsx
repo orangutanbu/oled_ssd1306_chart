@@ -26,4 +26,28 @@ export function SettingsChainsScreen(): JSX.Element {
           <Text variant="subheadLarge">{t('Chain Settings')}</Text>
         </BackHeader>
         <Box px="spacing12">
-          <Text variant="subheadLarge">{t('
+          <Text variant="subheadLarge">{t('Configure active chains (networks)')}</Text>
+          {ALL_SUPPORTED_CHAIN_IDS.map((chainId) => {
+            const isActive = activeChains.includes(chainId)
+            return (
+              <Box
+                key={chainId}
+                alignItems="center"
+                flexDirection="row"
+                justifyContent="space-between"
+                mt="spacing24">
+                <Text variant="bodyLarge">{CHAIN_INFO[chainId].label}</Text>
+                <Switch
+                  value={isActive}
+                  onValueChange={(newValue: boolean): void => {
+                    dispatch(setChainActiveStatus({ chainId, isActive: newValue }))
+                  }}
+                />
+              </Box>
+            )
+          })}
+        </Box>
+      </ScrollView>
+    </SheetScreen>
+  )
+}
