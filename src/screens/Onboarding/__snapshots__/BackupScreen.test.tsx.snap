@@ -1,0 +1,212 @@
+
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BackupScreen renders backup options when none are completed 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "backgroundColor": "#FFFFFF",
+        "display": "flex",
+        "flex": 1,
+      },
+      Object {
+        "paddingTop": 200,
+      },
+    ]
+  }
+>
+  <View
+    onLayout={[Function]}
+    style={
+      Array [
+        Array [
+          Object {
+            "flex": 1,
+            "justifyContent": "flex-end",
+          },
+          Object {
+            "marginBottom": undefined,
+          },
+        ],
+        Object {
+          "paddingBottom": 0,
+        },
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "stretch",
+            "display": "flex",
+            "flexDirection": "column",
+            "flexGrow": 1,
+            "justifyContent": "flex-start",
+            "paddingBottom": 16,
+            "paddingHorizontal": 16,
+          },
+        ]
+      }
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "display": "flex",
+              "flexDirection": "column",
+              "justifyContent": "center",
+              "margin": 12,
+            },
+          ]
+        }
+      >
+        <Text
+          allowFontScaling={false}
+          maxFontSizeMultiplier={1.2}
+          style={
+            Array [
+              Object {
+                "color": "#0E1524",
+                "display": "flex",
+                "fontFamily": "Inter-Medium",
+                "fontSize": 24,
+                "lineHeight": 28,
+                "paddingTop": 0,
+                "textAlign": "center",
+              },
+            ]
+          }
+        >
+          Back up your recovery phrase
+        </Text>
+        <View
+          style={
+            Array [
+              Object {
+                "display": "flex",
+                "flexGrow": 0,
+                "flexShrink": 0,
+                "height": 12,
+              },
+            ]
+          }
+        />
+        <Text
+          allowFontScaling={true}
+          maxFontSizeMultiplier={1.4}
+          style={
+            Array [
+              Object {
+                "color": "#5D6785",
+                "display": "flex",
+                "fontFamily": "Inter-Regular",
+                "fontSize": 15,
+                "lineHeight": 20,
+                "textAlign": "center",
+              },
+            ]
+          }
+        >
+          Your recovery phrase is the key to your wallet. Back it up so you can restore your wallet if you lose or damage your device.
+        </Text>
+      </View>
+      <View
+        style={
+          Array [
+            Object {
+              "display": "flex",
+              "flexGrow": 0,
+              "flexShrink": 0,
+              "height": 16,
+            },
+          ]
+        }
+      />
+      <View
+        style={
+          Array [
+            Object {
+              "alignItems": "stretch",
+              "display": "flex",
+              "flex": 1,
+              "flexDirection": "column",
+              "flexGrow": 1,
+              "justifyContent": "space-between",
+            },
+          ]
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "stretch",
+                "display": "flex",
+                "flexDirection": "column",
+                "flexGrow": 1,
+                "justifyContent": "flex-start",
+              },
+            ]
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "stretch",
+                  "display": "flex",
+                  "flexDirection": "column",
+                  "justifyContent": "flex-start",
+                },
+              ]
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "flexDirection": "row",
+                    "justifyContent": "flex-start",
+                    "paddingVertical": 16,
+                  },
+                ]
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "borderColor": "#FC72FF",
+                      "borderRadius": 12,
+                      "borderWidth": 1.25,
+                      "display": "flex",
+                      "flexDirection": "column",
+                      "height": 40,
+                      "justifyContent": "center",
+                      "padding": 16,
+                      "width": 40,
+                    },
+                  ]
+                }
+              >
+                <svg
+                  color="#0E1524"
+                  data-file-name="SvgCloud"
+                  height={24}
+                  strokeWidth={1.5}
+                  width={24}
+                />
+              </View>
+              <View
+                style={
+                  Array [
+                    Object {
+                      "display": "flex",
+                      "flexGrow": 0,
+                      "flexShrink": 0,

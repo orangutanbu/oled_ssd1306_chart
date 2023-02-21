@@ -34,4 +34,93 @@ export function SecuritySetupScreen({ navigation, route: { params } }: Props): J
 
   const onPressNext = useCallback(() => {
     setShowWarningModal(false)
-    navigation.navigate({ name: OnboardingScreens.Outro, params, merge
+    navigation.navigate({ name: OnboardingScreens.Outro, params, merge: true })
+  }, [navigation, params])
+
+  const onMaybeLaterPressed = useCallback(() => {
+    if (params?.importType === ImportType.Watch) {
+      onPressNext()
+    } else {
+      setShowWarningModal(true)
+    }
+  }, [onPressNext, params?.importType])
+
+  const onPressEnableSecurity = useCallback(async () => {
+    const authStatus = await tryLocalAuthenticate({
+      disableDeviceFallback: true,
+    })
+
+    if (
+      authStatus === BiometricAuthenticationStatus.Unsupported ||
+      authStatus === BiometricAuthenticationStatus.MissingEnrollment
+    ) {
+      Alert.alert(
+        t('{{authenticationTypeName}} ID is disabled', { authenticationTypeName }),
+        t('To use {{authenticationTypeName}} ID, allow access in system settings', {
+          authenticationTypeName,
+        }),
+        [{ text: t('Go to settings'), onPress: openSettings }, { text: t('Not now') }]
+      )
+    }
+
+    if (biometricAuthenticationSuccessful(authStatus)) {
+      dispatch(setRequiredForTransactions(true))
+      onPressNext()
+    }
+  }, [t, authenticationTypeName, dispatch, onPressNext])
+
+  const onCloseModal = useCallback(() => setShowWarningModal(false), [])
+
+  return (
+    <>
+      {showWarningModal && (
+        <BiometricAuthWarningModal
+          isTouchIdDevice={isTouchIdDevice}
+          onClose={onCloseModal}
+          onConfirm={onPressNext}
+        />
+      )}
+      <OnboardingScreen
+        childrenGap="none"
+        subtitle={t('{{ authenticationTypeName }} ID will be required to make transactions.', {
+          authenticationTypeName,
+        })}
+        title={t('Protect your wallet')}>
+        <Flex centered grow>
+          <Box
+            borderColor="background3"
+            borderRadius="rounded20"
+            borderWidth={4}
+            style={styles.iconView}>
+            {isTouchIdDevice ? (
+              <FingerprintIcon color={theme.colors.textSecondary} height={58} width={58} />
+            ) : (
+              <FaceIcon color={theme.colors.textSecondary} height={58} width={58} />
+            )}
+          </Box>
+        </Flex>
+
+        <Button
+          emphasis={ButtonEmphasis.Tertiary}
+          label={t('Maybe later')}
+          name={ElementName.Skip}
+          onPress={onMaybeLaterPressed}
+        />
+
+        <Button
+          label={t('Turn on {{authenticationTypeName}} ID', { authenticationTypeName })}
+          name={ElementName.Enable}
+          onPress={onPressEnableSecurity}
+        />
+      </OnboardingScreen>
+    </>
+  )
+}
+
+const styles = StyleSheet.create({
+  iconView: {
+    paddingBottom: 94,
+    paddingHorizontal: 32,
+    paddingTop: 70,
+  },
+})
