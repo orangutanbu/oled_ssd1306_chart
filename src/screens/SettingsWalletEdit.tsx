@@ -63,4 +63,44 @@ export function SettingsWalletEdit({
               <TextInput
                 autoFocus
                 autoCapitalize="none"
-               
+                color={nickname === activeAccount?.name ? 'textTertiary' : 'textPrimary'}
+                fontFamily={theme.textVariants.headlineMedium.fontFamily}
+                fontSize={theme.textVariants.headlineMedium.fontSize}
+                margin="none"
+                maxLength={NICKNAME_MAX_LENGTH}
+                numberOfLines={1}
+                placeholder={shortenAddress(address)}
+                placeholderTextColor={theme.colors.textTertiary}
+                px="none"
+                py="none"
+                returnKeyType="done"
+                value={nickname}
+                width="100%"
+                onChangeText={setNickname}
+                onSubmitEditing={handleNicknameUpdate}
+              />
+            ) : (
+              <Flex row alignItems="center">
+                <Flex shrink>
+                  <Text color="textPrimary" variant="headlineMedium">
+                    {nickname || shortenAddress(address)}
+                  </Text>
+                </Flex>
+                {!ensName && (
+                  <Box ml="spacing12">
+                    <Button
+                      IconName={PencilIcon}
+                      emphasis={ButtonEmphasis.Secondary}
+                      size={ButtonSize.Small}
+                      onPress={onPressShowEditInput}
+                    />
+                  </Box>
+                )}
+              </Flex>
+            )}
+          </Flex>
+        </Flex>
+      </Flex>
+    </Screen>
+  )
+}
