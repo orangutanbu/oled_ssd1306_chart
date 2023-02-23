@@ -181,4 +181,86 @@ function TokenDetails({
   }, [error, retry])
 
   // set if attempting buy or sell, use for warning modal
- 
+  const [activeTransactionType, setActiveTransactionType] = useState<TransactionType | undefined>(
+    undefined
+  )
+
+  const [showWarningModal, setShowWarningModal] = useState(false)
+  const { tokenWarningDismissed, dismissWarningCallback } = useTokenWarningDismissed(_currencyId)
+
+  const safetyLevel = token?.project?.safetyLevel
+
+  const initialSendState = useMemo((): TransactionState => {
+    return {
+      exactCurrencyField: CurrencyField.INPUT,
+      exactAmountToken: '',
+      [CurrencyField.INPUT]: {
+        address: currencyAddress,
+        chainId: currencyChainId,
+        type: AssetType.Currency,
+      },
+      [CurrencyField.OUTPUT]: null,
+      showRecipientSelector: true,
+    }
+  }, [currencyAddress, currencyChainId])
+
+  const navigateToSwapBuy = useCallback(() => {
+    setActiveTransactionType(undefined)
+    const swapFormState: TransactionState = {
+      exactCurrencyField: CurrencyField.OUTPUT,
+      exactAmountToken: '',
+      [CurrencyField.INPUT]: null,
+      [CurrencyField.OUTPUT]: {
+        address: currencyAddress,
+        chainId: currencyChainId,
+        type: AssetType.Currency,
+      },
+    }
+    dispatch(openModal({ name: ModalName.Swap, initialState: swapFormState }))
+  }, [currencyAddress, currencyChainId, dispatch])
+
+  const navigateToSwapSell = useCallback(() => {
+    setActiveTransactionType(undefined)
+    const swapFormState: TransactionState = {
+      exactCurrencyField: CurrencyField.INPUT,
+      exactAmountToken: '',
+      [CurrencyField.INPUT]: {
+        address: currencyAddress,
+        chainId: currencyChainId,
+        type: AssetType.Currency,
+      },
+      [CurrencyField.OUTPUT]: null,
+    }
+    dispatch(openModal({ name: ModalName.Swap, initialState: swapFormState }))
+  }, [currencyAddress, currencyChainId, dispatch])
+
+  const onPressSwap = useCallback(
+    (swapType: TransactionType.BUY | TransactionType.SELL) => {
+      // show warning modal speedbump if token has a warning level and user has not dismissed
+      if (safetyLevel !== SafetyLevel.Verified && !tokenWarningDismissed) {
+        setActiveTransactionType(swapType)
+        setShowWarningModal(true)
+      } else {
+        if (swapType === TransactionType.BUY) {
+          navigateToSwapBuy()
+        }
+        if (swapType === TransactionType.SELL) {
+          navigateToSwapSell()
+        }
+        return
+      }
+    },
+    [navigateToSwapBuy, navigateToSwapSell, safetyLevel, tokenWarningDismissed]
+  )
+
+  const onPressSend = useCallback(() => {
+    // show warning modal speedbump if token has a warning level and user has not dismissed
+    if (safetyLevel !== SafetyLevel.Verified && !tokenWarningDismissed) {
+      setActiveTransactionType(TransactionType.SEND)
+      setShowWarningModal(true)
+    } else {
+      dispatch(openModal({ name: ModalName.Send, ...{ initialState: initialSendState } }))
+    }
+  }, [safetyLevel, tokenWarningDismissed, dispatch, initialSendState])
+
+  const onAcceptWarnin
