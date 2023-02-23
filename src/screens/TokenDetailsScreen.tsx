@@ -69,4 +69,116 @@ function HeaderTitleElement({ data }: { data: TokenDetailsScreenQuery | undefine
       <HeaderPriceLabel price={tokenProject?.markets?.[0]?.price} />
       <Flex centered row gap="spacing4">
         <TokenLogo
-          chainId={fromGraphQLChain(token?.chain) ?? und
+          chainId={fromGraphQLChain(token?.chain) ?? undefined}
+          size={iconSizes.icon16}
+          symbol={token?.symbol ?? undefined}
+          url={tokenProject?.logoUrl ?? undefined}
+        />
+        <Text color="textSecondary" variant="buttonLabelMicro">
+          {token?.symbol ?? t('Unknown token')}
+        </Text>
+      </Flex>
+    </Flex>
+  )
+}
+
+enum TransactionType {
+  BUY,
+  SELL,
+  SEND,
+}
+
+export function TokenDetailsScreen({
+  route,
+}: AppStackScreenProp<Screens.TokenDetails>): JSX.Element {
+  const { currencyId: _currencyId } = route.params
+
+  // Token details screen query
+  const { data, refetch, networkStatus } = useTokenDetailsScreenQuery({
+    variables: currencyIdToContractInput(_currencyId),
+    pollInterval: PollingInterval.Normal,
+    notifyOnNetworkStatusChange: true,
+    returnPartialData: true,
+  })
+
+  const retry = useCallback(() => {
+    refetch(currencyIdToContractInput(_currencyId))
+  }, [_currencyId, refetch])
+
+  const isLoading = !data && isNonPollingRequestInFlight(networkStatus)
+
+  // Preload token price graphs
+  const { error: tokenPriceHistoryError } = useTokenPriceHistory(_currencyId)
+
+  const traceProperties = useMemo(
+    () => ({
+      address: currencyIdToAddress(_currencyId),
+      chain: currencyIdToChain(_currencyId),
+      currencyName: data?.token?.name,
+    }),
+    [_currencyId, data?.token?.name]
+  )
+
+  return (
+    <ReactNavigationPerformanceView interactive={isLoading} screenName={Screens.TokenDetails}>
+      <Trace
+        directFromPage
+        logImpression
+        properties={traceProperties}
+        screen={Screens.TokenDetails}>
+        <TokenDetails
+          _currencyId={_currencyId}
+          data={data}
+          error={isError(networkStatus, !!data) || !!tokenPriceHistoryError}
+          loading={isLoading}
+          retry={retry}
+        />
+      </Trace>
+    </ReactNavigationPerformanceView>
+  )
+}
+
+function TokenDetails({
+  _currencyId,
+  data,
+  error,
+  retry,
+  loading,
+}: {
+  _currencyId: string
+  data: TokenDetailsScreenQuery | undefined
+  error: boolean
+  retry: () => void
+  loading: boolean
+}): JSX.Element {
+  const dispatch = useAppDispatch()
+
+  const theme = useAppTheme()
+
+  const currencyChainId = currencyIdToChain(_currencyId) ?? ChainId.Mainnet
+  const currencyAddress = currencyIdToAddress(_currencyId)
+
+  const token = data?.token
+  const tokenLogoUrl = token?.project?.logoUrl
+
+  const crossChainTokens = token?.project?.tokens
+  const { currentChainBalance, otherChainBalances } = useCrossChainBalances(
+    _currencyId,
+    crossChainTokens
+  )
+
+  const { tokenColor, tokenColorLoading } = useExtractedTokenColor(
+    tokenLogoUrl,
+    /*background=*/ theme.colors.background0,
+    /*default=*/ theme.colors.textTertiary
+  )
+
+  const onPriceChartRetry = useCallback((): void => {
+    if (!error) {
+      return
+    }
+    retry()
+  }, [error, retry])
+
+  // set if attempting buy or sell, use for warning modal
+ 
