@@ -339,4 +339,24 @@ function TokenDetails({
                 safetyLevel === SafetyLevel.Blocked
                   ? undefined
                   : (): void =>
-                      onPressSwap(currentChainBalance ? TransactionType.SELL : TransactionType.B
+                      onPressSwap(currentChainBalance ? TransactionType.SELL : TransactionType.BUY)
+              }
+            />
+          </AnimatedFlex>
+        ) : null}
+
+        <TokenWarningModal
+          currencyId={_currencyId}
+          disableAccept={activeTransactionType === undefined}
+          isVisible={showWarningModal}
+          safetyLevel={safetyLevel}
+          onAccept={onAcceptWarning}
+          onClose={(): void => {
+            setActiveTransactionType(undefined)
+            setShowWarningModal(false)
+          }}
+        />
+      </Box>
+    </Trace>
+  )
+}
