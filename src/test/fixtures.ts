@@ -255,4 +255,75 @@ export const approveNotification = {
   spender: '0x939C8d89EBC11fA45e576215E2353673AD0bA18A',
 }
 
-export const u
+export const unknownNotification = {
+  type: AppNotificationType.Transaction,
+  chainId: ChainId.Mainnet,
+  txId: 'uid-1234',
+  txHash: '0x000',
+  txType: TransactionType.Unknown,
+  txStatus: TransactionStatus.Success,
+  tokenAddress: '0x939C8d89EBC11fA45e576215E2353673AD0bA18A',
+}
+
+export const networkUnknown: NetInfoUnknownState = {
+  isConnected: null,
+  type: NetInfoStateType.unknown,
+  isInternetReachable: null,
+  details: null,
+}
+
+export const networkDown: NetInfoNoConnectionState = {
+  isConnected: false,
+  type: NetInfoStateType.none,
+  isInternetReachable: false,
+  details: null,
+}
+
+export const ETH = NativeCurrency.onChain(ChainId.Mainnet)
+
+export const networkUp: NetInfoConnectedStates = {
+  isConnected: true,
+  type: NetInfoStateType.other,
+  isInternetReachable: true,
+  details: { isConnectionExpensive: false },
+}
+
+export const ethCurrencyInfo: CurrencyInfo = {
+  currencyId: currencyId(ETH),
+  currency: ETH,
+  logoUrl: 'https://token-icons.s3.amazonaws.com/eth.png',
+  safetyLevel: SafetyLevel.Verified,
+}
+
+export const uniCurrencyInfo: CurrencyInfo = {
+  currencyId: currencyId(UNI[ChainId.Mainnet]),
+  currency: UNI[ChainId.Mainnet],
+  logoUrl:
+    'https://raw.githubusercontent.com/Uniswap/assets/master/blockchains/ethereum/assets/0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984/logo.png',
+  safetyLevel: SafetyLevel.Verified,
+}
+
+export const daiCurrencyInfo: CurrencyInfo = {
+  currencyId: currencyId(DAI),
+  currency: DAI,
+  logoUrl:
+    'https://raw.githubusercontent.com/Uniswap/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
+  safetyLevel: SafetyLevel.Verified,
+}
+
+export const arbitrumDaiCurrencyInfo: CurrencyInfo = {
+  currencyId: currencyId(DAI_ARBITRUM_ONE),
+  currency: DAI_ARBITRUM_ONE,
+  logoUrl:
+    'https://raw.githubusercontent.com/Uniswap/assets/master/blockchains/ethereum/assets/0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984/logo.png',
+  safetyLevel: SafetyLevel.Verified,
+}
+
+// Useful when passing in preloaded state where active account is required
+export const mockWalletPreloadedState = {
+  wallet: {
+    ...initialWalletState,
+    accounts: { [account.address]: account },
+    activeAccountAddress: account.address,
+  },
+}
