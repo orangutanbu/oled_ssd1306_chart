@@ -152,4 +152,107 @@ export const txTypeInfo: ApproveTransactionInfo = {
 }
 
 export const txDetailsPending: TransactionDetails = {
-  chainId: ChainId.Mainnet
+  chainId: ChainId.Mainnet,
+  id: '0',
+  from: account.address,
+  options: {
+    request: txRequest,
+  },
+  typeInfo: txTypeInfo,
+  status: TransactionStatus.Pending,
+  addedTime: 1487076708000,
+  hash: '0x123',
+}
+
+export const txDetailsConfirmed: TransactionDetails = {
+  ...txDetailsPending,
+  status: TransactionStatus.Success,
+  receipt: {
+    blockHash: txReceipt.blockHash,
+    blockNumber: txReceipt.blockNumber,
+    transactionIndex: txReceipt.transactionIndex,
+    confirmations: txReceipt.confirmations,
+    confirmedTime: 1400000000000,
+  },
+}
+
+export const fiatOnRampTxDetailsPending: TransactionDetails = {
+  chainId: ChainId.Mainnet,
+  id: '0',
+  from: account.address,
+  options: {
+    request: txRequest,
+  },
+  typeInfo: txTypeInfo,
+  status: TransactionStatus.Pending,
+  addedTime: 1487076708000,
+  hash: '0x123',
+}
+
+export const finalizedTxAction: ReturnType<typeof finalizeTransaction> = {
+  payload: { ...txDetailsConfirmed, status: TransactionStatus.Success },
+  type: '',
+}
+
+export const swapNotification = {
+  type: AppNotificationType.Transaction,
+  chainId: ChainId.Mainnet,
+  txId: 'uid-1234',
+  txHash: '0x01',
+  txType: TransactionType.Swap,
+  txStatus: TransactionStatus.Success,
+  inputCurrencyId: `1-${NATIVE_ADDRESS}`,
+  outputCurrencyId: '1-0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984',
+  inputCurrencyAmountRaw: '230000000000000000',
+  outputCurrencyAmountRaw: '123000000000000000000',
+  tradeType: TradeType.EXACT_INPUT,
+}
+
+export const transferCurrencyNotification = {
+  type: AppNotificationType.Transaction,
+  chainId: ChainId.Mainnet,
+  txId: 'uid-1234',
+  txHash: '0x000',
+  txType: TransactionType.Send,
+  txStatus: TransactionStatus.Success,
+  assetType: AssetType.Currency,
+  tokenAddress: '0x4d224452801ACEd8B2F0aebE155379bb5D594381',
+  currencyAmountRaw: '1000000000000000000',
+  recipient: '0x11E4857Bb9993a50c685A79AFad4E6F65D518DDa',
+  // sender: '0x939C8d89EBC11fA45e576215E2353673AD0bA18A',
+}
+
+export const transferNFTNotification = {
+  type: AppNotificationType.Transaction,
+  chainId: ChainId.Mainnet,
+  txId: 'uid-1234',
+  txHash: '0x000',
+  txType: TransactionType.Send,
+  txStatus: TransactionStatus.Success,
+  assetType: AssetType.ERC1155,
+  tokenAddress: '0x7Bd29408f11D2bFC23c34f18275bBf23bB716Bc7',
+  tokenId: '4334',
+  recipient: '0x11E4857Bb9993a50c685A79AFad4E6F65D518DDa',
+  // sender: '0x11E4857Bb9993a50c685A79AFad4E6F65D518DDa',
+}
+
+export const wcNotification = {
+  type: AppNotificationType.WalletConnect,
+  chainId: ChainId.Mainnet,
+  event: WalletConnectEvent.Connected,
+  dappName: 'Uniswap',
+  imageUrl: `${config.uniswapAppUrl}/images/192x192_App_Icon.png`,
+}
+
+export const approveNotification = {
+  type: AppNotificationType.Transaction,
+  chainId: ChainId.Mainnet,
+  txId: 'uid-1234',
+  txHash: '0x000',
+  txType: TransactionType.Approve,
+  txStatus: TransactionStatus.Success,
+  tokenAddress: '0x4d224452801ACEd8B2F0aebE155379bb5D594381',
+  spender: '0x939C8d89EBC11fA45e576215E2353673AD0bA18A',
+}
+
+export const u
