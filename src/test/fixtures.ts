@@ -49,4 +49,107 @@ export const account: Account = {
 
 export const account2: Account = {
   type: AccountType.Readonly,
-  address: '0xe1d494bc8690b1ef2f0a13b6672c4f
+  address: '0xe1d494bc8690b1ef2f0a13b6672c4f2ee5c2d2b7',
+  name: 'Test Account',
+  timeImportedMs: 10,
+}
+
+const mockSigner = new (class {
+  signTransaction = (): string => '0x1234567890abcdef'
+  connect = (): this => this
+})()
+
+export const mockSignerManager = {
+  getSignerForAccount: async (): Promise<typeof mockSigner> => mockSigner,
+}
+
+const mockFeeData = {
+  maxFeePerPrice: BigNumber.from('1000'),
+  maxPriorityFeePerGas: BigNumber.from('10000'),
+  gasPrice: BigNumber.from('10000'),
+}
+
+export const mockProvider = {
+  getBalance: (): BigNumber => BigNumber.from('1000000000000000000'),
+  getGasPrice: (): BigNumber => BigNumber.from('100000000000'),
+  getTransactionCount: (): number => 1000,
+  estimateGas: (): BigNumber => BigNumber.from('30000'),
+  sendTransaction: (): { hash: string } => ({ hash: '0xabcdef' }),
+  detectNetwork: (): { name: string; chainId: ChainId } => ({ name: 'mainnet', chainId: 1 }),
+  getTransactionReceipt: (): typeof txReceipt => txReceipt,
+  waitForTransaction: (): typeof txReceipt => txReceipt,
+  getFeeData: (): typeof mockFeeData => mockFeeData,
+}
+
+export const mockProviderManager = {
+  getProvider: (): typeof mockProvider => mockProvider,
+}
+
+export const signerManager = new SignerManager()
+
+export const provider = new providers.JsonRpcProvider()
+export const providerManager = {
+  getProvider: (): typeof provider => provider,
+}
+
+export const mockContractManager = {
+  getOrCreateContract: (): typeof mockTokenContract => mockTokenContract,
+}
+
+export const mockTokenContract = {
+  balanceOf: (): BigNumber => BigNumber.from('1000000000000000000'),
+  populateTransaction: {
+    transfer: (): typeof txRequest => txRequest,
+    transferFrom: (): typeof txRequest => txRequest,
+    safeTransferFrom: (): typeof txRequest => txRequest,
+  },
+}
+
+export const contractManager = new ContractManager()
+contractManager.getOrCreateContract(ChainId.Goerli, DAI.address, provider, ERC20_ABI)
+contractManager.getOrCreateContract(
+  ChainId.Goerli,
+  WRAPPED_NATIVE_CURRENCY[ChainId.Goerli].address,
+  provider,
+  WETH_ABI
+)
+export const tokenContract = contractManager.getContract(ChainId.Goerli, DAI.address) as Erc20
+export const wethContract = contractManager.getContract(
+  ChainId.Goerli,
+  WRAPPED_NATIVE_CURRENCY[ChainId.Goerli].address
+) as Weth
+
+/**
+ * Transactions
+ */
+export const txRequest: providers.TransactionRequest = {
+  from: '0x123',
+  to: '0x456',
+  value: '0x0',
+  data: '0x789',
+  nonce: 10,
+  gasPrice: mockFeeData.gasPrice,
+}
+
+export const txReceipt = {
+  transactionHash: '0x123',
+  blockHash: '0x123',
+  blockNumber: 1,
+  transactionIndex: 1,
+  confirmations: 1,
+  status: 1,
+}
+
+export const txResponse = {
+  hash: '0x123',
+  wait: (): typeof txReceipt => txReceipt,
+}
+
+export const txTypeInfo: ApproveTransactionInfo = {
+  type: TransactionType.Approve,
+  tokenAddress: tokenContract.address,
+  spender: SWAP_ROUTER_ADDRESSES[ChainId.Goerli],
+}
+
+export const txDetailsPending: TransactionDetails = {
+  chainId: ChainId.Mainnet
