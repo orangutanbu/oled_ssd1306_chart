@@ -24,4 +24,12 @@ describe(maxAmountSpend, () => {
     expect(amount1Spend?.quotient.toString()).toEqual('99')
   })
 
-  it('handles small native amounts', () =>
+  it('handles small native amounts', () => {
+    const amount = CurrencyAmount.fromRawAmount(
+      MainnetEth,
+      JSBI.subtract(JSBI.BigInt(99), JSBI.BigInt(MIN_NATIVE_CURRENCY_FOR_GAS))
+    )
+    const amount1Spend = maxAmountSpend(amount)
+    expect(amount1Spend?.quotient.toString()).toEqual('0')
+  })
+})
