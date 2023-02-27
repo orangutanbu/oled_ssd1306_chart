@@ -12,4 +12,12 @@ describe('impact', () => {
 
     impactLight()
     impactMedium()
-    impa
+    impactHeavy()
+    impactLight()
+
+    expect(mockedImpactAsync).toHaveBeenCalledWith(ImpactFeedbackStyle.Light)
+    expect(mockedImpactAsync).toHaveBeenCalledWith(ImpactFeedbackStyle.Medium)
+    expect(mockedImpactAsync).toHaveBeenCalledWith(ImpactFeedbackStyle.Heavy)
+    expect(mockedImpactAsync).toHaveBeenCalledWith(ImpactFeedbackStyle.Light)
+  })
+})
