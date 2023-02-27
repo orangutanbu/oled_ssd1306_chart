@@ -19,4 +19,33 @@ describe(normalizeTextInput, () => {
     expect(normalizeTextInput('')).toBe('')
   })
 
-  it('handles string with multiple spaces'
+  it('handles string with multiple spaces', () => {
+    expect(normalizeTextInput('test    string')).toBe('test string')
+  })
+
+  it('handles string with multiple spaces and leading white space', () => {
+    expect(normalizeTextInput(' test    string')).toBe('test string')
+  })
+
+  it('lowercases string', () => {
+    expect(normalizeTextInput('Test')).toBe('test')
+  })
+
+  it('lowercases string with leading white space', () => {
+    expect(normalizeTextInput(' Test')).toBe('test')
+  })
+
+  it('does not lowercases string', () => {
+    expect(normalizeTextInput('Test', false)).toBe('Test')
+  })
+})
+
+describe(escapeRegExp, () => {
+  it('handles empty string', () => {
+    expect(escapeRegExp('')).toBe('')
+  })
+
+  it('handles escaped characters', () => {
+    expect(escapeRegExp('/*?')).toBe('/\\*\\?')
+  })
+})
