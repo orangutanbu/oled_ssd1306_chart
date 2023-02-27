@@ -46,4 +46,22 @@ export function fromGraphQLChain(chain: Chain | undefined): ChainId | null {
   return null
 }
 
-expo
+export function toGraphQLChain(chainId: ChainId): Chain | null {
+  switch (chainId) {
+    case ChainId.Mainnet:
+      return Chain.Ethereum
+    case ChainId.ArbitrumOne:
+      return Chain.Arbitrum
+    case ChainId.Goerli:
+      return Chain.EthereumGoerli
+    case ChainId.Optimism:
+      return Chain.Optimism
+    case ChainId.Polygon:
+      return Chain.Polygon
+  }
+  return null
+}
+
+export function getPollingIntervalByBlocktime(chainId?: ChainId): PollingInterval {
+  return isL2Chain(chainId) ? PollingInterval.LightningMcQueen : PollingInterval.Fast
+}
