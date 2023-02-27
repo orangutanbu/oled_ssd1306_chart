@@ -88,4 +88,78 @@ export function createMonitoredSaga<SagaParams = void>(
   const reducer = createReducer<SagaState>({ status: null, error: null }, (builder) =>
     builder
       .addCase(statusAction, (state, action) => {
-        state.status = action.p
+        state.status = action.payload
+        state.error = null
+      })
+      .addCase(errorAction, (state, action) => {
+        state.status = SagaStatus.Failure
+        state.error = action.payload
+      })
+      .addCase(resetAction, (state) => {
+        state.status = null
+        state.error = null
+      })
+  )
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const wrappedSaga = function* (): any {
+    while (true) {
+      try {
+        const trigger: Effect = yield take(triggerAction.type)
+        logger.debug('saga', 'monitoredSaga', `${name} triggered`)
+        yield put(statusAction(SagaStatus.Started))
+        const { result, cancel, timeout } = yield race({
+          // Note: Use fork here instead if parallelism is required for the saga
+          result: call(saga, trigger.payload),
+          cancel: take(cancelAction.type),
+          timeout: delay(options?.timeoutDuration || DEFAULT_TIMEOUT),
+        })
+
+        if (cancel) {
+          logger.debug('saga', 'monitoredSaga', `${name} canceled`)
+          yield put(errorAction('Action was cancelled.'))
+          continue
+        }
+
+        if (timeout) {
+          logger.warn('saga', 'monitoredSaga', `${name} timed out`)
+          throw new Error('Action timed out.')
+        }
+
+        if (result === false) {
+          logger.warn('saga', 'monitoredSaga', `${name} returned failure result`)
+          throw new Error('Action returned failure result.')
+        }
+
+        yield put(statusAction(SagaStatus.Success))
+        logger.debug('saga', 'monitoredSaga', `${name} finished`)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        logger.error('saga', 'monitoredSaga', `${name} error`, error)
+        const errorMessage = errorToString(error)
+        yield put(errorAction(errorMessage))
+        if (!options?.suppressErrorNotification) {
+          yield put(
+            pushNotification({
+              type: AppNotificationType.Error,
+              errorMessage,
+            })
+          )
+        }
+      }
+    }
+  }
+
+  return {
+    name,
+    wrappedSaga,
+    reducer,
+    actions: {
+      trigger: triggerAction,
+      cancel: cancelAction,
+      progress: statusAction,
+      error: errorAction,
+      reset: resetAction,
+    },
+  }
+}
