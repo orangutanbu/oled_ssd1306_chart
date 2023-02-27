@@ -36,4 +36,28 @@ describe(tryParseExactAmount, () => {
   })
 })
 
-describe(tryParse
+describe(tryParseRawAmount, () => {
+  it('handle undefined inputs', () => {
+    expect(tryParseRawAmount(undefined, undefined)).toBeUndefined()
+  })
+
+  it('handle undefined value', () => {
+    expect(tryParseRawAmount(undefined, DAI)).toBeUndefined()
+  })
+
+  it('handle undefined Currency', () => {
+    expect(tryParseRawAmount('1', undefined)).toBeUndefined()
+  })
+
+  it('handle raw input', () => {
+    expect(tryParseRawAmount('1000000000000000000', DAI)).toEqual(ONE_DAI)
+  })
+
+  it('handle fractional raw input', () => {
+    expect(tryParseRawAmount('500000000000000000', DAI)).toEqual(HALF_DAI)
+  })
+
+  it('handle non-raw amount', () => {
+    expect(tryParseRawAmount('0.01', DAI)).toBeNull()
+  })
+})
