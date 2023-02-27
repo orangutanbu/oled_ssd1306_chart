@@ -121,4 +121,51 @@ describe(isNativeCurrencyAddress, () => {
     expect(isNativeCurrencyAddress(ChainId.Mainnet, null)).toEqual(true)
   })
 
-  it('returns false for mainnet with mative native address',
+  it('returns false for mainnet with mative native address', () => {
+    expect(isNativeCurrencyAddress(ChainId.Mainnet, NATIVE_ADDRESS_ALT)).toEqual(false)
+  })
+
+  it('returns false for token address', () => {
+    expect(isNativeCurrencyAddress(ChainId.Mainnet, DAI.address)).toEqual(false)
+  })
+})
+
+describe(currencyIdToAddress, () => {
+  it('returns correct address for token', () => {
+    expect(currencyIdToAddress(`1-${DAI_ADDRESS}`)).toEqual(DAI_ADDRESS)
+  })
+
+  it('returns correct address for native asset', () => {
+    expect(currencyIdToAddress(`1-${NATIVE_ADDRESS}`)).toEqual(NATIVE_ADDRESS)
+  })
+})
+
+describe(currencyIdToGraphQLAddress, () => {
+  it('returns correct address for token', () => {
+    expect(currencyIdToGraphQLAddress(`1-${DAI_ADDRESS}`)).toEqual(DAI_ADDRESS.toLowerCase())
+  })
+
+  it('returns null for native asset', () => {
+    expect(currencyIdToGraphQLAddress(`1-${NATIVE_ADDRESS}`)).toEqual(null)
+  })
+})
+
+describe(currencyIdToChain, () => {
+  it('returns correct chain for token', () => {
+    expect(currencyIdToChain(`1-${DAI_ADDRESS}`)).toEqual(ChainId.Mainnet)
+  })
+
+  it('returns correct chain for native asset', () => {
+    expect(currencyIdToChain(`1-${NATIVE_ADDRESS}`)).toEqual(ChainId.Mainnet)
+  })
+
+  it('handles invalid currencyId', () => {
+    expect(currencyIdToChain(undefined)).toEqual(null)
+  })
+})
+
+describe(checksumCurrencyId, () => {
+  it('returns correct checksum address for token', () => {
+    expect(checksumCurrencyId(`1-${DAI_ADDRESS.toLowerCase()}`)).toEqual(`1-${DAI_ADDRESS}`)
+  })
+})
