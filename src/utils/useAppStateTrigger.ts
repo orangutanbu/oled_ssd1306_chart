@@ -10,4 +10,16 @@ export function useAppStateTrigger(
   const appState = useRef(AppState.currentState)
 
   useEffect(() => {
-    const subscrip
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      if (appState.current === from && nextAppState === to) {
+        callback()
+      }
+
+      appState.current = nextAppState
+    })
+
+    return () => {
+      subscription.remove()
+    }
+  }, [from, callback, to])
+}
