@@ -28,4 +28,13 @@ export function getStatsigEnvironmentTier(): StatsigEnvironmentTier {
     return StatsigEnvironmentTier.DEV
   }
   if (isBetaBuild()) {
-    return StatsigEnvironmentTier.BET
+    return StatsigEnvironmentTier.BETA
+  }
+  return StatsigEnvironmentTier.PROD
+}
+
+enum StatsigEnvironmentTier {
+  DEV = 'development',
+  BETA = 'beta',
+  PROD = 'production',
+}
